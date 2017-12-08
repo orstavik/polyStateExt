@@ -2,7 +2,7 @@
     "name": "poly-state",
     "version": "0.0.1",
     "manifest_version": 2,
-    "description": "Visualise your state",
+    "description": "Visualize your state",
     "icons": {
         "48": "icons/icon.png"
     },
