@@ -1,14 +1,6 @@
-const scriptToAttach = `
-window.addEventListener('state-changed-debug', (e) => {
-  chrome.runtime.sendMessage({
-    name: 'new-client-state',
-    payload: e.detail
-  })
-});
-`;
 chrome.runtime.sendMessage({
   tabId: chrome.devtools.inspectedWindow.tabId,
-  script: scriptToAttach
+  filename: "content-script.js"
 });
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {

@@ -4,7 +4,7 @@ function handleMessage(request, sender, sendResponse) {
   }
   chrome.tabs.executeScript(
     request.tabId, {
-      code: request.script
+      file: request.filename
     });
 }
 chrome.runtime.onMessage.addListener(handleMessage);
