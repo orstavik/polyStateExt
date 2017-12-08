@@ -1,22 +1,14 @@
-const scriptToAttach = `
-window.addEventListener('state-changed-debug', (e) => {
-  chrome.runtime.sendMessage({
-    name: 'new-client-state',
-    payload: e.detail
-  })
-});
-`;
 chrome.runtime.sendMessage({
   tabId: chrome.devtools.inspectedWindow.tabId,
-  script: scriptToAttach
+  filename: "content-script.js"
 });
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.name === 'new-client-state') {
-    const snapShot = JSON.parse(request.payload);
-    const li = makeTaskLI(snapShot);
+    const snap = Tools.resurrectDebugInfo(request.payload);
+    const li = makeTaskLI(snap);
     taskListUL.appendChild(li);
-    rememberSnap(snapShot);
+    rememberSnap(snap);
     details.innerHTML = `<ul class="stateTree">${stateList[stateList.length-1]}</ul>`;
   }
 });
@@ -45,7 +37,7 @@ function makeStateTreeUL(visualVersion) {
 </li>
 `;
   return res;
-}
+};
 
 function makeFuncUL(info, compute) {
   let filter = StatePrinter.debug(info.start, info.stop);
@@ -68,7 +60,7 @@ function makeFuncUL(info, compute) {
     str += li;
   }
   return "<ul class='listOfFuncs'>" + str + "</ul>";
-}
+};
 
 function makeAddedTime(timestamp) {
   const t = new Date(timestamp);
@@ -110,8 +102,30 @@ function makeTaskLI (debugInfo) {
   <div class="observes">${observeBody}</div>
 </div>`;
   return li;
-}
+};
 
+// const getDebugs =
+//   `(function(){
+//   let res = ITObservableState.debugList;
+//   ITObservableState.debugList = [];
+//   return res;
+// }).call()`;
+
+const taskListUL = document.querySelector("#taskList>ul");
+
+// setInterval(function () {
+//   chrome.devtools.inspectedWindow.eval(getDebugs, {}, function (list) {
+//     if (!list)
+//       return;
+//     for (let debugInfo of list)
+//       mainList.push(debugInfo);
+//   });
+
+//   while(mainList.length > 0) {
+//     let firstIn = mainList.shift();
+//     let li = makeTaskLI(firstIn);
+//     taskListUL.appendChild(li);
+//   }
 
 function toggleListItem(e) {
   const item = e.currentTarget;
