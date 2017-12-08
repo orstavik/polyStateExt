@@ -18,14 +18,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
 });
 
-const myJSON = {ans: 42};
-
-const formatter = new JSONFormatter(myJSON);
-
-document.body.appendChild(formatter.render());
-
-
-
 // const mainList = [];
 
 const makeStateTreeUL = function (visualVersion) {
