@@ -1,0 +1,102 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="libs/normalize.css">
+  <style>
+    body {
+      display: grid;
+      box-sizing: border-box;
+      height: 100vh;
+      margin: 0;
+      grid-template-columns: minmax(240px, 20vw) auto;
+      grid-template-rows: auto 1fr;
+      grid-template-areas: 'header header' 'list details';
+    }
+
+    @media (max-width: 600px) {
+      body {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr 2fr;
+        grid-template-areas: 'header' 'list' 'details';
+      }
+      #stateDetails {
+        border-left: none !important;
+        border-top: 1px solid lightgray;
+      }
+    }
+
+    header {
+      grid-area: header;
+      border-bottom: 1px solid lightgray;
+      padding: 0 12px;
+    }
+
+    #taskList {
+      grid-area: list;
+      overflow-y: auto;
+    }
+
+    #stateDetails {
+      grid-area: details;
+      border-left: 1px solid lightgray;
+      padding: 12px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    #taskList>ul>li {
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    #taskList>ul>li:nth-child(2n) {
+      background-color: #f4f4f4;
+    }
+
+    span.valueStart,
+    span.valueReduced {
+      display: none;
+    }
+
+    li.reduceAltered>span.valueReduced,
+    li.reduceAltered>span.valueNew {
+      display: block;
+      color: green;
+    }
+
+    #taskList li>.computes,
+    #taskList li>.observes {
+      display: none;
+    }
+
+    #taskList li:hover>.computes,
+    #taskList li:hover>.observes {
+      display: block;
+    }
+
+    .funcArgPath.triggered {
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h2 id="h2">PolyState</h2>
+  </header>
+  <div id="taskList">
+    <ul></ul>
+  </div>
+  <div id="stateDetails">
+    state - persistent - user - users - session - route - segments
+  </div>
+
+  <script src="libs/StatePrinter.js"></script>
+  <script src="devtools-panel.js"></script>
+</body>
+
+</html>

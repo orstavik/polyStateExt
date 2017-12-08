@@ -1,0 +1,18 @@
+{
+    "name": "poly-state",
+    "version": "0.0.1",
+    "manifest_version": 2,
+    "description": "Visualise your state",
+    "icons": {
+        "48": "icons/icon.png"
+    },
+    "background": {
+        "scripts": ["background.js"]
+    },
+    "devtools_page": "devtools-page.html",
+    "permissions": [
+        "http://*/*",
+        "https://*/*",
+        "file:///*"
+    ]
+}
