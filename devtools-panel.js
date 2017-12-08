@@ -13,7 +13,7 @@ chrome.runtime.sendMessage({
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.name === 'new-client-state') {
-    const li = makeTaskLI(JSON.parse(request.payload));
+    const li = makeTaskLI(Tools.resurrectDebugInfo(request.payload));
     taskListUL.appendChild(li);
   }
 });
@@ -35,7 +35,7 @@ const makeStateTreeUL = function (visualVersion) {
 </li>
 `;
   return res;
-}
+};
 
 const makeFuncUL = function (info, compute) {
   let filter = StatePrinter.debug(info.start, info.stop);
@@ -58,7 +58,7 @@ const makeFuncUL = function (info, compute) {
     str += li;
   }
   return "<ul class='listOfFuncs'>" + str + "</ul>";
-}
+};
 
 const makeTaskLI = function (debugInfo) {
   let task = debugInfo.task;
@@ -83,14 +83,14 @@ const makeTaskLI = function (debugInfo) {
   /*<ul class='stateTree'>${stateTreeUL}</ul>
   `;*/
   return li;
-}
+};
 
-const getDebugs =
-  `(function(){
-  let res = ITObservableState.debugList; 
-  ITObservableState.debugList = []; 
-  return res;
-}).call()`;
+// const getDebugs =
+//   `(function(){
+//   let res = ITObservableState.debugList;
+//   ITObservableState.debugList = [];
+//   return res;
+// }).call()`;
 
 const taskListUL = document.querySelector("#taskList>ul");
 

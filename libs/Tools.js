@@ -30,7 +30,7 @@ class Tools {
     if (bKeys.length !== aKeys.length)
       return false;
     for (let key of aKeys) {
-      if (bKeys.indexOf(key) === -1)
+      if (bKeys.indexOf(key) === -1 || A[key] !== B[key])
         return false;
     }
     return true;
