@@ -105,90 +105,13 @@ chrome.devtools.inspectedWindow.eval(StatePrinter + cb);
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.name === 'new-client-state') {
-    let debugInfo = JSON.parse(request.payload);
+    let data = JSON.parse(request.payload);
     let id = debugCounter++;
-    const li = makeTaskLI(debugInfo, id);
-    taskListUL.appendChild(li);
-    const state = ObservableStateLI.makeStateTreeUL(debugInfo.visualVersion, id + "_state");
-    stateListUL.append(state);
+    tasksListUL.append(TaskLI.makeTaskLI(data, id));
+    stateListUL.append(ObservableStateLI.makeStateTreeUL(data.visualVersion, "s"+id + "_state"));
   }
 });
 
 let debugCounter = 1;
-const taskListUL = document.querySelector("#taskList>ul");
+const tasksListUL = document.querySelector("#taskList>ul");
 const stateListUL = document.querySelector("#stateDetails>ul");
-
-const makeFuncUL = function (filter, isCompute) {
-  let str = "";
-  for (let funcName in filter) {
-    let data = filter[funcName];
-    let spannedArgs = data.triggerPaths.map(p =>
-      `<span class='funcArgPath ${p.triggered ? "triggered" : ""}'>${p.path.join(".")}</span>`
-    );
-    let args = spannedArgs.join(", ");
-    let returnValue = isCompute ?
-      `<span class="returnProp">${data.a.returnProp}</span><span class="pointsTo"> = </span>` :
-      "<span class='observeEntry'> => </span>";
-    let li = `
-<li>
-  ${returnValue}
-  <span class="funcName">${data.a.funcName}</span>
-  <span class="pointsTo">(</span>${args}<span class="pointsTo">)</span>
-</li>`;
-    str += li;
-  }
-  return "<ul class='listOfFuncs'>" + str + "</ul>";
-};
-
-function makeAddedTime(timestamp) {
-  const t = new Date(timestamp);
-  let h = t.getHours();
-  h = '0'.repeat(2 - h.toString().length) + h;
-  let m = t.getMinutes();
-  m = '0'.repeat(2 - m.toString().length) + m;
-  let s = t.getSeconds();
-  s = '0'.repeat(2 - s.toString().length) + s;
-  let ms = t.getMilliseconds();
-  ms = '0'.repeat(3 - ms.toString().length) + ms;
-  return `${h}:${m}:${s}.${ms}`;
-}
-
-function makeTaskLI(debugInfo, id) {
-  let task = debugInfo.task;
-  let visualVersion = debugInfo.visualVersion;
-  // let stateTreeUL = makeStateTreeUL(visualVersion);
-  let addedDate = makeAddedTime(task.added);
-  let timeToCompute = Math.round((task.stop - task.start) * 100) / 100;
-  let computeBody = makeFuncUL(debugInfo.computerInfo, true);
-  let observeBody = makeFuncUL(debugInfo.observerInfo, false);
-  let li = document.createElement("li");
-  li.id = "task_" + id;
-  li.dataset.index = id;
-  li.innerHTML =
-    `
-<div>
-<div class="eventMethod">
-  <span class="eventType">${task.eventType}</span><br>
-  <span>&#10551;</span>
-  <span class="taskName">${task.taskName}</span>
-</div>
-<div class="timings">
-  <span class="added">${addedDate}</span>
-  <span class="duration">${timeToCompute}</span>
-</div>
-</div>
-<div class="compObs">
-  <div class="computes">${computeBody}</div>
-  <div class="observes">${observeBody}</div>
-</div>`;
-  return li;
-}
-
-function toggleListItem(e) {
-  // li.addEventListener('click', toggleListItem);
-  const item = e.currentTarget;
-  if (item.classList.contains('opened'))
-    return item.classList.remove('opened');
-  item.classList.add('opened');
-  details.innerHTML = `<ul class="stateTree">${stateList[item.dataset.index]}</ul>`;
-}

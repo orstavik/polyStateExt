@@ -44,7 +44,11 @@
     }
 
     #stateDetails>ul>li {
-      /*display: none;*/
+      display: none;
+    }
+
+    #stateDetails>ul>li.opened {
+      display: block;
     }
 
     ul {
@@ -113,6 +117,7 @@
 
   <script src="devtools-panel.js"></script>
   <script src="libs/ObservableStateLI.js"></script>
+  <script src="libs/TaskLI.js"></script>
 </body>
 
 </html>
