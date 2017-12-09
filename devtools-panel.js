@@ -109,7 +109,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     let id = debugCounter++;
     const li = makeTaskLI(debugInfo, id);
     taskListUL.appendChild(li);
-    const state = makeStateTreeUL(debugInfo.visualVersion, id + "_state");
+    const state = ObservableStateLI.makeStateTreeUL(debugInfo.visualVersion, id + "_state");
     stateListUL.append(state);
   }
 });
@@ -117,24 +117,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 let debugCounter = 1;
 const taskListUL = document.querySelector("#taskList>ul");
 const stateListUL = document.querySelector("#stateDetails>ul");
-
-function makeStateTreeUL(visualVersion, id) {
-  const li = document.createElement("li");
-  li.id = id;
-  li.classList.add(...visualVersion.style);
-  li.innerHTML = `
-<span class="stateName">${visualVersion.name}</span>
-<span class="pointsTo"> : </span>
-<span class="valueStart">${visualVersion.values.startState}</span>
-<span class="valueReduced">${visualVersion.values.reducedState}</span>
-<span class="valueNew">${visualVersion.values.newState}</span>
-`;
-  const childUL = document.createElement("ul");
-  li.appendChild(childUL);
-  for (let childName in visualVersion.children)
-    childUL.appendChild(makeStateTreeUL(visualVersion.children[childName], id + "_" + childName));
-  return li;
-}
 
 const makeFuncUL = function (filter, isCompute) {
   let str = "";
