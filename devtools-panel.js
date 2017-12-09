@@ -1,5 +1,5 @@
 const StatePrinter =
-`
+  `
 class StatePrinter {
 
   static parse(debugInfo){
@@ -105,38 +105,36 @@ chrome.devtools.inspectedWindow.eval(StatePrinter + cb);
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.name === 'new-client-state') {
-    const li = makeTaskLI(JSON.parse(request.payload));
+    let debugInfo = JSON.parse(request.payload);
+    let id = debugCounter++;
+    const li = makeTaskLI(debugInfo, id);
     taskListUL.appendChild(li);
-    rememberSnap(snap);
-    details.innerHTML = `<ul class="stateTree">${stateList[stateList.length-1]}</ul>`;
+    const state = makeStateTreeUL(debugInfo.visualVersion, id + "_state");
+    stateListUL.append(state);
   }
 });
 
+let debugCounter = 1;
 const taskListUL = document.querySelector("#taskList>ul");
-const details = document.querySelector('#stateDetails');
-const stateList = [];
+const stateListUL = document.querySelector("#stateDetails>ul");
 
-function rememberSnap(snap) {
-  let visualVersion = StatePrinter.compareObjects("state", snap.startState, snap.reducedState, snap.newState);
-  stateList.push(makeStateTreeUL(visualVersion));
-}
-
-function makeStateTreeUL(visualVersion) {
-  let childrenText = "";
-  for (let childName in visualVersion.children)
-    childrenText += "\n" + makeStateTreeUL(visualVersion.children[childName]);
-  let res = `
-<li class="${visualVersion.style.join(" ")}">
+function makeStateTreeUL(visualVersion, id) {
+  const li = document.createElement("li");
+  li.id = id;
+  li.classList.add(...visualVersion.style);
+  li.innerHTML = `
 <span class="stateName">${visualVersion.name}</span>
 <span class="pointsTo"> : </span>
 <span class="valueStart">${visualVersion.values.startState}</span>
 <span class="valueReduced">${visualVersion.values.reducedState}</span>
 <span class="valueNew">${visualVersion.values.newState}</span>
-<ul>${childrenText}</ul>
-</li>
 `;
-  return res;
-};
+  const childUL = document.createElement("ul");
+  li.appendChild(childUL);
+  for (let childName in visualVersion.children)
+    childUL.appendChild(makeStateTreeUL(visualVersion.children[childName], id + "_" + childName));
+  return li;
+}
 
 const makeFuncUL = function (filter, isCompute) {
   let str = "";
@@ -163,29 +161,29 @@ const makeFuncUL = function (filter, isCompute) {
 function makeAddedTime(timestamp) {
   const t = new Date(timestamp);
   let h = t.getHours();
-  h = '0'.repeat(2-h.toString().length)+h;
+  h = '0'.repeat(2 - h.toString().length) + h;
   let m = t.getMinutes();
-  m = '0'.repeat(2-m.toString().length)+m;
+  m = '0'.repeat(2 - m.toString().length) + m;
   let s = t.getSeconds();
-  s = '0'.repeat(2-s.toString().length)+s;
+  s = '0'.repeat(2 - s.toString().length) + s;
   let ms = t.getMilliseconds();
-  ms = '0'.repeat(3-ms.toString().length)+ms;
+  ms = '0'.repeat(3 - ms.toString().length) + ms;
   return `${h}:${m}:${s}.${ms}`;
 }
 
-function makeTaskLI (debugInfo) {
+function makeTaskLI(debugInfo, id) {
   let task = debugInfo.task;
   let visualVersion = debugInfo.visualVersion;
-  let stateTreeUL = makeStateTreeUL(visualVersion);
+  // let stateTreeUL = makeStateTreeUL(visualVersion);
   let addedDate = makeAddedTime(task.added);
   let timeToCompute = Math.round((task.stop - task.start) * 100) / 100;
   let computeBody = makeFuncUL(debugInfo.computerInfo, true);
   let observeBody = makeFuncUL(debugInfo.observerInfo, false);
   let li = document.createElement("li");
-  li.dataset.index = taskListUL.children.length;
-  li.addEventListener('click', toggleListItem);
+  li.id = "task_" + id;
+  li.dataset.index = id;
   li.innerHTML =
-`
+    `
 <div>
 <div class="eventMethod">
   <span class="eventType">${task.eventType}</span><br>
@@ -202,11 +200,10 @@ function makeTaskLI (debugInfo) {
   <div class="observes">${observeBody}</div>
 </div>`;
   return li;
-};
-
-const taskListUL = document.querySelector("#taskList>ul");
+}
 
 function toggleListItem(e) {
+  // li.addEventListener('click', toggleListItem);
   const item = e.currentTarget;
   if (item.classList.contains('opened'))
     return item.classList.remove('opened');

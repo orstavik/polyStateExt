@@ -1,5 +1,5 @@
 function handleMessage(request, sender, sendResponse) {
-  if (sender.url != chrome.runtime.getURL("panel.html")) {
+  if (sender.url != chrome.runtime.getURL("devtools-panel.html")) {
     return;
   }
   chrome.tabs.executeScript(
