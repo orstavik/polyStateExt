@@ -6,8 +6,7 @@ class TaskLI {
     li.id = "task_" + id;
     li.dataset.index = id;
     li.addEventListener('click', TaskLI.toggleListItem);
-    li.innerHTML =
-      `
+    li.innerHTML = `
 <div class="eventMethod">
   <span class="eventType"></span><br>
   <span>&#10551;</span>
@@ -22,36 +21,37 @@ class TaskLI {
   <div class="computes"></div>
   <div class="observes"></div>
 </div>`;
-    li.querySelector("div.eventMethod>span.eventType").innerText = task.eventType;
-    li.querySelector("div.eventMethod>span.taskName").innerText = task.taskName;
-    li.querySelector("div.timings>span.added").innerText = TaskLI.makeAddedTime(task.added);
-    li.querySelector("div.timings>span.duration").innerText = Math.round((task.stop - task.start) * 100) / 100;
-    li.querySelector("div.compObs>div.computes").append(TaskLI.makeFuncUL(debugInfo.computerInfo, true));
-    li.querySelector("div.compObs>div.observes").append(TaskLI.makeFuncUL(debugInfo.observerInfo, false));
+    li.querySelector("span.eventType").innerText = task.eventType;
+    li.querySelector("span.taskName").innerText = task.taskName;
+    li.querySelector("span.added").innerText = TaskLI.makeAddedTime(task.added);
+    li.querySelector("span.duration").innerText = Math.round((task.stop - task.start) * 100) / 100;
+    li.querySelector("div.computes").append(TaskLI.makeFuncUL(debugInfo.computerInfo, true));
+    li.querySelector("div.observes").append(TaskLI.makeFuncUL(debugInfo.observerInfo, false));
     return li;
   }
 
   static makeFuncUL (filter, isCompute) {
     let ul = document.createElement("ul");
     ul.classList.add("listOfFuncs");
-    let str = "";
     for (let funcName in filter) {
       let data = filter[funcName];
-      let liEl = document.createElement("li");
-      let spannedArgs = data.triggerPaths.map(p =>
-        `<span class='funcArgPath ${p.triggered ? "triggered" : ""}'>${p.path.join(".")}</span>`
-      );
-      let args = spannedArgs.join(", ");
-      let returnValue = isCompute ?
-        `<span class="returnProp">${data.a.returnProp}</span><span class="pointsTo"> = </span>` :
-        "<span class='observeEntry'> => </span>";
-      liEl.innerHTML = `
-<li>
-  ${returnValue}
-  <span class="funcName">${data.a.funcName}</span>
-  <span class="pointsTo">(</span>${args}<span class="pointsTo">)</span>
-</li>`;
-      ul.append(liEl);
+      let li = document.createElement("li");
+      li.append(TaskLI.makeSpan(isCompute ? data.a.returnProp : "", "returnProp"));
+      li.append(TaskLI.makeSpan(isCompute ? "<=" : "=>", "pointsTo"));
+      li.append(TaskLI.makeSpan(data.a.funcName, "funcName"));
+      li.append(TaskLI.makeSpan("(", "pointsTo"));
+
+      let comma = false;
+      for (let p of data.triggerPaths) {
+        if (comma)
+          li.append(",", "pointsTo");
+        else
+          comma = true;
+        li.append(p.path.join("."), "funcArgPath" + p.triggered ? " triggered" : "");
+      }
+
+      li.append(TaskLI.makeSpan(")", "pointsTo"));
+      ul.append(li);
     }
     return ul;
   };
