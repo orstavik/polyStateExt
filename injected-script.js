@@ -85,7 +85,16 @@ class StatePrinter {
   }
 }
 
-ITObservableState.debugHook = function(snap){
+ITObservableState.debugHookFirstTime = true;
+
+ITObservableState.debugHook = function(snap, history){
+  if (ITObservableState.debugHookFirstTime){
+    for (let oldSnap of history.reverse()) {
+      let res = StatePrinter.parse(oldSnap);
+      Tools.emit('state-changed-debug', JSON.stringify(res));
+    }
+    ITObservableState.debugHookFirstTime = false;
+  }
   let res = StatePrinter.parse(snap);
   Tools.emit('state-changed-debug', JSON.stringify(res));
 };
