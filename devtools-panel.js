@@ -1,108 +1,17 @@
-const StatePrinter =
-  `
-class StatePrinter {
-
-  static parse(debugInfo){
-    return {
-      task: debugInfo.task,
-      visualVersion: StatePrinter.compareObjects("state", debugInfo.startState, debugInfo.reducedState, debugInfo.newState),
-      computerInfo: StatePrinter.debug(debugInfo.computerInfo.start, debugInfo.computerInfo.stop),
-      observerInfo: StatePrinter.debug(debugInfo.observerInfo.start, debugInfo.observerInfo.stop)
-    };
-  }
-  
-  static debug(aFuncReg, bFuncReg) {
-    let C = {};
-    for (let key in aFuncReg) {
-      let A = aFuncReg[key];
-      let B = bFuncReg[key];
-      if (A === B)
-        continue;
-      let triggerPaths = [];
-      for (let i = 0; i < B.argsValue.length; i++) {
-        let a = A.argsValue[i];
-        let b = B.argsValue[i];
-        let triggered = false;
-        if (a !== b)
-          triggered = true;
-        triggerPaths[i] = {path: A.argsPaths[i], triggered: triggered};
-      }
-      C[key] = {a: A, triggerPaths: triggerPaths};
-    }
-    return C;
-  }
-
-  //.name, .diff, .style, .values.startState/.reducedState/.newState, .children
-  static compareObjects(name, startState, reducedState, newState) {
-    let res = {};
-    res.name = name;
-    res.style = [
-      "reduce" + StatePrinter.diff(startState, reducedState),
-      "compute" + StatePrinter.diff(reducedState, newState)
-    ];
-    res.values = {
-      startState: StatePrinter.getPrintValue(startState),
-      reducedState: StatePrinter.getPrintValue(reducedState),
-      newState: StatePrinter.getPrintValue(newState)
-    };
-    res.children = {};
-
-    for (let prop of StatePrinter.getAllObjectKeys(newState, reducedState, startState)) {
-      let start = startState ? startState[prop] : undefined;
-      let reduced = reducedState ? reducedState[prop] : undefined;
-      let nevv = newState ? newState[prop] : undefined;
-      res.children[prop] = StatePrinter.compareObjects(prop, start, reduced, nevv);
-    }
-    return res;
-  }
-
-  static getAllObjectKeys(computedState, reducedState, startState) {
-    let allKeys = [];
-    if (computedState && typeof computedState === "object")
-      allKeys = Object.keys(computedState);
-    if (reducedState && typeof reducedState === "object")
-      for (let key in reducedState)
-        if (allKeys.indexOf(key) === -1)
-          allKeys.push(key);
-    if (startState && typeof startState === "object")
-      for (let key in startState)
-        if (allKeys.indexOf(key) === -1)
-          allKeys.push(key);
-    return allKeys;
-  }
-
-  static getPrintValue(obj) {
-    if (!obj)
-      return obj;
-    if (typeof obj === "object")
-      return "";
-    return obj;
-  }
-
-  static diff(a, b) {
-    if (a === b) return "NoChange";
-    if (a === undefined) return "Added";
-    if (b === undefined) return "Deleted";
-    return "Altered";
-  }
-}
-`;
-
-let cb = `
-ITObservableState.debugHook = function(snap){
-  let res = StatePrinter.parse(snap); 
-  console.log("hooked: ", res); 
-  Tools.emit('state-changed-debug', JSON.stringify(res));
-};
-`;
-
+//1. load the content-script by sending a message to the background.js script that has access to load content scripts.
+//   Att! the content-script loaded as a file can be debugged in the content-script tab in the application window.
 chrome.runtime.sendMessage({
   tabId: chrome.devtools.inspectedWindow.tabId,
   filename: "content-script.js"
 });
 
-chrome.devtools.inspectedWindow.eval(StatePrinter + cb);
+//2a. get shortcuts to DOM elements in devtools-panel that will be decorated
+let debugCounter = 1;
+const tasksListUL = document.querySelector("#taskList>ul");
+const stateListUL = document.querySelector("#stateDetails>ul");
 
+//2b. add listener for new client states that decorate the devtools-panel DOM
+//    Att! the devtools-panel.js script can be debugged by right-clicking on the panel in devtools -> inspect.
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.name === 'new-client-state') {
     let data = JSON.parse(request.payload);
@@ -112,6 +21,14 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
 });
 
-let debugCounter = 1;
-const tasksListUL = document.querySelector("#taskList>ul");
-const stateListUL = document.querySelector("#stateDetails>ul");
+//3. get and inject the injected-script.
+//   the injected-script will hook into the ITObservableState.debugHook method to process
+//   and send messages for each debug state.
+//   Only chrome.devtools.inspectedWindow.eval has access to do this.
+//   Att!! If you need to debug the injected script, the content of the injected script must be added to the running app
+//         as a normal js code, for example as part of the ITObservableState.js file.
+(async function (){
+  let response = await fetch("injected-script.js");
+  let text = await response.text();
+  chrome.devtools.inspectedWindow.eval(text);
+})();
