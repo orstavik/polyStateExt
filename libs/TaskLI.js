@@ -1,30 +1,44 @@
+const taskTemplate = document.createElement("li");
+taskTemplate.innerHTML =`
+  <div class="eventMethod">
+    <span class="eventType"></span><br>
+    <span>&#10551;</span>
+    <span class="taskName"></span>
+  </div>
+  <pre class="eventInput"></pre>
+  <div class="timings">
+    <span class="added"></span>
+    <span class="duration"></span>
+  </div>
+  </div>
+  <div class="compObs">
+    <div class="computes"></div>
+    <div class="observes"></div>
+  </div>`;
+
+const funcTemplate = document.createElement("li");
+funcTemplate.innerHTML =`
+    <span class="returnProp"></span>
+    <span class="pointsTo functionSign"></span>
+    <span class="funcName"></span>
+    <span class="pointsTo argsStart"></span>
+    <span class="funcArgs"></span>
+    <span class="pointsTo argsEnd"></span>
+`;
+
 class TaskLI {
 
   static makeTaskLI(debugInfo, id) {
     let task = debugInfo.task;
-    let li = document.createElement("li");
+    let li = taskTemplate.cloneNode(true);
     li.id = "task_" + id;
     li.dataset.index = id;
     li.addEventListener('click', TaskLI.toggleListItem);
-    li.innerHTML = `
-<div class="eventMethod">
-  <span class="eventType"></span><br>
-  <span>&#10551;</span>
-  <span class="taskName"></span>
-</div>
-<div class="timings">
-  <span class="added"></span>
-  <span class="duration"></span>
-</div>
-</div>
-<div class="compObs">
-  <div class="computes"></div>
-  <div class="observes"></div>
-</div>`;
     li.querySelector("span.eventType").innerText = task.eventType;
     li.querySelector("span.taskName").innerText = task.taskName;
     li.querySelector("span.added").innerText = TaskLI.makeAddedTime(task.added);
     li.querySelector("span.duration").innerText = Math.round((task.stop - task.start) * 100) / 100;
+    li.querySelector("pre.eventInput").innerText = JSON.stringify(task.eventInput, null, 2);
     li.querySelector("div.computes").append(TaskLI.makeFuncUL(debugInfo.computerInfo, true));
     li.querySelector("div.observes").append(TaskLI.makeFuncUL(debugInfo.observerInfo, false));
     return li;
@@ -34,23 +48,23 @@ class TaskLI {
     let ul = document.createElement("ul");
     ul.classList.add("listOfFuncs");
     for (let funcName in filter) {
-      let data = filter[funcName];
-      let li = document.createElement("li");
-      li.append(TaskLI.makeSpan(isCompute ? data.a.returnProp : "", "returnProp"));
-      li.append(TaskLI.makeSpan(isCompute ? "<=" : "=>", "pointsTo"));
-      li.append(TaskLI.makeSpan(data.a.funcName, "funcName"));
-      li.append(TaskLI.makeSpan("(", "pointsTo"));
+      const data = filter[funcName];
+      const li = funcTemplate.cloneNode(true);
+      li.querySelector("span.returnProp").innerText = isCompute ? data.a.returnProp : "";
+      li.querySelector("span.functionSign").innerText = isCompute ? "<=" : "=>";
+      li.querySelector("span.funcName").innerText = data.a.funcName;
 
-      let comma = false;
-      for (let p of data.triggerPaths) {
-        if (comma)
-          li.append(",", "pointsTo");
-        else
-          comma = true;
-        li.append(p.path.join("."), "funcArgPath" + p.triggered ? " triggered" : "");
+      const args = li.querySelector("span.funcArgs");
+      for (let i = 0; i< data.triggerPaths.length; i++) {
+        let p = data.triggerPaths[i];
+        if (i !== 0)
+          args.append(TaskLI.makeSpan(", ", "pointsTo"));
+        let arg = TaskLI.makeSpan(p.path.join("."), "funcArgPath");
+        if (p.triggered)
+          arg.classList.add("triggered");
+        args.append(arg);
       }
 
-      li.append(TaskLI.makeSpan(")", "pointsTo"));
       ul.append(li);
     }
     return ul;
