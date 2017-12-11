@@ -1,29 +1,29 @@
 const taskTemplate = document.createElement("li");
-taskTemplate.innerHTML =`
+taskTemplate.innerHTML = `
   <div class="eventMethod">
     <span class="eventType"></span><br>
     <span>&#10551;</span>
     <span class="taskName"></span>
   </div>
-  <pre class="eventInput"></pre>
   <div class="timings">
     <span class="added"></span>
     <span class="duration"></span>
   </div>
   </div>
   <div class="compObs">
+    <pre class="eventInput"></pre>
     <div class="computes"></div>
     <div class="observes"></div>
   </div>`;
 
 const funcTemplate = document.createElement("li");
-funcTemplate.innerHTML =`
-    <span class="returnProp"></span>
-    <span class="pointsTo functionSign"></span>
-    <span class="funcName"></span>
-    <span class="pointsTo argsStart"></span>
-    <span class="funcArgs"></span>
-    <span class="pointsTo argsEnd"></span>
+funcTemplate.innerHTML = `
+  <span class="returnProp"></span>
+  <span class="pointsTo functionSign"></span>
+  <span class="funcName"></span>
+  <span class="pointsTo argsStart"></span>
+  <span class="funcArgs"></span>
+  <span class="pointsTo argsEnd"></span>
 `;
 
 class TaskLI {
@@ -44,7 +44,7 @@ class TaskLI {
     return li;
   }
 
-  static makeFuncUL (filter, isCompute) {
+  static makeFuncUL(filter, isCompute) {
     let ul = document.createElement("ul");
     ul.classList.add("listOfFuncs");
     for (let funcName in filter) {
@@ -55,7 +55,7 @@ class TaskLI {
       li.querySelector("span.funcName").innerText = data.a.funcName;
 
       const args = li.querySelector("span.funcArgs");
-      for (let i = 0; i< data.triggerPaths.length; i++) {
+      for (let i = 0; i < data.triggerPaths.length; i++) {
         let p = data.triggerPaths[i];
         if (i !== 0)
           args.append(TaskLI.makeSpan(", ", "pointsTo"));
@@ -84,7 +84,7 @@ class TaskLI {
   }
 
 
-  static makeSpan(innerText, clazz){
+  static makeSpan(innerText, clazz) {
     const span = document.createElement("span");
     span.classList.add(clazz);
     span.innerText = innerText;
@@ -103,7 +103,7 @@ class TaskLI {
 
     const taskItem = e.currentTarget;
     taskItem.classList.add('opened');
-    const stateItem = document.querySelector("#s" + taskItem.dataset.index +"_state");
+    const stateItem = document.querySelector("#s" + taskItem.dataset.index + "_state");
     stateItem.classList.add('opened');
   }
 }

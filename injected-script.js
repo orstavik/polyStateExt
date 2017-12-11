@@ -94,6 +94,7 @@ ITObservableState.debugHook = function(snap, history){
       Tools.emit('state-changed-debug', JSON.stringify(res));
     }
     ITObservableState.debugHookFirstTime = false;
+    return;
   }
   let res = StatePrinter.parse(snap);
   Tools.emit('state-changed-debug', JSON.stringify(res));
