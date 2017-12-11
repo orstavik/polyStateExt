@@ -100,6 +100,35 @@ span.valueReduced {
     user-select: none;
 }
 
+li.reduceAltered.computeAltered>div>span.stateName {
+    background-color: purple;
+}
+
+li.reduceAdded>div>span.stateName  {
+    background-color: green;
+}
+
+li.reduceAltered>div>span.stateName  {
+    background-color: lightgreen;
+}
+
+li.reduceSubAltered>div>span.stateName  {
+    border-bottom: 2px solid green;
+}
+
+li.computeAdded>div>span.stateName  {
+    background-color: orange;
+}
+
+li.computeAltered>div>span.stateName  {
+    background-color: yellow;
+}
+
+li.computeSubAltered>div>span.stateName  {
+    border-bottom: 2px solid orange;
+}
+
+
 li.hasChildren>.propWrapper::before {
     content: "+";
     display: inline-block;

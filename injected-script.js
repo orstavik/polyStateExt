@@ -91,6 +91,7 @@ class StatePrinter {
     if (a === b) return "NoChange";
     if (a === undefined) return "Added";
     if (b === undefined) return "Deleted";
+    if (StatePrinter.objectEqualOneLayer(a, b)) return "SubAltered";
     return "Altered";
   }
 
@@ -101,6 +102,24 @@ class StatePrinter {
       detail: StatePrinter.debugParsedJSON(snap),
     }));
   }
+
+  static objectEqualOneLayer(a, b) {
+    if (a === null || b === null || typeof a !== "object" || typeof b !== "object")
+      return false;
+    let aKeys = Object.keys(a);
+    let bKeys = Object.keys(b);
+    if (aKeys.length !== bKeys.length)
+      return false;
+    for (let key of aKeys) {
+      if (bKeys.indexOf(key) === -1)
+        return false;
+    }
+    return true;
+  }
 }
 
 new StatePrinter();
+setTimeout(() => {
+  thisIsSomethingThatDoesNotExist.whenYouAskForAPropOnThatYouWillSeeTheInjectedScriptInDevToolsSoYouCanDebugIt;
+  justRememberToOpenThePolystatePanel.thatShouldDoIt.AndBestOfLuck;
+}, 1000);
