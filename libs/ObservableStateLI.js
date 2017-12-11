@@ -1,8 +1,7 @@
 const StateLITemplate = document.createElement("li");
 StateLITemplate.innerHTML = 
 `<div class="propWrapper">
-  <span class="stateName"></span>
-  <span class="pointsTo"> : </span>
+  <span class="stateName"></span>:
   <span class="valueStart"></span>
   <span class="valueReduced"></span>
   <span class="valueNew"></span>

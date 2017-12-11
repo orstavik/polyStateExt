@@ -1,5 +1,4 @@
 .flash {
-    color: red;
     font-weight: bold;
 }
 
@@ -28,7 +27,7 @@ body {
 header {
     grid-area: header;
     border-bottom: 1px solid lightgray;
-    padding: 0 12px;
+    padding: 0 1rem;
 }
 
 #taskList {
@@ -39,8 +38,9 @@ header {
 #stateDetails {
     grid-area: details;
     border-left: 1px solid lightgray;
-    padding: 12px;
+    padding: 1rem;
     overflow-y: auto;
+    font-size: 0.8rem;
 }
 
 #stateDetails>ul>li {
@@ -71,11 +71,11 @@ ul {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 8px;
+    margin: 0.7rem;
 }
 
 .compObs>div {
-    margin: 12px;
+    margin: 1rem;
 }
 
 span.valueStart,
@@ -103,11 +103,24 @@ span.valueReduced {
 li.hasChildren>.propWrapper::before {
     content: "+";
     display: inline-block;
-    width: 8px;
+    width: 0.7rem;
+    font-weight: 900;
 }
 
 li.hasChildren.opened>.propWrapper::before {
     content: "-";
+}
+
+li.hasChildren>.propWrapper::after {
+    content: "{...}";
+}
+
+li.hasChildren.opened>.propWrapper::after {
+    content: "{";
+}
+
+li.hasChildren.opened >ul::after {
+    content: "}";
 }
 
 #stateDetails.stateName {
@@ -115,7 +128,7 @@ li.hasChildren.opened>.propWrapper::before {
 }
 
 #stateDetails li>ul {
-    margin-left: 12px;
+    margin-left: 1rem;
     display: none;
 }
 #stateDetails>ul>li>ul {
@@ -123,4 +136,26 @@ li.hasChildren.opened>.propWrapper::before {
 }
 #stateDetails li.opened>ul {
     display: block;
+}
+
+#stateDetails li {
+    padding-top: 0.2rem;
+}
+
+li:not(.hasChildren) .stateName {
+    margin-left: 0.92rem;
+}
+
+.stateName {
+    border-radius: 0.3rem;
+    padding: 0 0.3rem 0.1rem;
+    color: darkblue;
+}
+
+.stateName:hover {
+    background-color: #eee;
+}
+
+.valueNew {
+    color: orangered;
 }
