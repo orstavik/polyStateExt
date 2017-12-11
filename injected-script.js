@@ -119,7 +119,7 @@ class StatePrinter {
 }
 
 new StatePrinter();
-setTimeout(() => {
-  thisIsSomethingThatDoesNotExist.whenYouAskForAPropOnThatYouWillSeeTheInjectedScriptInDevToolsSoYouCanDebugIt;
-  justRememberToOpenThePolystatePanel.thatShouldDoIt.AndBestOfLuck;
-}, 1000);
+
+setTimeout(()=>
+clickOnThisErrorToSeeAndDebugTheInjectedScript.isntThisASweetTrick
+,0);
