@@ -100,13 +100,13 @@ span.valueReduced {
     user-select: none;
 }
 
-li>.propWrapper::before {
+li.hasChildren>.propWrapper::before {
     content: "+";
     display: inline-block;
     width: 8px;
 }
 
-li.opened>.propWrapper::before {
+li.hasChildren.opened>.propWrapper::before {
     content: "-";
 }
 
@@ -118,7 +118,9 @@ li.opened>.propWrapper::before {
     margin-left: 12px;
     display: none;
 }
-
+#stateDetails>ul>li>ul {
+    display: block;
+}
 #stateDetails li.opened>ul {
     display: block;
 }

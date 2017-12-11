@@ -5,7 +5,7 @@ class StatePrinter {
     window.addEventListener("state-history-changed", this.checkStateHistory.bind(this));
   }
 
-  checkStateHistory(e){
+  checkStateHistory(e) {
     const history = e.detail;
     if (!this.debugHookFirstTime)
       return StatePrinter.fireStateChangedDebug(history[0]);
@@ -53,9 +53,9 @@ class StatePrinter {
       "compute" + StatePrinter.diff(reducedState, newState)
     ];
     res.values = {
-      startState: StatePrinter.getPrintValue(startState),
-      reducedState: StatePrinter.getPrintValue(reducedState),
-      newState: StatePrinter.getPrintValue(newState)
+      startState: StatePrinter.isObject(startState) ? "" : startState,
+      reducedState: StatePrinter.isObject(reducedState) ? "" : reducedState,
+      newState: StatePrinter.isObject(newState) ? "" : newState,
     };
     res.children = {};
 
@@ -83,12 +83,8 @@ class StatePrinter {
     return allKeys;
   }
 
-  static getPrintValue(obj) {
-    if (!obj)
-      return obj;
-    if (typeof obj === "object")
-      return "";
-    return obj;
+  static isObject(obj) {
+    return (obj && typeof obj === "object");
   }
 
   static diff(a, b) {

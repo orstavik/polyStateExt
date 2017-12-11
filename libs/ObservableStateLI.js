@@ -15,6 +15,9 @@ class ObservableStateLI {
     const li = StateLITemplate.cloneNode(true);
     li.id = id;
     li.classList.add(...data.style);
+    if (Object.keys(data.children).length !== 0)
+      li.classList.add("hasChildren");
+
     li.querySelector(".propWrapper").addEventListener("click", (e) => li.classList.toggle("opened"));
     li.querySelector("span.stateName").textContent = data.name;
     li.querySelector("span.valueStart").textContent = data.values.startState;
