@@ -69,16 +69,18 @@ class TaskLI {
 
     const index = e.path[6].dataset.index;
     let segments = e.currentTarget.textContent.split(".");
+
     for (let i = 0; i < segments.length; i++) {
       let partialPath = segments.slice(0, segments.length - i);
       let argPath = partialPath.join("_");
       let detail = document.querySelector("#s" + index + "_state_" + argPath);
-      detail.classList.add("flash");
-      detail.scrollIntoViewIfNeeded();
-      break;
+      detail.classList.add("opened");
     }
-    // const detail = document.querySelector("#s" + index + "_state_");
-    // detail.classList.add("flash");
+
+    let argPath = segments.join("_");
+    let detail = document.querySelector("#s" + index + "_state_" + argPath);
+    detail.classList.add("flash");
+    detail.scrollIntoViewIfNeeded();
   }
 
   static toggleListItem(e) {
@@ -99,8 +101,8 @@ class TaskLI {
 }
 
 const taskTemplate = document.createElement("li");
-taskTemplate.innerHTML = 
-`<div class="eventMethod">
+taskTemplate.innerHTML =
+  `<div class="eventMethod">
   <span class="eventType"></span><br>
   <span>&#10551;</span>
   <span class="taskName"></span>
@@ -121,8 +123,8 @@ taskTemplate.innerHTML =
 </div>`;
 
 const funcTemplate = document.createElement("li");
-funcTemplate.innerHTML = 
-`<span class="returnProp"></span>
+funcTemplate.innerHTML =
+  `<span class="returnProp"></span>
 <span class="pointsTo functionSign"> = </span>
 <span class="funcName"></span>
 <span class="pointsTo argsStart">(</span>

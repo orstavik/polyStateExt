@@ -111,7 +111,9 @@ li.hasChildren.opened>.propWrapper::before {
     margin-left: 12px;
     display: none;
 }
-
+#stateDetails>ul>li>ul {
+    display: block;
+}
 #stateDetails li.opened>ul {
     display: block;
 }
