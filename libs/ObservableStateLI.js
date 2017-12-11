@@ -18,9 +18,9 @@ class ObservableStateLI {
     li.classList.add(...data.style);
     li.querySelector(".propWrapper").addEventListener("click", (e) => li.classList.toggle("opened"));
     li.querySelector("span.stateName").textContent = data.name;
-    li.querySelector("span.valueStart").textContent = data.name;
-    li.querySelector("span.valueReduced").textContent = data.name;
-    li.querySelector("span.valueNew").textContent = data.name;
+    li.querySelector("span.valueStart").textContent = data.values.startState;
+    li.querySelector("span.valueReduced").textContent = data.values.reducedState;
+    li.querySelector("span.valueNew").textContent = data.values.newState;
     const childUL = li.querySelector("ul");
     for (let childName in data.children)
       childUL.appendChild(ObservableStateLI.makeStateTreeUL(data.children[childName], id + "_" + childName));
