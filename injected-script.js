@@ -1,12 +1,26 @@
 class StatePrinter {
 
-  static parse(debugInfo){
-    return {
+  constructor() {
+    this.debugHookFirstTime = true;
+    window.addEventListener("state-history-changed", this.checkStateHistory.bind(this));
+  }
+
+  checkStateHistory(e){
+    const history = e.detail;
+    if (!this.debugHookFirstTime)
+      return StatePrinter.fireStateChangedDebug(history[0]);
+    for (let snap of history.reverse())
+      StatePrinter.fireStateChangedDebug(snap);
+    this.debugHookFirstTime = false;
+  }
+
+  static debugParsedJSON(debugInfo) {
+    return JSON.stringify({
       task: debugInfo.task,
       visualVersion: StatePrinter.compareObjects("state", debugInfo.startState, debugInfo.reducedState, debugInfo.newState),
       computerInfo: StatePrinter.debug(debugInfo.computerInfo.start, debugInfo.computerInfo.stop),
       observerInfo: StatePrinter.debug(debugInfo.observerInfo.start, debugInfo.observerInfo.stop)
-    };
+    });
   }
 
   static debug(aFuncReg, bFuncReg) {
@@ -83,19 +97,14 @@ class StatePrinter {
     if (b === undefined) return "Deleted";
     return "Altered";
   }
+
+  static fireStateChangedDebug(snap) {
+    window.dispatchEvent(new CustomEvent('state-changed-debug', {
+      composed: true,
+      bubbles: true,
+      detail: StatePrinter.debugParsedJSON(snap),
+    }));
+  }
 }
 
-ITObservableState.debugHookFirstTime = true;
-
-ITObservableState.debugHook = function(snap, history){
-  if (ITObservableState.debugHookFirstTime){
-    for (let oldSnap of history.reverse()) {
-      let res = StatePrinter.parse(oldSnap);
-      Tools.emit('state-changed-debug', JSON.stringify(res));
-    }
-    ITObservableState.debugHookFirstTime = false;
-    return;
-  }
-  let res = StatePrinter.parse(snap);
-  Tools.emit('state-changed-debug', JSON.stringify(res));
-};
+new StatePrinter();
