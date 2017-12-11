@@ -1,13 +1,14 @@
 const StateLITemplate = document.createElement("li");
-StateLITemplate.innerHTML = `
+StateLITemplate.innerHTML = 
+`<div class="propWrapper">
   <span class="stateName"></span>
   <span class="pointsTo"> : </span>
   <span class="valueStart"></span>
   <span class="valueReduced"></span>
   <span class="valueNew"></span>
-  <ul></ul>
-  <span class="showMoreThanFive simulateALI hideMeIfNotActive">...</span>
-`;
+</div>
+<ul></ul>
+<span class="showMoreThanFive simulateALI hideMeIfNotActive">...</span>`;
 
 class ObservableStateLI {
 
@@ -15,6 +16,7 @@ class ObservableStateLI {
     const li = StateLITemplate.cloneNode(true);
     li.id = id;
     li.classList.add(...data.style);
+    li.querySelector(".propWrapper").addEventListener("click", (e) => li.classList.toggle("opened"));
     li.querySelector("span.stateName").textContent = data.name;
     li.querySelector("span.valueStart").textContent = data.name;
     li.querySelector("span.valueReduced").textContent = data.name;

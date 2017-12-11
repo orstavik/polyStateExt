@@ -47,7 +47,7 @@ header {
     display: none;
 }
 
-#stateDetails>ul>li.opened {
+#stateDetails>ul>li.active {
     display: block;
 }
 
@@ -83,12 +83,6 @@ span.valueReduced {
     display: none;
 }
 
-li.reduceAltered>span.valueReduced,
-li.reduceAltered>span.valueNew {
-    display: block;
-    color: green;
-}
-
 #taskList li .compObs {
     display: none;
 }
@@ -99,4 +93,25 @@ li.reduceAltered>span.valueNew {
 
 .funcArgPath.triggered {
     font-weight: bold;
+}
+
+li .propWrapper::before {
+    content: "+";
+}
+
+li.opened .propWrapper::before {
+    content: "-";
+}
+
+#stateDetails.stateName {
+    font-weight: bold;
+}
+
+#stateDetails li>ul {
+    margin-left: 12px;
+    display: none;
+}
+
+#stateDetails li.opened>ul {
+    display: block;
 }

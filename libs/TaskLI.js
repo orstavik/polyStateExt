@@ -82,52 +82,51 @@ class TaskLI {
 
   static toggleListItem(e) {
 
-    const otherOpenedState = document.querySelectorAll("#stateDetails>ul>li.opened");
-    for (let opened of otherOpenedState)
-      opened.classList.remove("opened");
+    const otherOpenedState = document.querySelectorAll("#stateDetails>ul>li.active");
+    for (let active of otherOpenedState)
+      active.classList.remove("active");
 
     const otherOpenedTask = document.querySelectorAll("#taskList>ul>li.opened");
     for (let opened of otherOpenedTask)
       opened.classList.remove("opened");
 
     const taskItem = e.currentTarget;
-    taskItem.classList.add('opened');
+    taskItem.classList.add("opened");
     const stateItem = document.querySelector("#s" + taskItem.dataset.index + "_state");
-    stateItem.classList.add('opened');
+    stateItem.classList.add("active");
   }
 }
 
 const taskTemplate = document.createElement("li");
-taskTemplate.innerHTML = `
-  <div class="eventMethod">
-    <span class="eventType"></span><br>
-    <span>&#10551;</span>
-    <span class="taskName"></span>
+taskTemplate.innerHTML = 
+`<div class="eventMethod">
+  <span class="eventType"></span><br>
+  <span>&#10551;</span>
+  <span class="taskName"></span>
+</div>
+<div class="timings">
+  <span class="added"></span>
+  <span class="duration"></span>
+</div>
+</div>
+<div class="compObs">
+  <pre class="eventInput"></pre>
+  <div class="computes">
+    <ul class="listOfFuncs"></ul>
   </div>
-  <div class="timings">
-    <span class="added"></span>
-    <span class="duration"></span>
+  <div class="observes">
+    <ul class="listOfFuncs"></ul>
   </div>
-  </div>
-  <div class="compObs">
-    <pre class="eventInput"></pre>
-    <div class="computes">
-      <ul class="listOfFuncs"></ul>
-    </div>
-    <div class="observes">
-      <ul class="listOfFuncs"></ul>
-    </div>
-  </div>`;
+</div>`;
 
 const funcTemplate = document.createElement("li");
-funcTemplate.innerHTML = `
-  <span class="returnProp"></span>
-  <span class="pointsTo functionSign"></span>
-  <span class="funcName"></span>
-  <span class="pointsTo argsStart"></span>
-  <span class="funcArgs"></span>
-  <span class="pointsTo argsEnd"></span>
-`;
+funcTemplate.innerHTML = 
+`<span class="returnProp"></span>
+<span class="pointsTo functionSign"></span>
+<span class="funcName"></span>
+<span class="pointsTo argsStart"></span>
+<span class="funcArgs"></span>
+<span class="pointsTo argsEnd"></span>`;
 
 const pathTemplate = document.createElement("span");
 pathTemplate.classList.add("funcArgPath");
