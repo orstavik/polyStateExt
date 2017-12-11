@@ -95,11 +95,11 @@ span.valueReduced {
     font-weight: bold;
 }
 
-li .propWrapper::before {
+li.hasChildren>.propWrapper::before {
     content: "+";
 }
 
-li.opened .propWrapper::before {
+li.hasChildren.opened>.propWrapper::before {
     content: "-";
 }
 
