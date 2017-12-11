@@ -95,11 +95,18 @@ span.valueReduced {
     font-weight: bold;
 }
 
-li .propWrapper::before {
-    content: "+";
+.propWrapper {
+    cursor: default;
+    user-select: none;
 }
 
-li.opened .propWrapper::before {
+li>.propWrapper::before {
+    content: "+";
+    display: inline-block;
+    width: 8px;
+}
+
+li.opened>.propWrapper::before {
     content: "-";
 }
 

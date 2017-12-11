@@ -7,8 +7,7 @@ StateLITemplate.innerHTML =
   <span class="valueReduced"></span>
   <span class="valueNew"></span>
 </div>
-<ul></ul>
-<span class="showMoreThanFive simulateALI hideMeIfNotActive">...</span>`;
+<ul></ul>`;
 
 class ObservableStateLI {
 
