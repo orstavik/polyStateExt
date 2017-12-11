@@ -20,8 +20,9 @@ class TaskLI {
 
   static makeFuncUL(data, isCompute) {
     const li = funcTemplate.cloneNode(true);
-    li.querySelector("span.returnProp").innerText = isCompute ? data.a.returnProp : "";
-    li.querySelector("span.functionSign").innerText = isCompute ? "<=" : "=>";
+    if (isCompute)
+      li.querySelector("span.returnProp").append(TaskLI.makeArgsPath({path: [data.a.returnProp], triggered: true}));
+    //todo add so that triggered is not always true for the returnProp.. need to do this in the actual functions register somehow
     li.querySelector("span.funcName").innerText = data.a.funcName;
     const args = li.querySelector("span.funcArgs");
     for (let i = 0; i < data.triggerPaths.length; i++) {
@@ -122,11 +123,11 @@ taskTemplate.innerHTML =
 const funcTemplate = document.createElement("li");
 funcTemplate.innerHTML = 
 `<span class="returnProp"></span>
-<span class="pointsTo functionSign"></span>
+<span class="pointsTo functionSign"> = </span>
 <span class="funcName"></span>
-<span class="pointsTo argsStart"></span>
+<span class="pointsTo argsStart">(</span>
 <span class="funcArgs"></span>
-<span class="pointsTo argsEnd"></span>`;
+<span class="pointsTo argsEnd">)</span>`;
 
 const pathTemplate = document.createElement("span");
 pathTemplate.classList.add("funcArgPath");
