@@ -8,13 +8,17 @@ class TaskLI {
     li.querySelector("span.eventType").innerText = task.eventType;
     li.querySelector("span.taskName").innerText = task.taskName;
     li.querySelector("span.added").innerText = TaskLI.makeAddedTime(task.added);
-    li.querySelector("span.duration").innerText = Math.round((task.stop - task.start) * 100) / 100;
+    // li.querySelector("span.duration").innerText = Math.round((task.stop - task.start) * 100) / 100;
     li.querySelector("pre.eventInput").innerText = JSON.stringify(task.eventInput, null, 2);
     for (let funcName in debugInfo.computerInfo)
       li.querySelector("div.computes>ul").append(TaskLI.makeFuncUL(debugInfo.computerInfo[funcName], true));
     for (let funcName in debugInfo.observerInfo)
       li.querySelector("div.observes>ul").append(TaskLI.makeFuncUL(debugInfo.observerInfo[funcName], false));
-    li.addEventListener('click', TaskLI.toggleListItem);
+    li.addEventListener('mousedown', TaskLI.toggleListItem);
+    li.querySelector('div.openArrow').addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      li.classList.toggle('opened')
+    });
     return li;
   }
 
@@ -89,12 +93,12 @@ class TaskLI {
     for (let active of otherOpenedState)
       active.classList.remove("active");
 
-    const otherOpenedTask = document.querySelectorAll("#taskList>ul>li.opened");
-    for (let opened of otherOpenedTask)
-      opened.classList.remove("opened");
+    const otherOpenedTask = document.querySelectorAll("#taskList>ul>li.active");
+    for (let active of otherOpenedTask)
+      active.classList.remove("active");
 
     const taskItem = e.currentTarget;
-    taskItem.classList.add("opened");
+    taskItem.classList.add("active");
     const stateItem = document.querySelector("#s" + taskItem.dataset.index + "_state");
     stateItem.classList.add("active");
   }
@@ -102,24 +106,28 @@ class TaskLI {
 
 const taskTemplate = document.createElement("li");
 taskTemplate.innerHTML =
-  `<div class="eventMethod">
-  <span class="eventType"></span><br>
-  <span>&#10551;</span>
-  <span class="taskName"></span>
-</div>
-<div class="timings">
-  <span class="added"></span>
-  <span class="duration"></span>
-</div>
+`<div class="listItem">
+  <div class="openArrow"></div>
+  <div class="eventMethod">
+    <span class="eventType"></span><br>
+    <span class="taskName"></span>
+  </div>
+  <div class="timings">
+    <span class="added"></span>
+  </div>
 </div>
 <div class="compObs">
-  <pre class="eventInput"></pre>
-  <div class="computes">
+  <div class="label">Event Detail</div>
+  <pre class="content eventInput"></pre>
+  <div class="label">Computeds</div>
+  <div class="content computes">
     <ul class="listOfFuncs"></ul>
   </div>
-  <div class="observes">
+  <div class="label">Observers</div>
+  <div class="content observes">
     <ul class="listOfFuncs"></ul>
   </div>
+  <div class="label endLine"></div>
 </div>`;
 
 const funcTemplate = document.createElement("li");

@@ -8,26 +8,20 @@ body {
     height: 100vh;
     margin: 0;
     grid-template-columns: minmax(300px, 33vw) auto;
-    grid-template-rows: auto 1fr;
-    grid-template-areas: 'header header' 'list details';
+    grid-template-rows: 1fr;
+    grid-template-areas: 'list details';
 }
 
 @media (max-width: 600px) {
     body {
         grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr 2fr;
-        grid-template-areas: 'header' 'list' 'details';
+        grid-template-rows: 1fr 2fr;
+        grid-template-areas: 'list' 'details';
     }
     #stateDetails {
         border-left: none !important;
         border-top: 1px solid lightgray;
     }
-}
-
-header {
-    grid-area: header;
-    border-bottom: 1px solid lightgray;
-    padding: 0 1rem;
 }
 
 #taskList {
@@ -40,7 +34,9 @@ header {
     border-left: 1px solid lightgray;
     padding: 1rem;
     overflow-y: auto;
-    font-size: 0.8rem;
+    font-size: 12px;
+    line-height: 16px;
+    font-family: Consolas;
 }
 
 #stateDetails>ul>li {
@@ -60,22 +56,39 @@ ul {
 }
 
 #taskList>ul>li {
-    cursor: pointer;
+    cursor: default;
 }
 
 #taskList>ul>li:nth-child(2n) {
-    background-color: #f4f4f4;
+    background-color: #f5f5f5;
 }
 
-#taskList>ul>li>div {
+#taskList .listItem {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin: 0.7rem;
+    line-height: 16px;
+    padding: 6px 8px 6px 0;
 }
 
-.compObs>div {
-    margin: 1rem;
+#taskList .openArrow::before {
+    content: "\25b6";
+    display: inline-block;
+    width: 16px;
+    line-height: 24px;
+    font-size: 10px;
+    padding-left: 8px;
+}
+
+#taskList .opened .openArrow::before {
+    content: "\25bc";
+}
+
+#taskList .eventMethod {
+    flex: 1;
+}
+
+#taskList li:not(.active) .taskName {
+    color: grey;
 }
 
 span.valueStart,
@@ -83,12 +96,29 @@ span.valueReduced {
     display: none;
 }
 
-#taskList li .compObs {
-    display: none;
+#taskList li.active .listItem {
+    /* display: block; */
+    background-color: #3879d9;
+    color: white !important;
 }
 
+#taskList li .compObs {
+    display: none;
+    background-color: white;
+}
 #taskList li.opened .compObs {
     display: block;
+}
+
+.compObs .label {
+    background-color: #f3f3f3;
+    padding: 4px;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+.label.endLine {
+    padding: 2px;
 }
 
 .funcArgPath.triggered {
@@ -104,51 +134,54 @@ li.reduceAltered.computeAltered>div>span.stateName {
     background-color: purple;
 }
 
-li.reduceAdded>div>span.stateName  {
+li.reduceAdded>div>span.stateName {
     background-color: green;
 }
 
-li.reduceAltered>div>span.stateName  {
+li.reduceAltered>div>span.stateName {
     background-color: lightgreen;
 }
 
-li.reduceSubAltered>div>span.stateName  {
+li.reduceSubAltered>div>span.stateName {
     border-bottom: 2px solid green;
 }
 
-li.computeAdded>div>span.stateName  {
+li.computeAdded>div>span.stateName {
     background-color: orange;
 }
 
-li.computeAltered>div>span.stateName  {
+li.computeAltered>div>span.stateName {
     background-color: yellow;
 }
 
-li.computeSubAltered>div>span.stateName  {
+li.computeSubAltered>div>span.stateName {
     border-bottom: 2px solid orange;
 }
 
-
 li.hasChildren>.propWrapper::before {
-    content: "+";
+    content: "\25b6";
     display: inline-block;
-    width: 0.7rem;
-    font-weight: 900;
+    width: 6px;
+    font-size: 10px;
 }
 
 li.hasChildren.opened>.propWrapper::before {
-    content: "-";
+    content: "\25bc";
+    font-size: 13px;
+    line-height: 12px;
 }
 
 li.hasChildren>.propWrapper::after {
     content: "{...}";
 }
 
-li.hasChildren.opened>.propWrapper::after {
+li.hasChildren.opened>.propWrapper::after,
+#stateDetails>ul>li>.propWrapper::after {
     content: "{";
 }
 
-li.hasChildren.opened >ul::after {
+li.hasChildren.opened>ul::after,
+#stateDetails>ul>li>ul::after {
     content: "}";
 }
 
@@ -157,34 +190,30 @@ li.hasChildren.opened >ul::after {
 }
 
 #stateDetails li>ul {
-    margin-left: 1rem;
+    margin-left: 13px;
     display: none;
 }
+
+#stateDetails>ul>li>.propWrapper {
+    pointer-events: none;
+}
+
 #stateDetails>ul>li>ul {
     display: block;
 }
+
 #stateDetails li.opened>ul {
     display: block;
 }
 
-#stateDetails li {
-    padding-top: 0.2rem;
-}
-
 li:not(.hasChildren) .stateName {
-    margin-left: 0.92rem;
+    margin-left: 13px;
 }
 
 .stateName {
-    border-radius: 0.3rem;
-    padding: 0 0.3rem 0.1rem;
-    color: darkblue;
-}
-
-.stateName:hover {
-    background-color: #eee;
+    color: rgb(136, 19, 145);
 }
 
 .valueNew {
-    color: orangered;
+    color: rgb(196, 26, 22);
 }
