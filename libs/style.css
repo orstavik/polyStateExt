@@ -65,7 +65,7 @@ ul {
 
 #taskList .listItem {
     display: flex;
-    align-items: center;
+    /*align-items: top;*/
     line-height: 16px;
     padding: 6px 8px 6px 0;
 }
@@ -94,8 +94,12 @@ span.valueReduced {
 
 #taskList li.active .listItem {
     /* display: block; */
-    background-color: #3879d9;
-    color: white !important;
+    /*background-color: #3879d9;*/
+    /*color: white !important;*/
+}
+
+#taskList li.active ul.eventInput li>ul{
+     display: block; 
 }
 
 #taskList li .compObs {
