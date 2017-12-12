@@ -173,11 +173,13 @@ li.hasChildren>.propWrapper::before {
     display: inline-block;
     width: 6px;
     font-size: 10px;
+    margin-right: -13px;
 }
 
 li.hasChildren.opened>.propWrapper::before {
     content: "\25bc";
     line-height: 12px;
+    margin-right: -13px;
 }
 
 #stateDetails li.hasChildren.opened>.propWrapper::before {

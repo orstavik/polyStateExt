@@ -17,7 +17,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     let data = JSON.parse(request.payload);
     let id = debugCounter++;
     tasksListUL.append(TaskLI.makeTaskLI(data, id));
-    stateListUL.append(ObservableStateLI.makeStateTreeUL(data.visualVersion, "s"+id + "_state"));
+    stateListUL.append(ObservableStateLI.makeStateDetail(data, data.visualVersion, "s"+id));
   }
 });
 
