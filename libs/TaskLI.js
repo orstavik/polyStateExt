@@ -22,10 +22,7 @@ class TaskLI {
     li.dataset.index = id;
     li.querySelector("span.taskName").innerText = task.taskName;
     li.querySelector("span.added").innerText = TaskLI.makeAddedTime(task.added, task.start, task.stop);
-    li.querySelector("ul.eventInput").append(ObservableStateLI.makeEventTreeLI(task.taskName, {
-      event: task.eventType,
-      input: task.eventInput
-    }));
+    li.querySelector("ul.eventInput").append(ObservableStateLI.makeEventTreeLI(task.taskName, task.event));
     li.addEventListener('mousedown', TaskLI.toggleListItem);
     li.querySelector('div.openArrow').addEventListener('mousedown', (e) => {
       e.stopPropagation();
