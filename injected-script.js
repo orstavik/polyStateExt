@@ -104,7 +104,9 @@ class StatePrinter {
   }
 
   static objectEqualOneLayer(a, b) {
-    if (a === null || b === null || typeof a !== "object" || typeof b !== "object")
+    if (typeof a !== "object" || typeof b !== "object")
+      return false;
+    if (a === null || b === null)
       return false;
     let aKeys = Object.keys(a);
     let bKeys = Object.keys(b);
@@ -120,6 +122,4 @@ class StatePrinter {
 
 new StatePrinter();
 
-setTimeout(()=>
-clickOnThisErrorToSeeAndDebugTheInjectedScript.isntThisASweetTrick
-,0);
+console.info("To debug the injected script StatePrinter, click here!");
