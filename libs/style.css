@@ -87,10 +87,6 @@ ul {
     flex: 1;
 }
 
-#taskList li:not(.active) .taskName {
-    color: grey;
-}
-
 span.valueStart,
 span.valueReduced {
     display: none;

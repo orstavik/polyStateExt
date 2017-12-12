@@ -1,3 +1,18 @@
+const taskTemplate = document.createElement("li");
+taskTemplate.innerHTML =
+  `<div class="listItem">
+  <div class="openArrow"></div>
+  <div class="eventMethod">
+    <span class="taskName"></span>
+  </div>
+  <div class="timings">
+    <span class="added"></span>
+  </div>
+</div>
+<div class="compObs">
+  <ul class="content eventInput"></ul>
+</div>`;
+
 class TaskLI {
 
   static makeTaskLI(debugInfo, id) {
@@ -5,11 +20,12 @@ class TaskLI {
     let li = taskTemplate.cloneNode(true);
     li.id = "task_" + id;
     li.dataset.index = id;
-    li.querySelector("span.eventType").innerText = task.eventType;
     li.querySelector("span.taskName").innerText = task.taskName;
-    li.querySelector("span.added").innerText = TaskLI.makeAddedTime(task.added);
-    // li.querySelector("span.duration").innerText = Math.round((task.stop - task.start) * 100) / 100;
-    li.querySelector("ul.eventInput").append(ObservableStateLI.makeEventTreeLI("e.detail", task.eventInput));
+    li.querySelector("span.added").innerText = TaskLI.makeAddedTime(task.added, task.start, task.stop);
+    li.querySelector("ul.eventInput").append(ObservableStateLI.makeEventTreeLI(task.taskName, {
+      event: task.eventType,
+      input: task.eventInput
+    }));
     li.addEventListener('mousedown', TaskLI.toggleListItem);
     li.querySelector('div.openArrow').addEventListener('mousedown', (e) => {
       e.stopPropagation();
@@ -18,7 +34,7 @@ class TaskLI {
     return li;
   }
 
-  static makeAddedTime(timestamp) {
+  static makeAddedTime(timestamp, start, stop) {
     const t = new Date(timestamp);
     let h = t.getHours();
     h = '0'.repeat(2 - h.toString().length) + h;
@@ -28,7 +44,8 @@ class TaskLI {
     s = '0'.repeat(2 - s.toString().length) + s;
     let ms = t.getMilliseconds();
     ms = '0'.repeat(3 - ms.toString().length) + ms;
-    return `${h}:${m}:${s}.${ms}`;
+    let d = Math.round((stop - start) * 100) / 100;
+    return `${h}:${m}:${s}.${ms} | ${d}`;
   }
 
   static toggleListItem(e) {
@@ -47,20 +64,3 @@ class TaskLI {
     stateItem.classList.add("active");
   }
 }
-
-const taskTemplate = document.createElement("li");
-taskTemplate.innerHTML =
-`<div class="listItem">
-  <div class="openArrow"></div>
-  <div class="eventMethod">
-    <span class="eventType"></span><br>
-    <span class="taskName"></span>
-  </div>
-  <div class="timings">
-    <span class="added"></span>
-  </div>
-</div>
-<div class="compObs">
-  <div class="label">Event Detail</div>
-  <ul class="content eventInput"></ul>
-</div>`;
