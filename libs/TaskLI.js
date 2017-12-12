@@ -9,7 +9,7 @@ class TaskLI {
     li.querySelector("span.taskName").innerText = task.taskName;
     li.querySelector("span.added").innerText = TaskLI.makeAddedTime(task.added);
     // li.querySelector("span.duration").innerText = Math.round((task.stop - task.start) * 100) / 100;
-    li.querySelector("pre.eventInput").innerText = JSON.stringify(task.eventInput, null, 2);
+    li.querySelector("ul.eventInput").append(ObservableStateLI.makeEventTreeLI("e.detail", task.eventInput));
     for (let funcName in debugInfo.computerInfo)
       li.querySelector("div.computes>ul").append(TaskLI.makeFuncUL(debugInfo.computerInfo[funcName], true));
     for (let funcName in debugInfo.observerInfo)
@@ -118,7 +118,7 @@ taskTemplate.innerHTML =
 </div>
 <div class="compObs">
   <div class="label">Event Detail</div>
-  <pre class="content eventInput"></pre>
+  <ul class="content eventInput"></ul>
   <div class="label">Computeds</div>
   <div class="content computes">
     <ul class="listOfFuncs"></ul>

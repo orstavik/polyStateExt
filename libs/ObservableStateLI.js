@@ -8,6 +8,14 @@ StateLITemplate.innerHTML =
 </div>
 <ul></ul>`;
 
+const EventDetailLITemplate = document.createElement("li");
+EventDetailLITemplate.innerHTML =
+`<div class="propWrapper">
+  <span class="stateName"></span>:
+  <span class="valueNew"></span>
+</div>
+<ul></ul>`;
+
 class ObservableStateLI {
 
   static makeStateTreeUL(data, id) {
@@ -17,7 +25,7 @@ class ObservableStateLI {
     if (Object.keys(data.children).length !== 0)
       li.classList.add("hasChildren");
 
-    li.querySelector(".propWrapper").addEventListener("click", (e) => li.classList.toggle("opened"));
+    li.querySelector("div.propWrapper").addEventListener("click", (e) => li.classList.toggle("opened"));
     li.querySelector("span.stateName").textContent = data.name;
     li.querySelector("span.valueStart").textContent = data.values.startState;
     li.querySelector("span.valueReduced").textContent = data.values.reducedState;
@@ -25,6 +33,22 @@ class ObservableStateLI {
     const childUL = li.querySelector("ul");
     for (let childName in data.children)
       childUL.appendChild(ObservableStateLI.makeStateTreeUL(data.children[childName], id + "_" + childName));
+    return li;
+  }
+
+  static makeEventTreeLI(name, obj) {
+    const li = EventDetailLITemplate.cloneNode(true);
+    li.querySelector("div.propWrapper").addEventListener("click", (e) => li.classList.toggle("opened"));
+    li.querySelector("span.stateName").textContent = name;
+
+    if (obj && typeof obj === "object" && Object.keys(obj).length !== 0){
+      li.classList.add("hasChildren");
+      const childUL = li.querySelector("ul");
+      for (let childName in obj)
+        childUL.appendChild(ObservableStateLI.makeEventTreeLI(childName, obj[childName]));
+    } else {
+      li.querySelector("span.valueNew").textContent = obj;
+    }
     return li;
   }
 }
