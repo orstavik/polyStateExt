@@ -3,27 +3,29 @@ class StatePrinter {
   constructor() {
     this.debugHookFirstTime = true;
     window.addEventListener("state-history-changed", this.checkStateHistory.bind(this));
+    window.dispatchEvent(new CustomEvent('state-get-history'));
   }
 
   checkStateHistory(e) {
     const history = e.detail;
     if (!this.debugHookFirstTime)
-      return StatePrinter.fireStateChangedDebug(history[0]);
+      return window.dispatchEvent(new CustomEvent('state-changed-debug', {detail: StatePrinter.jsonSnap(history[0])}));
     for (let snap of history.reverse())
-      StatePrinter.fireStateChangedDebug(snap);
+      window.dispatchEvent(new CustomEvent('state-changed-debug', {detail: StatePrinter.jsonSnap(snap)}));
     this.debugHookFirstTime = false;
   }
 
-  static debugParsedJSON(debugInfo) {
+  static jsonSnap(debugInfo) {
     return JSON.stringify({
       task: debugInfo.task,
       visualVersion: StatePrinter.compareObjects("state", debugInfo.startState, debugInfo.reducedState, debugInfo.newState),
-      computerInfo: StatePrinter.debug(debugInfo.computerInfo.start, debugInfo.computerInfo.stop),
-      observerInfo: StatePrinter.debug(debugInfo.observerInfo.start, debugInfo.observerInfo.stop)
+      computerInfo: StatePrinter.makeTriggerFuncs(debugInfo.computerInfo.start, debugInfo.computerInfo.stop),
+      observerInfo: StatePrinter.makeTriggerFuncs(debugInfo.observerInfo.start, debugInfo.observerInfo.stop)
     });
   }
 
-  static debug(aFuncReg, bFuncReg) {
+  //todo check if computed also changed the return value.
+  static makeTriggerFuncs(aFuncReg, bFuncReg) {
     let C = {};
     for (let key in aFuncReg) {
       let A = aFuncReg[key];
@@ -93,14 +95,6 @@ class StatePrinter {
     if (b === undefined) return "Deleted";
     if (StatePrinter.objectEqualOneLayer(a, b)) return "SubAltered";
     return "Altered";
-  }
-
-  static fireStateChangedDebug(snap) {
-    window.dispatchEvent(new CustomEvent('state-changed-debug', {
-      composed: true,
-      bubbles: true,
-      detail: StatePrinter.debugParsedJSON(snap),
-    }));
   }
 
   static objectEqualOneLayer(a, b) {
