@@ -117,6 +117,10 @@ span.valueReduced {
     border-bottom: 1px solid #ddd;
 }
 
+.compObs .content {
+    padding: 8px 12px;
+}
+
 .label.endLine {
     padding: 2px;
 }
@@ -167,8 +171,11 @@ li.hasChildren>.propWrapper::before {
 
 li.hasChildren.opened>.propWrapper::before {
     content: "\25bc";
-    font-size: 13px;
     line-height: 12px;
+}
+
+#stateDetails li.hasChildren.opened>.propWrapper::before {
+    font-size: 13px;
 }
 
 li.hasChildren>.propWrapper::after {
@@ -176,20 +183,19 @@ li.hasChildren>.propWrapper::after {
 }
 
 li.hasChildren.opened>.propWrapper::after,
-#stateDetails>ul>li>.propWrapper::after {
+#stateDetails>ul>li>.propWrapper::after,
+ul.eventInput>li>.propWrapper::after {
     content: "{";
 }
 
 li.hasChildren.opened>ul::after,
-#stateDetails>ul>li>ul::after {
+#stateDetails>ul>li>ul::after,
+ul.eventInput>li>ul::after {
     content: "}";
 }
 
-#stateDetails.stateName {
-    font-weight: bold;
-}
-
-#stateDetails li>ul {
+#stateDetails li>ul,
+ul.eventInput li>ul {
     margin-left: 13px;
     display: none;
 }
@@ -202,7 +208,8 @@ li.hasChildren.opened>ul::after,
     display: block;
 }
 
-#stateDetails li.opened>ul {
+#stateDetails li.opened>ul,
+.compObs li.opened>ul {
     display: block;
 }
 
