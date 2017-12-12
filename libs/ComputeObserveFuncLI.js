@@ -19,7 +19,7 @@ class ComputeObserveFuncLI {
   static makeFuncUL(data, isCompute) {
     const li = funcTemplate.cloneNode(true);
     if (isCompute)
-      li.querySelector("span.returnProp").append(ComputeObserveFuncLI.makeArgsPath({path: data.a.returnPath, triggered: true}));
+      li.querySelector("span.returnProp").append(ComputeObserveFuncLI.makeArgsPath(data.triggerReturn));
     //todo add so that triggered is not always true for the returnProp.. need to do this in the actual functions register somehow
     li.querySelector("span.funcName").innerText = data.a.funcName;
     const args = li.querySelector("span.funcArgs");

@@ -41,7 +41,11 @@ class StatePrinter {
           triggered = true;
         triggerPaths[i] = {path: A.argsPaths[i], triggered: triggered};
       }
-      C[key] = {a: A, triggerPaths: triggerPaths};
+      C[key] = {
+        a: A,
+        triggerPaths: triggerPaths,
+        triggerReturn: {path: A.returnPath, triggered: A.returnValue !== B.returnValue}
+      };
     }
     return C;
   }
