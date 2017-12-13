@@ -40,6 +40,14 @@ span.valueReduced {
     padding: 2px;
 }
 
+span.state__computed {
+    display: none;
+}
+
+.state--computes span.state__computed {
+    display: inline-block;
+}
+
 #stateDetails {
     grid-area: details;
     border-left: 1px solid lightgray;

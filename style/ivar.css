@@ -1,0 +1,8 @@
+
+.state__computed {
+    display: none;
+}
+
+.state--computes .state__computed {
+    display: inline-block;
+}
