@@ -18,7 +18,7 @@ class StatePrinter {
   static jsonSnap(debugInfo) {
     let visualVersion = StatePrinter.compareObjects("state", debugInfo.startState, debugInfo.reducedState, debugInfo.newState);
     let computerInfo = StatePrinter.makeTriggerFuncs(debugInfo.computerInfo.start, debugInfo.computerInfo.stop);
-    // visualVersion = StatePrinter.appendComputesToState(visualVersion, computerInfo);
+    visualVersion = StatePrinter.appendComputesToState(visualVersion, computerInfo);
     return JSON.stringify({
       task: debugInfo.task,
       visualVersion: visualVersion,
@@ -122,7 +122,7 @@ class StatePrinter {
     for (let computeName in computerInfo) {
       let compute = computerInfo[computeName];
       if (!visualVersion.children[computeName])
-        visualVersion.children[computeName] = {};
+        visualVersion.children[computeName] = {children: [], style: [], values: {}};
       visualVersion.children[computeName].compute = compute;
     }
     return visualVersion;
