@@ -1,9 +1,9 @@
 const DetailLITemplate = document.createElement("li");
+DetailLITemplate.classList.add("state-wrapper");
 DetailLITemplate.innerHTML = `
-<h3>Observers</h3>
-<div class="content observes">
-  <ul class="listOfFuncs"></ul>
-</div>
+<h4>Observers</h4>
+<ul class="state-wrapper__observers"></ul>
+<h4>State</h4>
 <ul class="stateObject"></ul>`;
 
 const StateLITemplate = document.createElement("li");
@@ -33,8 +33,6 @@ class ObservableStateLI {
     li.id = id;
     let stateObject = ObservableStateLI.makeStateTreeUL(visualVersion, id + "_state");
     li.querySelector("ul.stateObject").append(stateObject);
-    // for (let funcName in debugInfo.computerInfo)
-    //   li.querySelector("div.computes>ul").append(ComputeObserveFuncLI.makeFuncUL(debugInfo.computerInfo[funcName], true));
     for (let funcName in debugInfo.observerInfo)
       li.querySelector("div.observes>ul").append(ComputeObserveFuncLI.makeFuncUL(debugInfo.observerInfo[funcName], false));
     return li;
