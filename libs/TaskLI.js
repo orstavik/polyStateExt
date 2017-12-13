@@ -1,35 +1,56 @@
-const taskTemplate = document.createElement('li');
-taskTemplate.classList.add('tasklist__item');
-taskTemplate.innerHTML =
-`<details class="task">
-  <summary class="task__body">
-    <span class="task__method"></span>
-    <span class="task__timestamp"></span>
-    <span> | </span>
-    <span class="task__duration"></span>
-  </summary>
-  <ul class="task__event"></ul>
-</details>`;
+// const taskTemplate = document.createElement('li');
+// taskTemplate.classList.add('task');
+// taskTemplate.innerHTML =
+// `<details class="task__body">
+//   <summary class="task__summary">
+//     <span class="task__method"></span>
+//     <span class="task__timestamp"></span>
+//     <span>&nbsp;|&nbsp;</span>
+//     <span class="task__duration"></span>
+//   </summary>
+//   <ul class="task__event"></ul>
+// </details>`;
 
 class TaskLI {
 
   static get ACTIVE_CLASS() {
-    return 'tasklist--active';
+    return 'task--active';
+  }
+
+  static template(id, index, method, timestamp, duration) {
+    return html`<li class="task">
+  <details class="task__body" id="${id}" data-index="${index}">
+    <summary class="task__summary">
+      <span class="task__method">${method}</span>
+      <span class="task__timestamp">${timestamp}</span>
+      <span>&nbsp;|&nbsp;</span>
+      <span class="task__duration">${duration}</span>
+    </summary>
+    <ul class="task__event"></ul>
+  </details>
+</li>`;
   }
 
   static makeTaskLI(debugInfo, id) {
     const task = debugInfo.task;
-    const li = taskTemplate.cloneNode(true);
-    li.id = "task_" + id;
-    li.dataset.index = id;
-    li.querySelector("span.task__method").textContent = task.taskName;
-    li.querySelector("span.task__timestamp").textContent = TaskLI.makeAddedTime(task.added);
-    li.querySelector("span.task__duration").textContent = Math.round((task.stop - task.start) * 100) / 100;
-    const ul = li.querySelector("ul.task__event");
+    // const li = taskTemplate.cloneNode(true);
+    // li.id = "task_" + id;
+    // li.dataset.index = id;
+    // li.querySelector("span.task__method").textContent = task.taskName;
+    // li.querySelector("span.task__timestamp").textContent = TaskLI.makeAddedTime(task.added);
+    // li.querySelector("span.task__duration").textContent = Math.round((task.stop - task.start) * 100) / 100;
+
+    const taskId = "task_" + id;
+    const timestamp = TaskLI.makeAddedTime(task.added);
+    const duration = Math.round((task.stop - task.start) * 100) / 100;
+    const frag = TaskLI.template(taskId, id, task.taskName, timestamp, duration);
+    debugger;
+    const ul = frag.querySelector("ul.task__event");
     ul.append(ObservableStateLI.makeEventTreeLI("detail", task.event.detail));
     ul.append(ObservableStateLI.makeEventTreeLI("type", task.event.type));
-    li.addEventListener('mousedown', TaskLI.showActiveState);
-    return li;
+    frag.querySelector('li.task').addEventListener('mousedown', TaskLI.showActiveState);
+
+    return frag;
   }
 
   static makeAddedTime(timestamp, start, stop) {
