@@ -21,7 +21,7 @@ class ComputeObserveFuncLI {
     if (isCompute)
       li.querySelector("span.returnProp").append(ComputeObserveFuncLI.makeArgsPath(data.triggerReturn));
     //todo add so that triggered is not always true for the returnProp.. need to do this in the actual functions register somehow
-    li.querySelector("span.funcName").innerText = data.a.funcName;
+    li.querySelector("span.funcName").innerText = data.funcName;
     const args = li.querySelector("span.funcArgs");
     for (let i = 0; i < data.triggerPaths.length; i++) {
       if (i !== 0) args.append(CommaTemplate.cloneNode(true));
