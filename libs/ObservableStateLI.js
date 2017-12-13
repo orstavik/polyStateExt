@@ -16,7 +16,7 @@ StateLITemplate.innerHTML = `
   <span class="valueReduced"></span>
   <span class="valueNew"></span>
 </div>
-<ul></ul>`;
+<ul class="state__children"></ul>`;
 
 const EventDetailLITemplate = document.createElement("li");
 EventDetailLITemplate.innerHTML =
