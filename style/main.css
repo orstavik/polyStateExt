@@ -1,0 +1,25 @@
+body {
+    display: grid;
+    box-sizing: border-box;
+    height: 100vh;
+    margin: 0;
+    grid-template-columns: minmax(300px, 33vw) auto;
+    grid-template-rows: 1fr;
+    grid-template-areas: 'tasklist details';
+}
+
+@media (max-width: 600px) {
+    body {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 2fr;
+        grid-template-areas: 'tasklist' 'details';
+    }
+    #stateDetails {
+        border-left: none !important;
+        border-top: 1px solid lightgray;
+    }
+}
+
+* {
+    cursor: default;
+}

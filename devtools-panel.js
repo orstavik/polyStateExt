@@ -7,7 +7,7 @@ chrome.runtime.sendMessage({
 
 //2a. get shortcuts to DOM elements in devtools-panel that will be decorated
 let debugCounter = 1;
-const tasksListUL = document.querySelector("#taskList>ul");
+const tasksListUL = document.querySelector("aside.tasklist>ul");
 const stateListUL = document.querySelector("#stateDetails>ul");
 
 //2b. add listener for new client states that decorate the devtools-panel DOM

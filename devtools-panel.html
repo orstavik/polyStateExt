@@ -2,16 +2,20 @@
 
 <head>
   <link rel="stylesheet" href="libs/normalize.css">
-  <link rel="stylesheet" href="libs/style.css">
+  <!-- <link rel="stylesheet" href="libs/style.css"> -->
+  <link rel="stylesheet" href="style/main.css">
+  <link rel="stylesheet" href="style/tasklist.css">
 </head>
 
 <body>
-  <div id="taskList">
+  <aside class="tasklist">
+    <ul class="tasklist__list">
+      <!-- tasks go here -->
+    </ul>
+  </aside>
+  <main id="stateDetails">
     <ul></ul>
-  </div>
-  <div id="stateDetails">
-    <ul></ul>
-  </div>
+  </main>
 
   <script src="devtools-panel.js"></script>
   <script src="libs/ObservableStateLI.js"></script>
