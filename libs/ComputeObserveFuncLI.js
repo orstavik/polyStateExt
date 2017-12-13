@@ -1,5 +1,5 @@
 const funcTemplate = document.createElement("li");
-funcTemplate.innerHTML =`
+funcTemplate.innerHTML = `
 <span class="returnProp"></span>
 <span class="pointsTo functionSign"> = </span>
 <span class="funcName"></span>
@@ -11,7 +11,11 @@ funcTemplate.innerHTML =`
 const ComputeDIV = document.createElement("div");
 ComputeDIV.classList.add("compute");
 ComputeDIV.innerHTML = `
-  <span class="compute__return"></span> = <span class="compute__name"></span>(<span class="compute__args"></span>)
+  <img class="compute__icon" src="../icons/settings-gears.svg" />
+  <span class="compute__description">
+    <span class="compute__return"></span> = 
+    <span class="compute__name"></span>(<span class="compute__args"></span>)
+  </span>
 `;
 
 const pathTemplate = document.createElement("span");
@@ -24,15 +28,19 @@ CommaTemplate.classList.add("pointsTo");
 class ComputeObserveFuncLI {
 
   static makeComputeDIV(data) {
-    const li = ComputeDIV.cloneNode(true);
-    li.querySelector(".compute__return").append(ComputeObserveFuncLI.makeArgsPath(data.triggerReturn));
-    li.querySelector(".compute__name").innerText = data.funcName;
-    const args = li.querySelector(".compute__args");
+    const div = ComputeDIV.cloneNode(true);
+    div.querySelector(".compute__return").append(ComputeObserveFuncLI.makeArgsPath(data.triggerReturn));
+    div.querySelector(".compute__name").innerText = data.funcName;
+    div.addEventListener("click", e => {
+      div.classList.toggle("compute--active");
+      e.stopPropagation();
+    });
+    const args = div.querySelector(".compute__args");
     for (let i = 0; i < data.triggerPaths.length; i++) {
       if (i !== 0) args.append(CommaTemplate.cloneNode(true));
       args.append(ComputeObserveFuncLI.makeArgsPath(data.triggerPaths[i]));
     }
-    return li;
+    return div;
   };
 
   static makeFuncUL(data, isCompute) {

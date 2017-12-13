@@ -1,22 +1,21 @@
 const DetailLITemplate = document.createElement("li");
-DetailLITemplate.classList.add("state-wrapper");
+DetailLITemplate.classList.add("state-observer");
 DetailLITemplate.innerHTML = `
-<h4>Observers</h4>
-<ul class="state-wrapper__observers"></ul>
-<h4>State</h4>
-<ul class="stateObject"></ul>`;
+<h4 class="state-observer__header1">Observers</h4>
+<ul class="state-observer__observers"></ul>
+<h4 class="state-observer__header2">State</h4>
+<ul class="state-observer__state"></ul>`;
 
 const StateLITemplate = document.createElement("li");
 StateLITemplate.classList.add("state");
 StateLITemplate.innerHTML = `
-<div class="propWrapper">
-  <span class="state__computed"> [@] </span>
-  <span class="stateName"></span>:
-  <span class="valueStart"></span>
-  <span class="valueReduced"></span>
-  <span class="valueNew"></span>
-</div>
-<ul class="state__children"></ul>`;
+<details class="state__body">
+  <summary class="state__summary">
+    <span class="state__name"></span>:
+    <span class="state__value"></span>
+  </summary>
+  <ul class="state__children"></ul>
+</details>`;
 
 const EventDetailLITemplate = document.createElement("li");
 EventDetailLITemplate.innerHTML =
@@ -32,9 +31,9 @@ class ObservableStateLI {
     const li = DetailLITemplate.cloneNode(true);
     li.id = id;
     let stateObject = ObservableStateLI.makeStateTreeUL(visualVersion, id + "_state");
-    li.querySelector("ul.stateObject").append(stateObject);
+    li.querySelector(".state-observer__state").append(stateObject);
     for (let funcName in debugInfo.observerInfo)
-      li.querySelector("div.observes>ul").append(ComputeObserveFuncLI.makeFuncUL(debugInfo.observerInfo[funcName], false));
+      li.querySelector(".state-observer__observers").append(ComputeObserveFuncLI.makeFuncUL(debugInfo.observerInfo[funcName], false));
     return li;
   }
 
@@ -43,18 +42,17 @@ class ObservableStateLI {
     li.id = id;
     li.classList.add(...data.style);
     if (Object.keys(data.children).length !== 0)
-      li.classList.add("hasChildren");
+      li.classList.add("state--has-children");
     if (data.compute) {
       li.classList.add("state--computes");
-      li.append(ComputeObserveFuncLI.makeComputeDIV(data.compute));
+      li.querySelector(".state__summary").prepend(ComputeObserveFuncLI.makeComputeDIV(data.compute));
     }
 
-    li.querySelector("div.propWrapper").addEventListener("click", (e) => li.classList.toggle("opened"));
-    li.querySelector("span.stateName").textContent = data.name;
-    li.querySelector("span.valueStart").textContent = data.values.startState;
-    li.querySelector("span.valueReduced").textContent = data.values.reducedState;
-    li.querySelector("span.valueNew").textContent = data.values.newState;
-    const childUL = li.querySelector("ul");
+    li.querySelector(".state__name").textContent = data.name;
+    li.querySelector(".state__value").textContent = data.values.newState;
+    // li.querySelector("span.valueReduced").textContent = data.values.reducedState;
+    // li.querySelector("span.valueNew").textContent = data.values.newState;
+    const childUL = li.querySelector(".state__children");
     for (let childName in data.children)
       childUL.appendChild(ObservableStateLI.makeStateTreeUL(data.children[childName], id + "_" + childName));
     return li;
