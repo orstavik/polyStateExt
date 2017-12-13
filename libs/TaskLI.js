@@ -44,7 +44,6 @@ class TaskLI {
     const timestamp = TaskLI.makeAddedTime(task.added);
     const duration = Math.round((task.stop - task.start) * 100) / 100;
     const frag = TaskLI.template(taskId, id, task.taskName, timestamp, duration);
-    debugger;
     const ul = frag.querySelector("ul.task__event");
     ul.append(ObservableStateLI.makeEventTreeLI("detail", task.event.detail));
     ul.append(ObservableStateLI.makeEventTreeLI("type", task.event.type));
