@@ -2,19 +2,6 @@
     font-weight: bold;
 }
 
-#taskList .openArrow::before {
-    content: "\25b6";
-    display: inline-block;
-    width: 16px;
-    line-height: 24px;
-    font-size: 10px;
-    padding-left: 8px;
-}
-
-#taskList .opened .openArrow::before {
-    content: "\25bc";
-}
-
 #taskist .eventMethod {
     flex: 1;
 }
