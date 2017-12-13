@@ -8,6 +8,12 @@ funcTemplate.innerHTML =`
 <span class="pointsTo argsEnd">)</span>
 `;
 
+const ComputeDIV = document.createElement("div");
+ComputeDIV.classList.add("compute");
+ComputeDIV.innerHTML = `
+  <span class="compute__return"></span> = <span class="compute__name"></span>(<span class="compute__args"></span>)
+`;
+
 const pathTemplate = document.createElement("span");
 pathTemplate.classList.add("funcArgPath");
 
@@ -16,11 +22,23 @@ CommaTemplate.textContent = ", ";
 CommaTemplate.classList.add("pointsTo");
 
 class ComputeObserveFuncLI {
+
+  static makeComputeDIV(data) {
+    const li = ComputeDIV.cloneNode(true);
+    li.querySelector(".compute__return").append(ComputeObserveFuncLI.makeArgsPath(data.triggerReturn));
+    li.querySelector(".compute__name").innerText = data.funcName;
+    const args = li.querySelector(".compute__args");
+    for (let i = 0; i < data.triggerPaths.length; i++) {
+      if (i !== 0) args.append(CommaTemplate.cloneNode(true));
+      args.append(ComputeObserveFuncLI.makeArgsPath(data.triggerPaths[i]));
+    }
+    return li;
+  };
+
   static makeFuncUL(data, isCompute) {
     const li = funcTemplate.cloneNode(true);
     if (isCompute)
       li.querySelector("span.returnProp").append(ComputeObserveFuncLI.makeArgsPath(data.triggerReturn));
-    //todo add so that triggered is not always true for the returnProp.. need to do this in the actual functions register somehow
     li.querySelector("span.funcName").innerText = data.funcName;
     const args = li.querySelector("span.funcArgs");
     for (let i = 0; i < data.triggerPaths.length; i++) {
