@@ -16,41 +16,42 @@ class StatePrinter {
   }
 
   static jsonSnap(debugInfo) {
+    let visualVersion = StatePrinter.compareObjects("state", debugInfo.startState, debugInfo.reducedState, debugInfo.newState);
+    let computerInfo = StatePrinter.makeTriggerFuncs(debugInfo.computerInfo.start, debugInfo.computerInfo.stop);
+    // visualVersion = StatePrinter.appendComputesToState(visualVersion, computerInfo);
     return JSON.stringify({
       task: debugInfo.task,
-      visualVersion: StatePrinter.compareObjects("state", debugInfo.startState, debugInfo.reducedState, debugInfo.newState),
-      computerInfo: StatePrinter.makeTriggerFuncs(debugInfo.computerInfo.start, debugInfo.computerInfo.stop),
+      visualVersion: visualVersion,
+      computerInfo: computerInfo,
       observerInfo: StatePrinter.makeTriggerFuncs(debugInfo.observerInfo.start, debugInfo.observerInfo.stop)
     });
   }
 
-  //todo check if computed also changed the return value.
-  static makeTriggerFuncs(aFuncReg, bFuncReg) {
+  static makeTriggerFuncs(startReg, stopReg) {
     let C = {};
-    for (let key in aFuncReg) {
-      let A = aFuncReg[key];
-      let B = bFuncReg[key];
-      if (A === B)
-        continue;
-      let triggerPaths = [];
-      for (let i = 0; i < B.argsValue.length; i++) {
-        let a = A.argsValue[i];
-        let b = B.argsValue[i];
-        let triggered = false;
-        if (a !== b)
-          triggered = true;
-        triggerPaths[i] = {path: A.argsPaths[i], triggered: triggered};
-      }
-      C[key] = {
-        a: A,
-        triggerPaths: triggerPaths,
-        triggerReturn: {path: A.returnPath, triggered: A.returnValue !== B.returnValue}
-      };
-    }
+    for (let key in startReg)
+      C[key] = StatePrinter.makeTriggerFunc(startReg[key], stopReg[key]);
     return C;
   }
 
-  //.name, .diff, .style, .values.startState/.reducedState/.newState, .children
+  static makeTriggerFunc(start, stop) {
+    return {
+      funcName: start.funcName,
+      triggerReturn: StatePrinter.makeTriggerPath(start.returnPath, start.returnValue, stop.returnValue),
+      triggerPaths: start.argsPaths.map((p, i) => StatePrinter.makeTriggerPath(p, start.argsValue[i], stop.argsValue[i]))
+    };
+  }
+
+  static makeTriggerPath(path, startValue, stopValue) {
+    return {
+      path,
+      startValue,
+      stopValue,
+      triggered: startValue !== stopValue
+    };
+  }
+
+//.name, .diff, .style, .values.startState/.reducedState/.newState, .children
   static compareObjects(name, startState, reducedState, newState) {
     let res = {};
     res.name = name;
@@ -115,6 +116,16 @@ class StatePrinter {
         return false;
     }
     return true;
+  }
+
+  static appendComputesToState(visualVersion, computerInfo) {
+    for (let computeName in computerInfo) {
+      let compute = computerInfo[computeName];
+      if (!visualVersion.children[computeName])
+        visualVersion.children[computeName] = {};
+      visualVersion.children[computeName].compute = compute;
+    }
+    return visualVersion;
   }
 }
 
