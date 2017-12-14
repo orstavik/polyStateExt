@@ -1,13 +1,3 @@
-const funcTemplate = document.createElement("li");
-funcTemplate.innerHTML = `
-<span class="returnProp"></span>
-<span class="pointsTo functionSign"> = </span>
-<span class="funcName"></span>
-<span class="pointsTo argsStart">(</span>
-<span class="funcArgs"></span>
-<span class="pointsTo argsEnd">)</span>
-`;
-
 const ComputeDIV = document.createElement("div");
 ComputeDIV.classList.add("compute");
 ComputeDIV.innerHTML = `
@@ -17,9 +7,6 @@ ComputeDIV.innerHTML = `
     <span class="compute__name"></span>(<span class="compute__args"></span>)
   </span>
 `;
-
-const pathTemplate = document.createElement("span");
-pathTemplate.classList.add("funcArgPath");
 
 const CommaTemplate = document.createElement("span");
 CommaTemplate.textContent = ", ";
@@ -47,21 +34,5 @@ export const ComputeObserveFuncLI = class ComputeObserveFuncLI {
     return div;
   };
 
-  static makeFuncUL(data, isCompute) {
-    const li = funcTemplate.cloneNode(true);
-    if (isCompute){
-      let path = document.createElement("state-path");
-      path.updatePath(data.triggerReturn);
-      li.querySelector("span.returnProp").append(path);
-    }
-    li.querySelector("span.funcName").innerText = data.funcName;
-    const args = li.querySelector("span.funcArgs");
-    for (let i = 0; i < data.triggerPaths.length; i++) {
-      if (i !== 0) args.append(CommaTemplate.cloneNode(true));
-      let path = document.createElement("state-path");
-      path.updatePath(data.triggerPaths[i]);
-      args.append(path);
-    }
-    return li;
-  };
+
 }

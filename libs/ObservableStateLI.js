@@ -26,8 +26,14 @@ export const ObservableStateLI = class ObservableStateLI {
     li.contentID = id;
     let stateObject = ObservableStateLI.makeStateTreeUL(visualVersion, id + "_state");
     li.querySelector(".state-observer__state").append(stateObject);
-    for (let funcName in debugInfo.observerInfo)
-      li.querySelector(".state-observer__observers").append(ComputeObserveFuncLI.makeFuncUL(debugInfo.observerInfo[funcName], false));
+    let ul = li.querySelector(".state-observer__observers");
+    for (let funcData of Object.values(debugInfo.observerInfo)) {
+      let li = document.createElement("li");
+      let func = document.createElement("observe-function");
+      li.append(func);
+      func.updateFuncObj(funcData);
+      ul.append(li);
+    }
     return li;
   }
 
