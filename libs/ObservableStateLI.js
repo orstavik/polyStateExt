@@ -1,5 +1,3 @@
-import {ComputeObserveFuncLI} from "./ComputeObserveFuncLI.js";
-
 const DetailLITemplate = document.createElement("li");
 DetailLITemplate.classList.add("state-observer");
 DetailLITemplate.innerHTML = `
@@ -45,7 +43,9 @@ export const ObservableStateLI = class ObservableStateLI {
       li.classList.add("state--has-children");
     if (data.compute) {
       li.classList.add("state--computes");
-      li.querySelector(".state__summary").prepend(ComputeObserveFuncLI.makeComputeDIV(data.compute));
+      let computeListing = document.createElement("compute-listing");
+      computeListing.updateFuncObj(data.compute);
+      li.querySelector(".state__summary").prepend(computeListing);
     }
 
     li.querySelector(".state__name").textContent = data.name;
