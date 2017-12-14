@@ -1,6 +1,12 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 
-class StatePath extends HyperHTMLElement {
+export class StatePath extends HyperHTMLElement {
+
+  static make(path){
+    const res = new StatePath();
+    res.updatePath(path);
+    return res;
+  }
 
   constructor() {
     super();
