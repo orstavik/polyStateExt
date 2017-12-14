@@ -5,7 +5,7 @@ class DetailedObject extends HyperHTMLElement {
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
-    this.setObj("nothingToSeeHere", null);
+    this.setObj("unset", null);
   }
 
   setObj(name, obj) {
@@ -29,24 +29,29 @@ class DetailedObject extends HyperHTMLElement {
   render() {
     if (this.childObjs.length === 0) {
       this.html`
+        <style>
+          span {
+            color: orange;
+          }
+        </style>
         <span class="stateName">${this.name}</span> : 
         <span class="valueNew">${this.obj}</span>
       `;
     } else {
       this.html`
-      <details>
-        <summary>
-          <span class="stateName">${this.name}</span>
-        </summary>
-        <ul>
-          ${this.childObjs.map(child => this.html`
-            <li>
-              <detailed-object class="${child[0]}">${child[1]}</detailed-object>
-            </li>
-          `)}
-        </ul>                                                           
-      </details>
-    `;
+        <details>
+          <summary>
+            <span class="stateName">${this.name}</span>
+          </summary>
+          <ul>
+            ${this.childObjs.map(child => HyperHTMLElement.wire(child)`
+              <li>
+                <detailed-object class="${child[0]}">${child[1]}</detailed-object>
+              </li>
+            `)}
+          </ul>                                                           
+        </details>
+      `;
     }
   }
 
