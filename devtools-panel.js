@@ -1,3 +1,5 @@
+import {TaskLI} from "./libs/TaskLI.js";
+
 //1. load the content-script by sending a message to the background.js script that has access to load content scripts.
 //   Att! the content-script loaded as a file can be debugged in the content-script tab in the application window.
 chrome.runtime.sendMessage({
