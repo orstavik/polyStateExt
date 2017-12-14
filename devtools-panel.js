@@ -1,4 +1,3 @@
-import {TaskLI} from "./libs/TaskLI.js";
 import {ObservableStateLI} from "./libs/ObservableStateLI.js";
 
 //1. load the content-script by sending a message to the background.js script that has access to load content scripts.
@@ -19,7 +18,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.name === 'new-client-state') {
     let data = JSON.parse(request.payload);
     let id = debugCounter++;
-    tasksListUL.append(TaskLI.makeTaskLI(data.task, id));
+    let task = document.createElement("task-li");
+    task.updateTask(id, data.task);
+    tasksListUL.append(task);
     stateListUL.append(ObservableStateLI.makeStateDetail(data, data.visualVersion, "s"+id));
   }
 });

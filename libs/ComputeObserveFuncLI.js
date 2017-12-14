@@ -70,7 +70,7 @@ export const ComputeObserveFuncLI = class ComputeObserveFuncLI {
     for (let oldi of oldFlash)
       oldi.classList.remove("flash");
 
-    const index = e.path[5].id;
+    const index = e.path[5].contentID;
     let segments = e.currentTarget.textContent.split(".");
 
     for (let i = 0; i < segments.length; i++) {

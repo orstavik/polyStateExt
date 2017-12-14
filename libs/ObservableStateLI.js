@@ -23,7 +23,7 @@ export const ObservableStateLI = class ObservableStateLI {
 
   static makeStateDetail(debugInfo, visualVersion, id) {
     const li = DetailLITemplate.cloneNode(true);
-    li.id = id;
+    li.contentID = id;
     let stateObject = ObservableStateLI.makeStateTreeUL(visualVersion, id + "_state");
     li.querySelector(".state-observer__state").append(stateObject);
     for (let funcName in debugInfo.observerInfo)
@@ -33,7 +33,7 @@ export const ObservableStateLI = class ObservableStateLI {
 
   static makeStateTreeUL(data, id) {
     const li = StateLITemplate.cloneNode(true);
-    li.id = id;
+    li.contentID = id;
     li.classList.add(...data.style);
     if (Object.keys(data.children).length !== 0)
       li.classList.add("state--has-children");
