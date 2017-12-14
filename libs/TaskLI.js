@@ -1,24 +1,13 @@
-// const taskTemplate = document.createElement('li');
-// taskTemplate.classList.add('task');
-// taskTemplate.innerHTML =
-// `<details class="task__body">
-//   <summary class="task__summary">
-//     <span class="task__method"></span>
-//     <span class="task__timestamp"></span>
-//     <span>&nbsp;|&nbsp;</span>
-//     <span class="task__duration"></span>
-//   </summary>
-//   <ul class="task__event"></ul>
-// </details>`;
+import {html,render} from "../node_modules/lit-html/lit-html.js";
 
-class TaskLI {
+export const TaskLI = class TaskLI {
 
   static get ACTIVE_CLASS() {
     return 'task--active';
   }
 
   static template(id, index, method, timestamp, duration) {
-    return html`<li class="task">
+    return html`
   <details class="task__body" id="${id}" data-index="${index}">
     <summary class="task__summary">
       <span class="task__method">${method}</span>
@@ -27,29 +16,25 @@ class TaskLI {
       <span class="task__duration">${duration}</span>
     </summary>
     <ul class="task__event"></ul>
-  </details>
-</li>`;
+  </details>`;
   }
 
   static makeTaskLI(debugInfo, id) {
+    const li = document.createElement("li");
+    li.classList.add("task");
     const task = debugInfo.task;
-    // const li = taskTemplate.cloneNode(true);
-    // li.id = "task_" + id;
-    // li.dataset.index = id;
-    // li.querySelector("span.task__method").textContent = task.taskName;
-    // li.querySelector("span.task__timestamp").textContent = TaskLI.makeAddedTime(task.added);
-    // li.querySelector("span.task__duration").textContent = Math.round((task.stop - task.start) * 100) / 100;
 
     const taskId = "task_" + id;
     const timestamp = TaskLI.makeAddedTime(task.added);
     const duration = Math.round((task.stop - task.start) * 100) / 100;
     const frag = TaskLI.template(taskId, id, task.taskName, timestamp, duration);
-    const ul = frag.querySelector("ul.task__event");
+    render(frag, li);
+
+    const ul = li.querySelector("ul.task__event");
     ul.append(ObservableStateLI.makeEventTreeLI("detail", task.event.detail));
     ul.append(ObservableStateLI.makeEventTreeLI("type", task.event.type));
-    frag.querySelector('li.task').addEventListener('mousedown', TaskLI.showActiveState);
-
-    return frag;
+    li.addEventListener('mousedown', TaskLI.showActiveState);
+    return li;
   }
 
   static makeAddedTime(timestamp, start, stop) {

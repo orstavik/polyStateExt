@@ -11,7 +11,7 @@ funcTemplate.innerHTML = `
 const ComputeDIV = document.createElement("div");
 ComputeDIV.classList.add("compute");
 ComputeDIV.innerHTML = `
-  <img class="compute__icon" src="../icons/settings-gears.svg" />
+  <span class="compute__icon">&#9881;</span>
   <span class="compute__description">
     <span class="compute__return"></span> = 
     <span class="compute__name"></span>(<span class="compute__args"></span>)
