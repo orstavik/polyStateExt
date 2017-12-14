@@ -1,5 +1,12 @@
 import {html,render} from "../node_modules/lit-html/lit-html.js";
-import {ObservableStateLI} from "./ObservableStateLI.js";
+
+const EventDetailLITemplate = document.createElement("li");
+EventDetailLITemplate.innerHTML =
+  `<div class="propWrapper">
+  <span class="stateName"></span>:
+  <span class="valueNew"></span>
+</div>
+<ul></ul>`;
 
 export const TaskLI = class TaskLI {
 
@@ -32,9 +39,25 @@ export const TaskLI = class TaskLI {
     render(frag, li);
 
     const ul = li.querySelector("ul.task__event");
-    ul.append(ObservableStateLI.makeEventTreeLI("detail", task.event.detail));
-    ul.append(ObservableStateLI.makeEventTreeLI("type", task.event.type));
+    ul.append(TaskLI.makeEventTreeLI("detail", task.event.detail));
+    ul.append(TaskLI.makeEventTreeLI("type", task.event.type));
     li.addEventListener('mousedown', TaskLI.showActiveState);
+    return li;
+  }
+
+  static makeEventTreeLI(name, obj) {
+    const li = EventDetailLITemplate.cloneNode(true);
+    li.querySelector("div.propWrapper").addEventListener("click", (e) => li.classList.toggle("opened"));
+    li.querySelector("span.stateName").textContent = name;
+
+    if (obj && typeof obj === "object" && Object.keys(obj).length !== 0) {
+      li.classList.add("hasChildren");
+      const childUL = li.querySelector("ul");
+      for (let childName in obj)
+        childUL.appendChild(TaskLI.makeEventTreeLI(childName, obj[childName]));
+    } else {
+      li.querySelector("span.valueNew").textContent = obj;
+    }
     return li;
   }
 

@@ -19,14 +19,6 @@ StateLITemplate.innerHTML = `
   <ul class="state__children"></ul>
 </details>`;
 
-const EventDetailLITemplate = document.createElement("li");
-EventDetailLITemplate.innerHTML =
-  `<div class="propWrapper">
-  <span class="stateName"></span>:
-  <span class="valueNew"></span>
-</div>
-<ul></ul>`;
-
 export const ObservableStateLI = class ObservableStateLI {
 
   static makeStateDetail(debugInfo, visualVersion, id) {
@@ -57,22 +49,6 @@ export const ObservableStateLI = class ObservableStateLI {
     const childUL = li.querySelector(".state__children");
     for (let childName in data.children)
       childUL.appendChild(ObservableStateLI.makeStateTreeUL(data.children[childName], id + "_" + childName));
-    return li;
-  }
-
-  static makeEventTreeLI(name, obj) {
-    const li = EventDetailLITemplate.cloneNode(true);
-    li.querySelector("div.propWrapper").addEventListener("click", (e) => li.classList.toggle("opened"));
-    li.querySelector("span.stateName").textContent = name;
-
-    if (obj && typeof obj === "object" && Object.keys(obj).length !== 0) {
-      li.classList.add("hasChildren");
-      const childUL = li.querySelector("ul");
-      for (let childName in obj)
-        childUL.appendChild(ObservableStateLI.makeEventTreeLI(childName, obj[childName]));
-    } else {
-      li.querySelector("span.valueNew").textContent = obj;
-    }
     return li;
   }
 }
