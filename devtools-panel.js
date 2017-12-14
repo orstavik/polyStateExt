@@ -18,9 +18,16 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.name === 'new-client-state') {
     let data = JSON.parse(request.payload);
     let id = debugCounter++;
-    let task = document.createElement("task-li");
-    task.updateTask(id, data.task);
-    tasksListUL.append(task);
+    let li = document.createElement("li");
+    let task = document.createElement("detailed-object");
+    task.updateObject(data.task.taskName, data.task.event);
+    let timeInfo = document.createElement("added-duration");
+    timeInfo.updateTimes(data.task.added, data.task.start, data.task.stop);
+    li.append(task);
+    li.append(timeInfo);
+    // let task = document.createElement("task-li");
+    // task.updateTask(id, data.task);
+    tasksListUL.append(li);
     stateListUL.append(ObservableStateLI.makeStateDetail(data, data.visualVersion, "s"+id));
   }
 });

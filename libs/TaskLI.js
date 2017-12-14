@@ -6,6 +6,7 @@ class TaskLI extends HyperHTMLElement {
     super();
     this.attachShadow({mode: 'open'});
     this.setTask(0, {taskName: "unset"});
+    this.addEventListener("mousedown", TaskLI.showActiveState);
   }
 
   setTask(index, task) {
@@ -19,9 +20,9 @@ class TaskLI extends HyperHTMLElement {
     this.render();
   }
 
-  render(id, index, task, mouseListener) {
+  render() {
     return this.html`
-      <li id="${this.contentID}" class="task" onmousedown="${TaskLI.showActiveState}">
+      <li id="${this.contentID}" class="task">
         <details class="task__body" data-index="${this.index}">
           <summary class="task__summary">
             <span class="task__method">${this.taskName}</span>
