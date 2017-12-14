@@ -1,3 +1,5 @@
+import {ComputeObserveFuncLI} from "./ComputeObserveFuncLI.js";
+
 const DetailLITemplate = document.createElement("li");
 DetailLITemplate.classList.add("state-observer");
 DetailLITemplate.innerHTML = `
@@ -25,7 +27,7 @@ EventDetailLITemplate.innerHTML =
 </div>
 <ul></ul>`;
 
-class ObservableStateLI {
+export const ObservableStateLI = class ObservableStateLI {
 
   static makeStateDetail(debugInfo, visualVersion, id) {
     const li = DetailLITemplate.cloneNode(true);

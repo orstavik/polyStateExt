@@ -1,4 +1,5 @@
 import {html,render} from "../node_modules/lit-html/lit-html.js";
+import {ObservableStateLI} from "./ObservableStateLI.js";
 
 export const TaskLI = class TaskLI {
 

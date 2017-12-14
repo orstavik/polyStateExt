@@ -25,7 +25,7 @@ const CommaTemplate = document.createElement("span");
 CommaTemplate.textContent = ", ";
 CommaTemplate.classList.add("pointsTo");
 
-class ComputeObserveFuncLI {
+export const ComputeObserveFuncLI = class ComputeObserveFuncLI {
 
   static makeComputeDIV(data) {
     const div = ComputeDIV.cloneNode(true);
