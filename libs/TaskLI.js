@@ -6,7 +6,7 @@ class EventDetailLI {
     let contentValue = "";
     let liClass = "eventdetail";
     let children = [];
-    if (EventDetailLI.isIterable(value)){
+    if (EventDetailLI.isIterable(value)) {
       liClass += " hasChildren";
       children = Object.entries(value);
     } else {
@@ -40,29 +40,13 @@ export const TaskLI = class TaskLI {
     return 'task--active';
   }
 
-  static timeTemplate(timestamp, start, stop) {
-    const t = new Date(timestamp);
-    let h = TaskLI.formatNumber(t.getHours(), 2);
-    let m = TaskLI.formatNumber(t.getMinutes(), 2);
-    let s = TaskLI.formatNumber(t.getSeconds(), 2);
-    let ms = TaskLI.formatNumber(t.getMilliseconds(), 3);
-    let duration = Math.round((stop - start) * 100) / 100;
-    return wire()`
-      <span class="task__timestamp">${h}:${m}:${s}.${ms}</span>
-      <span>&nbsp;|&nbsp;</span>
-      <span class="task__duration">${duration}</span>
-    `;
-  }
-
   static template(id, index, task, mouseListener) {
-    let timeTemplate = TaskLI.timeTemplate(task.added, task.start, task.stop);
-    // timeTemplate.test(id);
     return wire()`
 <li id="${id}" class="task" onmousedown="${mouseListener}">
   <details class="task__body" data-index="${index}">
     <summary class="task__summary">
       <span class="task__method">${task.taskName}</span>
-      ${timeTemplate}
+      <added-duration class="task__time"></added-duration>
     </summary>
     <ul class="task__event">
       ${EventDetailLI.makeEventTreeLI("detail", task.event.detail)}
@@ -74,11 +58,9 @@ export const TaskLI = class TaskLI {
   }
 
   static makeTaskLI(task, id) {
-    return TaskLI.template("task_" + id, id, task, TaskLI.showActiveState);
-  }
-
-  static formatNumber(n, width) {
-    return '0'.repeat(width - n.toString().length) + n;
+    let template = TaskLI.template("task_" + id, id, task, TaskLI.showActiveState);
+    template.querySelector("added-duration").updateTimes(task.added, task.start, task.stop);
+    return template;
   }
 
   static showActiveState(e) {
