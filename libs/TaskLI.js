@@ -55,12 +55,14 @@ export const TaskLI = class TaskLI {
   }
 
   static template(id, index, task, mouseListener) {
+    let timeTemplate = TaskLI.timeTemplate(task.added, task.start, task.stop);
+    // timeTemplate.test(id);
     return wire()`
 <li id="${id}" class="task" onmousedown="${mouseListener}">
   <details class="task__body" data-index="${index}">
     <summary class="task__summary">
       <span class="task__method">${task.taskName}</span>
-      ${TaskLI.timeTemplate(task.added, task.start, task.stop)}
+      ${timeTemplate}
     </summary>
     <ul class="task__event">
       ${EventDetailLI.makeEventTreeLI("detail", task.event.detail)}
