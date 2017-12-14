@@ -1,4 +1,4 @@
-import {html,render} from "../node_modules/lit-html/lit-html.js";
+import {wire,bind} from "../node_modules/hyperhtml/esm/index.js";
 
 const EventDetailLITemplate = document.createElement("li");
 EventDetailLITemplate.innerHTML =
@@ -14,34 +14,41 @@ export const TaskLI = class TaskLI {
     return 'task--active';
   }
 
-  static template(id, index, method, timestamp, duration) {
-    return html`
-  <details class="task__body" id="${id}" data-index="${index}">
-    <summary class="task__summary">
-      <span class="task__method">${method}</span>
-      <span class="task__timestamp">${timestamp}</span>
+  static timeTemplate(timestamp, start, stop) {
+    const t = new Date(timestamp);
+    let h = TaskLI.formatNumber(t.getHours(), 2);
+    let m = TaskLI.formatNumber(t.getMinutes(), 2);
+    let s = TaskLI.formatNumber(t.getSeconds(), 2);
+    let ms = TaskLI.formatNumber(t.getMilliseconds(), 3);
+    let duration = Math.round((stop - start) * 100) / 100;
+    return wire()`
+      <span class="task__timestamp">${h}:${m}:${s}.${ms}</span>
       <span>&nbsp;|&nbsp;</span>
       <span class="task__duration">${duration}</span>
-    </summary>
-    <ul class="task__event"></ul>
-  </details>`;
+    `;
   }
 
-  static makeTaskLI(debugInfo, id) {
-    const li = document.createElement("li");
-    li.classList.add("task");
-    const task = debugInfo.task;
+  static template(id, index, task, mouseListener) {
+    return wire()`
+<li id="${id}" class="task" onmousedown="${mouseListener}">
+  <details class="task__body" data-index="${index}">
+    <summary class="task__summary">
+      <span class="task__method">${task.taskName}</span>
+      ${TaskLI.timeTemplate(task.added, task.start, task.stop)}
+    </summary>
+    <ul class="task__event">
+    
+    </ul>
+  </details>
+</li>
+`;
+  }
 
-    const taskId = "task_" + id;
-    const timestamp = TaskLI.makeAddedTime(task.added);
-    const duration = Math.round((task.stop - task.start) * 100) / 100;
-    const frag = TaskLI.template(taskId, id, task.taskName, timestamp, duration);
-    render(frag, li);
-
+  static makeTaskLI(task, id) {
+    const li = TaskLI.template("task_" + id, id, task, TaskLI.showActiveState);
     const ul = li.querySelector("ul.task__event");
     ul.append(TaskLI.makeEventTreeLI("detail", task.event.detail));
     ul.append(TaskLI.makeEventTreeLI("type", task.event.type));
-    li.addEventListener('mousedown', TaskLI.showActiveState);
     return li;
   }
 
@@ -61,17 +68,8 @@ export const TaskLI = class TaskLI {
     return li;
   }
 
-  static makeAddedTime(timestamp, start, stop) {
-    const t = new Date(timestamp);
-    let h = t.getHours();
-    h = '0'.repeat(2 - h.toString().length) + h;
-    let m = t.getMinutes();
-    m = '0'.repeat(2 - m.toString().length) + m;
-    let s = t.getSeconds();
-    s = '0'.repeat(2 - s.toString().length) + s;
-    let ms = t.getMilliseconds();
-    ms = '0'.repeat(3 - ms.toString().length) + ms;
-    return `${h}:${m}:${s}.${ms}`;
+  static formatNumber(n, width) {
+    return '0'.repeat(width - n.toString().length) + n;
   }
 
   static showActiveState(e) {
