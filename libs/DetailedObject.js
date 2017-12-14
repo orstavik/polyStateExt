@@ -44,7 +44,7 @@ class DetailedObject extends HyperHTMLElement {
             <span class="stateName">${this.name}</span>
           </summary>
           <ul>
-            ${this.childObjs.map(child => HyperHTMLElement.wire(child)`
+            ${this.childObjs.map(child => HyperHTMLElement.wire()`
               <li>
                 <detailed-object class="${child[0]}">${child[1]}</detailed-object>
               </li>
