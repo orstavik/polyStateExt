@@ -1,7 +1,13 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 import {StatePath} from "./StatePath.js";
 
-class ComputeListing extends HyperHTMLElement {
+export class ComputeListing extends HyperHTMLElement {
+
+  static make(funcObj){
+    const res = new ComputeListing();
+    res.updateFuncObj(funcObj);
+    return res;
+  }
 
   constructor() {
     super();
