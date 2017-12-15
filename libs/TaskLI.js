@@ -4,17 +4,22 @@ import {DetailedObject} from "./DetailedObject.js";
 
 export class TaskLI extends HyperHTMLElement {
 
-  constructor() {
+  constructor(props, attribs) {
     super();
     this.attachShadow({mode: 'open'});
-    this.setTask(0, {taskName: "unset"});
-    this.addEventListener("mousedown", TaskLI.showActiveState);
-  }
 
-  static make(index, task) {
-    const comp = new TaskLI();
-    comp.updateTask(index, task);
-    return comp;
+    for (let key in attribs)
+      this.setAttribute(key, attribs[key]);
+    
+    props = Object.assign({
+      index: 0,
+      task: {
+        taskName: 'unset',
+      }
+    }, props);
+    
+    this.updateProps(props);
+    this.addEventListener("mousedown", TaskLI.showActiveState);
   }
 
   setTask(index, task) {
@@ -23,20 +28,30 @@ export class TaskLI extends HyperHTMLElement {
     this.task = task;
   }
 
-  updateTask(index, task){
-    this.setTask(index, task);
+  updateProps(props) {
+    props = Object.assign({}, this._props, props);
+    props.contentID = "task_" + props.index;
+    this._props = props;
+
     this.render();
   }
 
   render() {
     return this.html`
-      <li id="${this.contentID}" class="task">
-        <details class="task__body" data-index="${this.index}">
+      <li id="${this._props.contentID}" class="task">
+        <details class="task__body" data-index="${this._props.index}">
           <summary class="task__summary">
-            <span class="task__method">${this.task.taskName}</span>
-            ${new AddedDuration({timestamp: this.task.added, start: this.task.start, stop: this.task.stop}, {class: 'task__timestamp', 'data-test': 'test'})}
+            <span class="task__method">${this._props.task.taskName}</span>
+            ${new AddedDuration({
+              timestamp: this._props.task.added,
+              start: this._props.task.start,
+              stop: this._props.task.stop
+            }, {
+              class: 'task__timestamp',
+              'data-test': 'test'
+            })}
           </summary>
-          ${DetailedObject.make(this.task.taskName, this.task.event)}
+          ${DetailedObject.make(this._props.task.taskName, this._props.task.event)}
         </details>
       </li>
     `;
@@ -57,4 +72,4 @@ export class TaskLI extends HyperHTMLElement {
   }
 }
 
-TaskLI.define("task-li");
+customElements.define('task-li', TaskLI);
