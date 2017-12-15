@@ -34,14 +34,23 @@ export class AddedDuration extends HyperHTMLElement {
 
   render() {
     this.html`
-      <style>
-        span {
-          color: grey;
-        }
-      </style>
+      ${AddedDuration.style()}
       <span class="task__timestamp">${this._props.h}:${this._props.m}:${this._props.s}.${this._props.ms}</span>
       <span>&nbsp;|&nbsp;</span>
       <span class="task__duration">${this._props.duration}</span>
+    `;
+  }
+  
+  static style() {
+    return HyperHTMLElement.wire()`
+      <style>
+        :host {
+          color: grey;
+        }
+        :host(.task--active) {
+          color: white;
+        }
+      </style>
     `;
   }
 
