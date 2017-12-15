@@ -1,8 +1,14 @@
 {
-  "name": "polystate",
+  "name": "polystateext",
   "version": "1.0.0",
   "description": "",
   "main": "background.js",
+  "dependencies": {
+    "hyperhtml": "^2.4.3",
+    "hyperhtml-element": "^1.3.0",
+    "normalize.css": "^7.0.0"
+  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,11 +21,5 @@
   "bugs": {
     "url": "https://github.com/enlightenmentor/polyState/issues"
   },
-  "homepage": "https://github.com/enlightenmentor/polyState#readme",
-  "dependencies": {
-    "hyperhtml": "^2.4.3",
-    "hyperhtml-element": "^1.3.0",
-    "normalize": "^0.3.1",
-    "normalize.css": "^7.0.0"
-  }
+  "homepage": "https://github.com/enlightenmentor/polyState#readme"
 }
