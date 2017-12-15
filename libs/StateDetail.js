@@ -4,26 +4,47 @@ import {ObserveFunction} from "./ObserveFunction.js";
 
 export class StateDetail extends HyperHTMLElement {
 
-  static make(debugInfo, visualVersion, id) {
-    const res = new StateDetail();
-    res.updateDebug(debugInfo, visualVersion, id);
-    return res;
-  }
-
-  constructor() {
+  /**
+   * Adds two numbers
+   * @param {Object} props
+   * @param {Object} props.debugInfo
+   * @param {Object} props.visualVersion
+   * @param {Number} props.id
+   * @param {Object} attribs
+   */
+  constructor(props, attribs) {
     super();
     this.attachShadow({mode: 'open'});
-    this.setDebug(null, null, 0);
+
+    for (let key in attribs)
+      this.setAttribute(key, attribs[key]);
+
+    props = Object.assign({
+      timestamp: 0,
+      start: 0,
+      stop: 0
+    }, props);
+
+    this.updateProps(props);
     this.addEventListener("path-clicked", StateDetail.pathClicked);
   }
 
-  setDebug(debugInfo, visualVersion, id) {
-    if (!debugInfo)
+  /**
+   * Adds two numbers
+   * @param {Object} props
+   * @param {Object} props.debugInfo
+   * @param {Object} props.visualVersion
+   * @param {Number} props.id
+   */
+  updateProps(props) {
+    props = Object.assign({}, this._props, props);
+
+    if (!props.debugInfo)
       return;
-    this.debugInfo = debugInfo;
-    this.observers = Object.values(debugInfo.observerInfo);
-    this.visualVersion = visualVersion;
-    this.id = id;
+    props.observers = Object.values(props.debugInfo.observerInfo);
+
+    this._props = props;
+    this.render();
   }
 
   updateDebug(debugInfo, visualVersion, id) {
@@ -33,16 +54,16 @@ export class StateDetail extends HyperHTMLElement {
 
   render() {
 
-    if (this.observers.length !== 0) {
+    if (this._props.observers.length !== 0) {
       this.html`
         <h4 class="state-observer__header1">Observers</h4>
         <ul class="state-observer__observers">
-          ${this.observers.map(observer => HyperHTMLElement.wire()`
+          ${this._props.observers.map(observer => HyperHTMLElement.wire()`
             ${ObserveFunction.make(observer)}
           `)}
         </ul>
         <h4 class="state-observer__header2">State</h4>
-        ${StateTree.make(this.id + "_state", this.visualVersion)}
+        ${StateTree.make(this._props.id + "_state", this._props.visualVersion)}
       `;
     } else {
       this.html`
@@ -52,6 +73,8 @@ export class StateDetail extends HyperHTMLElement {
   }
 
   static pathClicked (e){
+    alert("path clicked: " + e.detail);
+    if(1)return;
     const oldFlash = document.querySelectorAll(".flash");
     for (let oldi of oldFlash)
       oldi.classList.remove("flash");
