@@ -39,4 +39,4 @@ class AddedDuration extends HyperHTMLElement {
     return '0'.repeat(width - n.toString().length) + n;
   }
 }
-AddedDuration.define('added-duration');
+customElements.define('added-duration', AddedDuration);

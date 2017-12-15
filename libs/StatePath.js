@@ -58,5 +58,4 @@ export class StatePath extends HyperHTMLElement {
     detail.scrollIntoViewIfNeeded();
   }
 }
-
-StatePath.define('state-path');
+customElements.define('state-path', StatePath);
