@@ -3,35 +3,40 @@ import {StatePath} from "./StatePath.js";
 
 export class ComputeListing extends HyperHTMLElement {
 
-  static make(funcObj){
-    const res = new ComputeListing();
-    res.updateFuncObj(funcObj);
-    return res;
-  }
-
-  constructor() {
+  /**
+   * An entry for a computed trigger
+   * @param {Object} props
+   * @param {Object} props.triggerReturn
+   * @param {String} props.funcName
+   * @param {Object[]} props.triggerPaths
+   * @param {Object} attribs
+   */
+  constructor(props, attribs) {
     super();
     this.attachShadow({mode: 'open'});
-    this.setFuncObj(null);
-    // this.addEventListener("click", e => {
-    //   this.classList.toggle("compute--active");
-    //   e.stopPropagation();
-    // });
+
+    for (let key in attribs)
+      this.setAttribute(key, attribs[key]);
+
+    props = Object.assign({}, props);
+
+    this.updateProps(props);
   }
 
-  setFuncObj(functionObj) {
-    this.funcReturn = functionObj ? functionObj.triggerReturn : null;
-    this.funcName = functionObj ? functionObj.funcName : "unset";
-    this.funcArgs = functionObj ? functionObj.triggerPaths : [];
-  }
-
-  updateFuncObj(funcObj) {
-    this.setFuncObj(funcObj);
+  /**
+   * update a computed trigger
+   * @param {Object} props
+   * @param {Object} props.triggerReturn
+   * @param {String} props.funcName
+   * @param {Object[]} props.triggerPaths
+   */
+  updateProps(props) {
+    props = Object.assign({}, this._props, props);
+    this._props = props;
     this.render();
   }
 
   render() {
-    console.log("statepath");
     this.html`
       <style>
         span.compute__name {
@@ -42,10 +47,10 @@ export class ComputeListing extends HyperHTMLElement {
       <div class="compute">
         <span class="compute__icon">&#9881;</span>
         <span class="compute__description">
-          <span class="compute__return">${StatePath.make(this.funcReturn)}</span> = 
-          <span class="compute__name">${this.funcName}</span>(<span class="compute__args">
-          ${this.funcArgs.map((arg, i) =>
-            HyperHTMLElement.wire()`${i !== 0 ? ", ": ""}${StatePath.make(arg)}`
+          <span class="compute__return">${StatePath.make(this._props.triggerReturn)}</span> = 
+          <span class="compute__name">${this._props.funcName}</span>(<span class="compute__args">
+          ${(this._props.triggerPaths || []).map((arg, i) =>
+            HyperHTMLElement.wire()`${i !== 0 ? ", " : ""}${StatePath.make(arg)}`
           )}
           </span>)
         </span>
@@ -53,4 +58,5 @@ export class ComputeListing extends HyperHTMLElement {
     `;
   }
 }
+
 customElements.define('compute-listing', ComputeListing);

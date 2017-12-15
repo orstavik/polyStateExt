@@ -19,11 +19,7 @@ export class StateDetail extends HyperHTMLElement {
     for (let key in attribs)
       this.setAttribute(key, attribs[key]);
 
-    props = Object.assign({
-      timestamp: 0,
-      start: 0,
-      stop: 0
-    }, props);
+    props = Object.assign({}, props);
 
     this.updateProps(props);
     this.addEventListener("path-clicked", StateDetail.pathClicked);

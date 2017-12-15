@@ -38,7 +38,7 @@ export class StateTree extends HyperHTMLElement {
             color: pink;
           }
         </style>
-        ${this.compute ? ComputeListing.make(this.compute) : ""}
+        ${this.compute ? new ComputeListing(this.compute) : ""}
         <span class="stateName">${this.name}</span> : 
         <span class="valueNew">${this.values.newState}</span>
       `;
@@ -51,7 +51,7 @@ export class StateTree extends HyperHTMLElement {
         </style>
         <details>
           <summary>
-            ${this.compute ? ComputeListing.make(this.compute) : ""}
+            ${this.compute ? new ComputeListing(this.compute) : ""}
             <span class="stateName">${this.name}</span>
           </summary>
           ${this.childObjs.map(child => HyperHTMLElement.wire()`
