@@ -19,14 +19,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.name === 'new-client-state') {
     let data = JSON.parse(request.payload);
     let id = debugCounter++;
-    tasksList.append(new TaskLI({
-      index: id,
-      task: data.task
-    }, {
-      class: 'tasklist__item task',
-      id: 'task_'+id,
-      'data-index': id
-    }));
+    tasksList.append(makeTasklistItem(id, data.task));
 
     let li2 = document.createElement("li");
     let detail = new StateDetail({debugInfo: data, visualVersion: data.visualVersion, id:"s"+id});
@@ -34,6 +27,17 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     stateListUL.append(li2);
   }
 });
+
+const makeTasklistItem = function (id, task) {
+  return new TaskLI({
+    index: id,
+    task: task
+  }, {
+    class: 'tasklist__item task',
+    id: 'task_' + id,
+    'data-index': id
+  });
+};
 
 //3. get and inject the injected-script.
 //   the injected-script will hook into the ITObservableState.debugHook method to process
