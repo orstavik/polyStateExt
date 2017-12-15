@@ -1,6 +1,8 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
+import {AddedDuration} from "./AddedDuration.js";
+import {DetailedObject} from "./DetailedObject.js";
 
-class TaskLI extends HyperHTMLElement {
+export class TaskLI extends HyperHTMLElement {
 
   constructor() {
     super();
@@ -9,10 +11,16 @@ class TaskLI extends HyperHTMLElement {
     this.addEventListener("mousedown", TaskLI.showActiveState);
   }
 
+  static make(index, task) {
+    const comp = new TaskLI();
+    comp.updateTask(index, task);
+    return comp;
+  }
+
   setTask(index, task) {
     this.index = index;
     this.contentID = "task_" + index;
-    this.taskName = task.taskName;
+    this.task = task;
   }
 
   updateTask(index, task){
@@ -25,10 +33,10 @@ class TaskLI extends HyperHTMLElement {
       <li id="${this.contentID}" class="task">
         <details class="task__body" data-index="${this.index}">
           <summary class="task__summary">
-            <span class="task__method">${this.taskName}</span>
-            <added-duration class="task__time"></added-duration>
+            <span class="task__method">${this.task.taskName}</span>
+            ${new AddedDuration({timestamp: this.task.added, start: this.task.start, stop: this.task.stop}, {class: 'task__timestamp', 'data-test': 'test'})}
           </summary>
-          <detailed-object></detailed-object>
+          ${DetailedObject.make(this.task.taskName, this.task.event)}
         </details>
       </li>
     `;

@@ -11,7 +11,7 @@ export class DetailedObject extends HyperHTMLElement {
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
-    this.setObj("unset", null);
+    this.updateObject("unset", null);
   }
 
   setObj(name, obj) {

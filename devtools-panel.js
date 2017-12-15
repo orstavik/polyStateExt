@@ -1,6 +1,5 @@
 import {StateDetail} from "./libs/StateDetail.js";
-import {AddedDuration} from "./libs/AddedDuration.js";
-import {DetailedObject} from "./libs/DetailedObject.js";
+import {TaskLI} from "./libs/TaskLI.js";
 
 //1. load the content-script by sending a message to the background.js script that has access to load content scripts.
 //   Att! the content-script loaded as a file can be debugged in the content-script tab in the application window.
@@ -10,8 +9,8 @@ chrome.runtime.sendMessage({
 });
 
 //2a. get shortcuts to DOM elements in devtools-panel that will be decorated
-let debugCounter = 1;
-const tasksListUL = document.querySelector("aside.tasklist>ul");
+let debugCounter = 0;
+const tasksList = document.querySelector("aside.tasklist");
 const stateListUL = document.querySelector("#stateDetails>ul");
 
 //2b. add listener for new client states that decorate the devtools-panel DOM
@@ -20,10 +19,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.name === 'new-client-state') {
     let data = JSON.parse(request.payload);
     let id = debugCounter++;
-    let li = document.createElement("li");
-    li.append(DetailedObject.make(data.task.taskName, data.task.event));
-    li.append(AddedDuration.make(data.task.added, data.task.start, data.task.stop));
-    tasksListUL.append(li);
+    tasksList.append(TaskLI.make(id, data.task));
 
     let li2 = document.createElement("li");
     let detail = StateDetail.make(data, data.visualVersion, "s"+id);
