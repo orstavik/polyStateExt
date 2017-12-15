@@ -22,15 +22,8 @@ export class TaskLI extends HyperHTMLElement {
     this.addEventListener("mousedown", TaskLI.showActiveState);
   }
 
-  setTask(index, task) {
-    this.index = index;
-    this.contentID = "task_" + index;
-    this.task = task;
-  }
-
   updateProps(props) {
     props = Object.assign({}, this._props, props);
-    props.contentID = "task_" + props.index;
     this._props = props;
 
     this.render();
@@ -38,22 +31,23 @@ export class TaskLI extends HyperHTMLElement {
 
   render() {
     return this.html`
-      <li id="${this._props.contentID}" class="task">
-        <details class="task__body" data-index="${this._props.index}">
-          <summary class="task__summary">
-            <span class="task__method">${this._props.task.taskName}</span>
-            ${new AddedDuration({
-              timestamp: this._props.task.added,
-              start: this._props.task.start,
-              stop: this._props.task.stop
-            }, {
-              class: 'task__timestamp',
-              'data-test': 'test'
-            })}
-          </summary>
-          ${DetailedObject.make(this._props.task.taskName, this._props.task.event)}
-        </details>
-      </li>
+      <details class="task__body" data-index="${this._props.index}">
+        <summary class="task__summary">
+          <span class="task__method">${this._props.task.taskName}</span>
+          ${new AddedDuration({
+            timestamp: this._props.task.added,
+            start: this._props.task.start,
+            stop: this._props.task.stop
+          }, {
+            class: 'task__timestamp',
+            'data-test': 'test'
+          })}
+        </summary>
+        ${new DetailedObject({
+          name: this._props.task.taskName,
+          obj: this._props.task.event
+        })}
+      </details>
     `;
   }
 

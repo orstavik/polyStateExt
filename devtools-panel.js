@@ -19,7 +19,14 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.name === 'new-client-state') {
     let data = JSON.parse(request.payload);
     let id = debugCounter++;
-    tasksList.append(new TaskLI({index: id, task: data.task}));
+    tasksList.append(new TaskLI({
+      index: id,
+      task: data.task
+    }, {
+      class: 'tasklist__item task',
+      id: 'task_'+id,
+      'data-index': id
+    }));
 
     let li2 = document.createElement("li");
     let detail = StateDetail.make(data, data.visualVersion, "s"+id);
