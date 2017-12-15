@@ -2,6 +2,12 @@ import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 
 class DetailedObject extends HyperHTMLElement {
 
+  static make(name, obj) {
+    const res = new DetailedObject();
+    res.updateObject(name, obj);
+    return res;
+  }
+
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
@@ -30,7 +36,7 @@ class DetailedObject extends HyperHTMLElement {
     if (this.childObjs.length === 0) {
       this.html`
         <style>
-          span {
+          span.valueNew {
             color: orange;
           }
         </style>
@@ -39,17 +45,18 @@ class DetailedObject extends HyperHTMLElement {
       `;
     } else {
       this.html`
+        <style>
+          details {
+            padding-left: 15px; 
+          }
+        </style>
         <details>
           <summary>
             <span class="stateName">${this.name}</span>
           </summary>
-          <ul>
-            ${this.childObjs.map(child => HyperHTMLElement.wire()`
-              <li>
-                <detailed-object class="${child[0]}">${child[1]}</detailed-object>
-              </li>
-            `)}
-          </ul>                                                           
+          ${this.childObjs.map(child => HyperHTMLElement.wire()`
+              <detailed-object class="${child[0]}">${child[1]}</detailed-object>
+          `)}
         </details>
       `;
     }
