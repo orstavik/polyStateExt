@@ -17,19 +17,12 @@ class DetailedObject extends HyperHTMLElement {
   setObj(name, obj) {
     this.name = name;
     this.obj = obj;
-    this.childObjs = DetailedObject.getChildren(obj);
+    this.childObjs = !obj || typeof obj !== "object" ? [] : Object.entries(obj);
   }
 
   updateObject(name, obj) {
     this.setObj(name, obj);
     this.render();
-    if (this.childObjs.length > 0) {
-      let childrenDO = this.shadowRoot.querySelectorAll("detailed-object");
-      for (let i = 0; i < this.childObjs.length; i++) {
-        let childObj = this.childObjs[i];
-        childrenDO[i].updateObject(childObj[0], childObj[1]);
-      }
-    }
   }
 
   render() {
@@ -37,7 +30,7 @@ class DetailedObject extends HyperHTMLElement {
       this.html`
         <style>
           span.valueNew {
-            color: orange;
+            color: purple;
           }
         </style>
         <span class="stateName">${this.name}</span> : 
@@ -55,16 +48,12 @@ class DetailedObject extends HyperHTMLElement {
             <span class="stateName">${this.name}</span>
           </summary>
           ${this.childObjs.map(child => HyperHTMLElement.wire()`
-              <detailed-object class="${child[0]}">${child[1]}</detailed-object>
+            ${DetailedObject.make(child[0],child[1])}
           `)}
         </details>
       `;
     }
   }
-
-  static getChildren(obj) {
-    return !obj || typeof obj !== "object" ? [] : Object.entries(obj);
-  }
 }
 
-DetailedObject.define('detailed-object');
+customElements.define("detailed-object", DetailedObject);
