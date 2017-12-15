@@ -1,4 +1,4 @@
-import {ObservableStateLI} from "./libs/ObservableStateLI.js";
+import {StateDetail} from "./libs/StateDetail.js";
 import {AddedDuration} from "./libs/AddedDuration.js";
 import {DetailedObject} from "./libs/DetailedObject.js";
 
@@ -23,10 +23,12 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     let li = document.createElement("li");
     li.append(DetailedObject.make(data.task.taskName, data.task.event));
     li.append(AddedDuration.make(data.task.added, data.task.start, data.task.stop));
-    // let task = document.createElement("task-li");
-    // task.updateTask(id, data.task);
     tasksListUL.append(li);
-    stateListUL.append(ObservableStateLI.makeStateDetail(data, data.visualVersion, "s"+id));
+
+    let li2 = document.createElement("li");
+    let detail = StateDetail.make(data, data.visualVersion, "s"+id);
+    li2.append(detail);
+    stateListUL.append(li2);
   }
 });
 

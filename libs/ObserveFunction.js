@@ -1,7 +1,13 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 import {StatePath} from "./StatePath.js";
 
-class ObserveFunction extends HyperHTMLElement {
+export class ObserveFunction extends HyperHTMLElement {
+
+  static make(funcObj) {
+    const res = new ObserveFunction();
+    res.updateFuncObj(funcObj);
+    return res;
+  }
 
   constructor() {
     super();
@@ -38,4 +44,5 @@ class ObserveFunction extends HyperHTMLElement {
     `;
   }
 }
+
 customElements.define('observe-function', ObserveFunction);
