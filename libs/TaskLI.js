@@ -31,6 +31,7 @@ export class TaskLI extends HyperHTMLElement {
 
   render() {
     return this.html`
+      ${TaskLI.style()}
       <details class="task__body" data-index="${this._props.index}">
         <summary class="task__summary">
           <span class="task__method">${this._props.task.taskName}</span>
@@ -51,10 +52,60 @@ export class TaskLI extends HyperHTMLElement {
     `;
   }
 
+  static style() {
+    return HyperHTMLElement.wire()`
+      <style>
+        .task__summary {
+          display: flex;
+          align-items: center;
+          line-height: 16px;
+          padding: 8px 8px 8px 4px;
+          pointer-events: none;
+        }
+        
+        .task__summary::-webkit-details-marker {
+          display: none;
+        }
+        
+        .task__summary::before {
+          content: "\\25b6";
+          display: inline-block;
+          width: 14px;
+          font-size: 10px;
+          padding: 4px 0 4px 4px;
+          pointer-events: auto;
+          cursor: pointer;
+        }
+        
+        .task__body[open] .task__summary::before {
+          content: "\\25bc";
+        }
+        
+        .task__summary:focus {
+          outline: none;
+        }
+        
+        :host(.task:nth-child(2n)) .task__summary {
+          background-color: #f5f5f5;
+        }
+        
+        :host(.task--active) .task__summary {
+          background-color: #3879d9 !important;
+          color: white;
+        }
+        
+        .task__method {
+          flex: 1;
+        }
+      </style>
+    `;
+  }
+
   static showActiveState(e) {
     const prevTask = document.querySelector('.task--active');
-    if (prevTask)
+    if (prevTask) {
       prevTask.classList.remove("task--active");
+    }
     const nextTask = e.currentTarget;
     nextTask.classList.add("task--active");
 
