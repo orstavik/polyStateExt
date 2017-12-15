@@ -1,4 +1,6 @@
 import {ObservableStateLI} from "./libs/ObservableStateLI.js";
+import {AddedDuration} from "./libs/AddedDuration.js";
+import {DetailedObject} from "./libs/DetailedObject.js";
 
 //1. load the content-script by sending a message to the background.js script that has access to load content scripts.
 //   Att! the content-script loaded as a file can be debugged in the content-script tab in the application window.
@@ -19,12 +21,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     let data = JSON.parse(request.payload);
     let id = debugCounter++;
     let li = document.createElement("li");
-    let task = document.createElement("detailed-object");
-    task.updateObject(data.task.taskName, data.task.event);
-    let timeInfo = document.createElement("added-duration");
-    timeInfo.updateTimes(data.task.added, data.task.start, data.task.stop);
-    li.append(task);
-    li.append(timeInfo);
+    li.append(DetailedObject.make(data.task.taskName, data.task.event));
+    li.append(AddedDuration.make(data.task.added, data.task.start, data.task.stop));
     // let task = document.createElement("task-li");
     // task.updateTask(id, data.task);
     tasksListUL.append(li);

@@ -1,6 +1,6 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 
-class DetailedObject extends HyperHTMLElement {
+export class DetailedObject extends HyperHTMLElement {
 
   static make(name, obj) {
     const res = new DetailedObject();
@@ -30,7 +30,7 @@ class DetailedObject extends HyperHTMLElement {
       this.html`
         <style>
           span.valueNew {
-            color: purple;
+            color: pink;
           }
         </style>
         <span class="stateName">${this.name}</span> : 

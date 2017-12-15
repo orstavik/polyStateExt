@@ -47,4 +47,4 @@ class ComputeListing extends HyperHTMLElement {
     `;
   }
 }
-AddedDuration.define('compute-listing', ComputeListing);
+customElements.define('compute-listing', ComputeListing);

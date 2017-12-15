@@ -2,7 +2,7 @@ import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 
 export class StatePath extends HyperHTMLElement {
 
-  static make(path){
+  static make(path) {
     const res = new StatePath();
     res.updatePath(path);
     return res;
@@ -58,4 +58,5 @@ export class StatePath extends HyperHTMLElement {
     detail.scrollIntoViewIfNeeded();
   }
 }
+
 customElements.define('state-path', StatePath);

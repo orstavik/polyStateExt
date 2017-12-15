@@ -1,6 +1,12 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 
-class AddedDuration extends HyperHTMLElement {
+export class AddedDuration extends HyperHTMLElement {
+
+  static make(timestamp, start, stop) {
+    const res = new AddedDuration();
+    res.updateTimes(timestamp, start, stop);
+    return res;
+  }
 
   constructor() {
     super();
@@ -26,7 +32,7 @@ class AddedDuration extends HyperHTMLElement {
     this.html`
       <style>
         span {
-          color: blue;
+          color: grey;
         }
       </style>
       <span class="task__timestamp">${this.h}:${this.m}:${this.s}.${this.ms}</span>
