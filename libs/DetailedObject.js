@@ -2,42 +2,42 @@ import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 
 export class DetailedObject extends HyperHTMLElement {
 
-  static make(name, obj) {
-    const res = new DetailedObject();
-    res.updateObject(name, obj);
-    return res;
-  }
-
-  constructor() {
+  constructor(props, attribs) {
     super();
     this.attachShadow({mode: 'open'});
-    this.updateObject("unset", null);
+
+    for (let key in attribs)
+      this.setAttribute(key, attribs[key]);
+
+    props = Object.assign({
+      name: 'unset',
+      obj: null
+    }, props);
+
+    this.updateProps(props);
   }
 
-  setObj(name, obj) {
-    this.name = name;
-    this.obj = obj;
-    this.childObjs = !obj || typeof obj !== "object" ? [] : Object.entries(obj);
-  }
+  updateProps(props) {
+    props = Object.assign({}, this._props, props);
+    props.childObjs = !props.obj || typeof props.obj !== "object" ? [] : Object.entries(props.obj);
+    this._props = props;
 
-  updateObject(name, obj) {
-    this.setObj(name, obj);
     this.render();
   }
 
   render() {
-    if (this.childObjs.length === 0) {
-      this.html`
+    if (this._props.childObjs.length === 0) {
+      this.html `
         <style>
           span.valueNew {
             color: pink;
           }
         </style>
-        <span class="stateName">${this.name}</span> : 
-        <span class="valueNew">${this.obj}</span>
+        <span class="stateName">${this._props.name}</span> : 
+        <span class="valueNew">${this._props.obj}</span>
       `;
     } else {
-      this.html`
+      this.html `
         <style>
           details {
             padding-left: 15px; 
@@ -45,10 +45,13 @@ export class DetailedObject extends HyperHTMLElement {
         </style>
         <details>
           <summary>
-            <span class="stateName">${this.name}</span>
+            <span class="stateName">${this._props.name}</span>
           </summary>
-          ${this.childObjs.map(child => HyperHTMLElement.wire()`
-            ${DetailedObject.make(child[0],child[1])}
+          ${this._props.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
+            ${new DetailedObject({
+              name: key,
+              obj: value
+            })}
           `)}
         </details>
       `;
