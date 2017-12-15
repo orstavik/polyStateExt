@@ -22,7 +22,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     tasksList.append(new TaskLI({index: id, task: data.task}));
 
     let li2 = document.createElement("li");
-    let detail = StateDetail.make(data, data.visualVersion, "s"+id);
+    let detail = new StateDetail({debugInfo: data, visualVersion: data.visualVersion, id:"s"+id});
     li2.append(detail);
     stateListUL.append(li2);
   }

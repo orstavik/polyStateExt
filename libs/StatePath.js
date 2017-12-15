@@ -33,7 +33,7 @@ export class StatePath extends HyperHTMLElement {
           color: darkgreen;
         }
       </style>
-      <span class="${this.classes}" onclick="${StatePath.togglePathArgs}">${this.contentValue}</span>
+      <span class="${this.classes}">${this.contentValue}</span>
     `;
   }
 
