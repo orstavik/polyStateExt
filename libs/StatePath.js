@@ -26,7 +26,6 @@ export class StatePath extends HyperHTMLElement {
   }
 
   render() {
-    console.log("statepath");
     this.html`
       <style>
         span {
