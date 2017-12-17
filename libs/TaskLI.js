@@ -127,6 +127,10 @@ export class TaskLI extends HyperHTMLElement {
           background-color: #3879d9 !important;
           color: white;
         }
+
+        :host(.task--active) .task__timestamp {
+          --color: white;
+        }
         
         .task__method {
           flex: 1;
