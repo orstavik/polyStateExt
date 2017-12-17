@@ -29,6 +29,7 @@ export class TaskLI extends HyperHTMLElement {
     props = Object.assign({}, TaskLI.initProps, props);
     
     this.updateProps(props);
+    this.addEventListener('mousedown', TaskLI.showActiveState);
   }
 
   /**
@@ -64,7 +65,7 @@ export class TaskLI extends HyperHTMLElement {
   render() {
     return this.html`
       ${TaskLI.style()}
-      <details class="task__body" data-index="${this._props.index}" onmousedown="${TaskLI.showActiveState}">
+      <details class="task__body" data-index="${this._props.index}">
         <summary class="task__summary">
           <span class="task__method">${this._props.task.taskName}</span>
           ${new AddedDuration({
