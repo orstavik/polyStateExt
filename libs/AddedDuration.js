@@ -1,22 +1,25 @@
-/** @module AddedDuration */
+/** @module libs/AddedDuration */
 
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 
 /**
  * Webcomponent time info of task
  * @export
- * @class AddedDuration
  * @extends {HyperHTMLElement}
  */
 export class AddedDuration extends HyperHTMLElement {
 
   /**
+   * @typedef {Object} Props
+   * @property {number} props.timestamp
+   * @property {number} props.start
+   * @property {number} props.stop
+   */
+
+  /**
    * Creates an instance of AddedDuration
-   * @param {Object} props
-   * @param {number} props.timestamp
-   * @param {number} props.start
-   * @param {number} props.stop Properties of class
-   * @param {Object} attribs HTML attributes of component
+   * @param {Props} props Properties of class
+   * @param {Object} attribs Attributes of component
    */
   constructor(props, attribs) {
     super();
@@ -42,10 +45,7 @@ export class AddedDuration extends HyperHTMLElement {
 
   /**
    * Updates props and rerenders component
-   * @param {Object} props
-   * @param {number} props.timestamp
-   * @param {number} props.start
-   * @param {number} props.stop Properties of class
+   * @param {Props} props New properties of class
    */
   updateProps(props) {
     props = Object.assign({}, this._props, props);

@@ -1,4 +1,4 @@
-/** @module TaskLI */
+/** @module libs/TaskLI */
 
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 import {AddedDuration} from "./AddedDuration.js";
@@ -7,17 +7,20 @@ import {DetailedObject} from "./DetailedObject.js";
 /**
  * Webcomponent state task view
  * @export
- * @class TaskLI
  * @extends {HyperHTMLElement}
  */
 export class TaskLI extends HyperHTMLElement {
 
   /**
+   * @typedef {Object} Props
+   * @property {number} index Index of task
+   * @property {Object} task Body of task
+   */
+
+  /**
    * Creates an instance of TaskLI
-   * @param {Object} props
-   * @param {number} props.index
-   * @param {Object} props.task Properties of class
-   * @param {Object} attribs HTML attributes of component
+   * @param {Props} props Properties of class
+   * @param {Object} attribs Attributes of component
    */
   constructor(props, attribs) {
     super();
@@ -45,9 +48,7 @@ export class TaskLI extends HyperHTMLElement {
 
   /**
    * Updates props and rerenders component
-   * @param {Object} props
-   * @param {number} props.index
-   * @param {Object} props.task Properties of class
+   * @param {Props} props New properties of class
    */
   updateProps(props) {
     props = Object.assign({}, this._props, props);
@@ -84,7 +85,7 @@ export class TaskLI extends HyperHTMLElement {
 
   /**
    * Returns style html element
-   * @return {HTMLStyleElement}
+   * @returns {HTMLStyleElement}
    */
   static style() {
     return HyperHTMLElement.wire()`
@@ -129,7 +130,7 @@ export class TaskLI extends HyperHTMLElement {
         }
 
         :host(.task--active) .task__timestamp {
-          --color: white;
+          color: white;
         }
         
         .task__method {
