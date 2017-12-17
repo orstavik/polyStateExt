@@ -1,24 +1,52 @@
+/** @module AddedDuration */
+
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 
+/**
+ * Webcomponent time info of task
+ * @export
+ * @class AddedDuration
+ * @extends {HyperHTMLElement}
+ */
 export class AddedDuration extends HyperHTMLElement {
 
+  /**
+   * Creates an instance of AddedDuration
+   * @param {Object} props
+   * @param {number} props.timestamp
+   * @param {number} props.start
+   * @param {number} props.stop Properties of class
+   * @param {Object} attribs HTML attributes of component
+   */
   constructor(props, attribs) {
     super();
     this.attachShadow({mode: 'open'});
-
     for (let key in attribs)
       this.setAttribute(key, attribs[key]);
-    
-    props = Object.assign({
-      timestamp: 0,
-      start: 0,
-      stop: 0
-    }, props);
-    
+    props = Object.assign({}, AddedDuration.initProps(), props);
     this.updateProps(props);
   }
 
-  // props = {timestamp: <Number>, start: <Number>, stop: <Number>}
+  /**
+   * Returns default props
+   * @readonly
+   * @static
+   */
+  static get initProps() {
+    return {
+      timestamp: 0,
+      start: 0,
+      stop: 0
+    }
+  }
+
+  /**
+   * Updates props and rerenders component
+   * @param {Object} props
+   * @param {number} props.timestamp
+   * @param {number} props.start
+   * @param {number} props.stop Properties of class
+   */
   updateProps(props) {
     props = Object.assign({}, this._props, props);
     const t = new Date(props.timestamp);
@@ -31,7 +59,10 @@ export class AddedDuration extends HyperHTMLElement {
     
     this.render();
   }
-
+  
+  /**
+   * Renders html to the shadow dom of a component
+   */
   render() {
     this.html`
       ${AddedDuration.style()}
@@ -41,6 +72,10 @@ export class AddedDuration extends HyperHTMLElement {
     `;
   }
   
+  /**
+   * Returns style html element
+   * @return {HTMLStyleElement}
+   */
   static style() {
     return HyperHTMLElement.wire()`
       <style>
@@ -54,8 +89,17 @@ export class AddedDuration extends HyperHTMLElement {
     `;
   }
 
+  /**
+   * Formats the number to string with zeros in front
+   * so that result contains set number of symbols
+   * @static
+   * @param {number} n
+   * @param {number} width Number of symbols in result string
+   * @returns {string}
+   */
   static formatNumber(n, width) {
     return '0'.repeat(width - n.toString().length) + n;
   }
 }
+
 customElements.define('added-duration', AddedDuration);

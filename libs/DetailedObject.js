@@ -42,7 +42,7 @@ export class DetailedObject extends HyperHTMLElement {
    * Updates props and rerenders component
    * @param {Object} props
    * @param {string} props.name
-   * @param {Object} props.obj Properties of DetailsObject class
+   * @param {Object} props.obj Properties of class
    */
   updateProps(props) {
     props = Object.assign({}, this._props, props);
