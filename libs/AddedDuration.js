@@ -23,7 +23,7 @@ export class AddedDuration extends HyperHTMLElement {
     this.attachShadow({mode: 'open'});
     for (let key in attribs)
       this.setAttribute(key, attribs[key]);
-    props = Object.assign({}, AddedDuration.initProps(), props);
+    props = Object.assign({}, AddedDuration.initProps, props);
     this.updateProps(props);
   }
 
