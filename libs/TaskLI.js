@@ -1,9 +1,24 @@
+/** @module TaskLI */
+
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 import {AddedDuration} from "./AddedDuration.js";
 import {DetailedObject} from "./DetailedObject.js";
 
+/**
+ * Webcomponent state task view
+ * @export
+ * @class TaskLI
+ * @extends {HyperHTMLElement}
+ */
 export class TaskLI extends HyperHTMLElement {
 
+  /**
+   * Creates an instance of TaskLI
+   * @param {Object} props
+   * @param {string} props.index
+   * @param {Object} props.task Properties of class
+   * @param {Object} attribs HTML attributes of component
+   */
   constructor(props, attribs) {
     super();
     this.attachShadow({mode: 'open'});
@@ -11,17 +26,31 @@ export class TaskLI extends HyperHTMLElement {
     for (let key in attribs)
       this.setAttribute(key, attribs[key]);
     
-    props = Object.assign({
+    props = Object.assign({}, TaskLI.initProps, props);
+    
+    this.updateProps(props);
+  }
+
+  /**
+   * Returns default props
+   * @readonly
+   * @static
+   */
+  static get initProps() {
+    return {
       index: 0,
       task: {
         taskName: 'unset',
       }
-    }, props);
-    
-    this.updateProps(props);
-    this.addEventListener("mousedown", TaskLI.showActiveState);
+    }
   }
 
+  /**
+   * Updates props and rerenders component
+   * @param {Object} props
+   * @param {string} props.name
+   * @param {Object} props.obj Properties of DetailsObject class
+   */
   updateProps(props) {
     props = Object.assign({}, this._props, props);
     this._props = props;
@@ -29,10 +58,13 @@ export class TaskLI extends HyperHTMLElement {
     this.render();
   }
 
+  /**
+   * Renders html to the shadow dom of a component
+   */
   render() {
     return this.html`
       ${TaskLI.style()}
-      <details class="task__body" data-index="${this._props.index}">
+      <details class="task__body" data-index="${this._props.index}" onmousedown="${TaskLI.showActiveState}">
         <summary class="task__summary">
           <span class="task__method">${this._props.task.taskName}</span>
           ${new AddedDuration({
@@ -52,6 +84,10 @@ export class TaskLI extends HyperHTMLElement {
     `;
   }
 
+  /**
+   * Returns style html element
+   * @return {HTMLStyleElement}
+   */
   static style() {
     return HyperHTMLElement.wire()`
       <style>
@@ -100,7 +136,11 @@ export class TaskLI extends HyperHTMLElement {
       </style>
     `;
   }
-
+  /**
+   * Changes the current active task and state detail
+   * @static
+   * @param {MouseEvent} e
+   */
   static showActiveState(e) {
     const prevTask = document.querySelector('.task--active');
     if (prevTask) {

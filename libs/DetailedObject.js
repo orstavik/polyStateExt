@@ -3,19 +3,19 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 
 /**
- * Class representing tree view of an object
- * 
+ * Webcomponent tree view of an object
+ * @export
  * @class DetailedObject
  * @extends {HyperHTMLElement}
  */
 export class DetailedObject extends HyperHTMLElement {
   
   /**
-   * Creates an instance of DetailedObject.
+   * Creates an instance of DetailedObject
    * @param {Object} props
    * @param {string} props.name
-   * @param {Object} props.obj Properties of DetailsObject class
-   * @param {Object} attribs HTML attributes of <details-object> component
+   * @param {Object} props.obj Properties of class
+   * @param {Object} attribs HTML attributes of component
    */
   constructor(props, attribs) {
     super();
@@ -28,7 +28,6 @@ export class DetailedObject extends HyperHTMLElement {
 
   /**
    * Returns default props
-   * 
    * @readonly
    * @static
    */
@@ -41,7 +40,6 @@ export class DetailedObject extends HyperHTMLElement {
 
   /**
    * Updates props and rerenders component
-   * 
    * @param {Object} props
    * @param {string} props.name
    * @param {Object} props.obj Properties of DetailsObject class
