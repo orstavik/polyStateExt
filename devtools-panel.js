@@ -12,7 +12,12 @@ chrome.runtime.sendMessage({
 let debugCounter = 0;
 const tasksList = document.querySelector("aside.tasklist");
 const stateDetail = document.querySelector("state-detail");
-
+const debugInfoList = [];
+tasksList.addEventListener("task-selected", e=> {
+  const taskId = Number(e.detail);
+  let data = debugInfoList[taskId];
+  stateDetail.updateProps(new StateDetail.Props(data.observerInfo, data.visualVersion));
+});
 //2b. add listener for new client states that decorate the devtools-panel DOM
 //    Att! the devtools-panel.js script can be debugged by right-clicking on the panel in devtools -> inspect.
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -20,8 +25,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     let data = JSON.parse(request.payload);
     let id = debugCounter++;
     tasksList.append(new TaskLI(new TaskLI.Props(id, data.task), {id: 'task_' + id, class: 'tasklist__item task', 'data-index': id}));
-
-    stateDetail.updateProps(new StateDetail.Props(data.observerInfo, data.visualVersion));
+    debugInfoList[id] = data;
+    // stateDetail.updateProps(new StateDetail.Props(data.observerInfo, data.visualVersion));
   }
 });
 
