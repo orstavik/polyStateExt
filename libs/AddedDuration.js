@@ -4,21 +4,12 @@ import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 
 /**
  * Webcomponent time info of task
- * @export
- * @extends {HyperHTMLElement}
  */
-export class AddedDuration extends HyperHTMLElement {
-
-  /**
-   * @typedef {Object} Props
-   * @property {number} props.timestamp
-   * @property {number} props.start
-   * @property {number} props.stop
-   */
+class AddedDuration extends HyperHTMLElement {
 
   /**
    * Creates an instance of AddedDuration
-   * @param {Props} props Properties of class
+   * @param {AddedDuration.Props} props Properties of class
    * @param {Object} attribs Attributes of component
    */
   constructor(props, attribs) {
@@ -26,42 +17,29 @@ export class AddedDuration extends HyperHTMLElement {
     this.attachShadow({mode: 'open'});
     for (let key in attribs)
       this.setAttribute(key, attribs[key]);
-    props = Object.assign({}, AddedDuration.initProps, props);
-    this.updateProps(props);
+    this._props = props;
+    this.updateProps();
   }
 
   /**
-   * Returns default props
-   * @readonly
-   * @static
-   */
-  static get initProps() {
-    return {
-      timestamp: 0,
-      start: 0,
-      stop: 0
-    }
-  }
-
-  /**
-   * Updates props and rerenders component
-   * @param {Props} props New properties of class
+   * Call this method to update its properties and rerender its DOM node.
+   * @param {AddedDuration.Props} props New properties of class
    */
   updateProps(props) {
-    props = Object.assign({}, this._props, props);
-    const t = new Date(props.timestamp);
-    props.h = AddedDuration.formatNumber(t.getHours(), 2);
-    props.m = AddedDuration.formatNumber(t.getMinutes(), 2);
-    props.s = AddedDuration.formatNumber(t.getSeconds(), 2);
-    props.ms = AddedDuration.formatNumber(t.getMilliseconds(), 3);
-    props.duration = Math.round((props.stop - props.start) * 100) / 100;
-    this._props = props;
-    
+    this._props = this._props.update(props);
+    const t = new Date(this._props.timestamp);
+    this._props.h = AddedDuration.formatNumber(t.getHours(), 2);
+    this._props.m = AddedDuration.formatNumber(t.getMinutes(), 2);
+    this._props.s = AddedDuration.formatNumber(t.getSeconds(), 2);
+    this._props.ms = AddedDuration.formatNumber(t.getMilliseconds(), 3);
+    this._props.duration = Math.round((this._props.stop - this._props.start) * 100) / 100;
     this.render();
   }
   
   /**
-   * Renders html to the shadow dom of a component
+   * Call this method to update the html code inside this element to the current state of its properties and attributes.
+   * updateProps calls this method by default, but you must call this method manually if you need the DOM to reflect
+   * changes to some of its attributes that should change the HTML structure.
    */
   render() {
     this.html`
@@ -73,7 +51,7 @@ export class AddedDuration extends HyperHTMLElement {
   }
   
   /**
-   * Returns style html element
+   * Helper function to isolate css style
    * @return {HTMLStyleElement}
    */
   static style() {
@@ -89,7 +67,6 @@ export class AddedDuration extends HyperHTMLElement {
   /**
    * Formats the number to string with zeros in front
    * so that result contains set number of symbols
-   * @static
    * @param {number} n
    * @param {number} width Number of symbols in result string
    * @returns {string}
@@ -99,4 +76,32 @@ export class AddedDuration extends HyperHTMLElement {
   }
 }
 
+/**
+ * AddedDuration props interface
+ */
+AddedDuration.Props = class {
+  /**
+   * @param {number} props.timestamp
+   * @param {number} props.start
+   * @param {number} props.stop
+   */
+  constructor(timestamp, start, stop) {
+    this.timestamp = timestamp || 0;
+    this.start = start || 0;
+    this.stop = stop || 0;
+  }
+
+  /**
+   * @param {Object} newProps
+   * @param {number} newProps.timestamp
+   * @param {number} newProps.start
+   * @param {number} newProps.stop
+   */
+  update(newProps){
+    return Object.assign({}, this, newProps);
+  }
+};
+
 customElements.define('added-duration', AddedDuration);
+
+export default AddedDuration;

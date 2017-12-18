@@ -1,7 +1,7 @@
 /** @module libs/TaskLI */
 
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
-import {AddedDuration} from "./AddedDuration.js";
+import AddedDuration from "./AddedDuration.js";
 import {DetailedObject} from "./DetailedObject.js";
 
 /**
@@ -19,7 +19,7 @@ class TaskLI extends HyperHTMLElement {
     for (let key in attribs)
       this.setAttribute(key, attribs[key]);
     this._props = props;
-    this.render();
+    this.updateProps();
     this.addEventListener('mousedown', TaskLI.showActiveState);
   }
 
@@ -38,24 +38,21 @@ class TaskLI extends HyperHTMLElement {
    * changes to some of its attributes that should change the HTML structure.
    */
   render() {
+    const p = this._props;
     return this.html`
       ${TaskLI._style()}
-      <details class="task__body" data-index="${this._props.index}">
+      <details class="task__body" data-index="${p.index}">
         <summary class="task__summary">
-          <span class="task__method">${this._props.task.taskName}</span>
-          ${new AddedDuration({
-      timestamp: this._props.task.added,
-      start: this._props.task.start,
-      stop: this._props.task.stop
-    }, {
-      class: 'task__timestamp',
-      'data-test': 'test'
-    })}
+          <span class="task__method">${p.task.taskName}</span>
+          ${new AddedDuration(new AddedDuration.Props(p.task.added, p.task.start, p.task.stop), {
+            class: 'task__timestamp',
+            'data-test': 'test'
+          })}
         </summary>
         ${new DetailedObject({
-      name: this._props.task.taskName,
-      obj: this._props.task.event
-    })}
+          name: p.task.taskName,
+          obj: p.task.event
+        })}
       </details>
     `;
   }
@@ -137,6 +134,9 @@ class TaskLI extends HyperHTMLElement {
   }
 }
 
+/**
+ * TaskLI props interface
+ */
 TaskLI.Props = class {
   /**
    * @param {number} index Index of task
@@ -147,7 +147,11 @@ TaskLI.Props = class {
     this.task = task || {taskName: "unset"};
   }
 
-
+  /**
+   * @param {Object} newProps
+   * @param {number} newProps.index
+   * @param {Object} newProps.task
+   */
   update(newProps){
     return Object.assign({}, this, newProps);
   }
