@@ -18,7 +18,7 @@ export class StatePath extends HyperHTMLElement {
   }
 
   setPathObj(path) {
-    this.contentValue = path ? path.path.join(".") : "unset";
+    this.state.contentValue = path ? path.path.join(".") : "unset";
   }
 
   updatePath(path) {
@@ -36,12 +36,12 @@ export class StatePath extends HyperHTMLElement {
           color: darkgreen;
         }
       </style>
-      <span>${this.contentValue}</span>
+      <span>${this.state.contentValue}</span>
     `;
   }
 
   static togglePathArgs(e) {
-    this.dispatchEvent(new CustomEvent("path-clicked", {composed: true, bubbles: true, detail: this.contentValue}));
+    this.dispatchEvent(new CustomEvent("path-clicked", {composed: true, bubbles: true, detail: this.state.contentValue}));
   }
 }
 
