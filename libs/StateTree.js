@@ -1,5 +1,5 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
-import {ComputeListing} from "./ComputeListing.js";
+import ComputeListing from "./ComputeListing.js";
 
 export class StateTree extends HyperHTMLElement {
 
@@ -40,7 +40,7 @@ export class StateTree extends HyperHTMLElement {
             color: pink;
           }
         </style>
-        ${this.compute ? new ComputeListing(this.compute) : ""}
+        ${this.compute ? new ComputeListing(new ComputeListing.Props(this.compute), null) : ""}
         <span class="stateName">${this.name}</span> : 
         <span class="valueNew">${this.values.newState}</span>
       `;
