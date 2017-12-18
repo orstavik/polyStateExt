@@ -80,8 +80,7 @@ export class AddedDuration extends HyperHTMLElement {
     return HyperHTMLElement.wire()`
       <style>
         :host {
-          --color: grey;
-          color: --color;
+          color: grey;
         }
       </style>
     `;
