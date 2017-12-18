@@ -24,28 +24,33 @@ class StateDetail extends HyperHTMLElement {
    * @param {StateDetail.Props} props The new properties of this component
    */
   updateProps(props) {
-    this._props = this._props.update(props);
+    this._props = StateDetail.Props.update(props, this._props);
     this.render();
   }
 
   render() {
-
-    if (this._props.observers.length !== 0) {
-      this.html`
-        <h4 class="state-observer__header1">Observers</h4>
-        <ul class="state-observer__observers">
-          ${this._props.observers.map(observer => HyperHTMLElement.wire()`
-            ${ObserveFunction.make(observer)}
-          `)}
-        </ul>
+    this.html`
+        ${this._renderObservers()}
         <h4 class="state-observer__header2">State</h4>
-        ${StateTree.make("state", this._props.visualVersion, "state-observer__state")}
+        ${this._props && this._props.visualVersion ?
+          StateTree.make("state", this._props.visualVersion, "state-observer__state") :
+          null
+        }
       `;
-    } else {
-      this.html`
-        <h5>No observers registered</h5>
-      `;
-    }
+  }
+
+  _renderObservers() {
+    if (!this._props || !this._props.observers)
+      return HyperHTMLElement.wire()`<h5>No observers registered</h5>`;
+
+    return HyperHTMLElement.wire()`
+      <h4 class="state-observer__header1">Observers</h4>
+      <ul class="state-observer__observers">
+        ${this._props.observers.map(observer => HyperHTMLElement.wire()`
+          ${ObserveFunction.make(observer)}
+        `)}
+      </ul>
+    `;
   }
 
   /**
@@ -66,17 +71,12 @@ StateDetail.Props = class {
    * @param {Object} visualVersion computed merged into the state detail
    */
   constructor(observerInfo, visualVersion) {
-    if (!observerInfo || !visualVersion)
-      throw new Error("StateDetail must have both debugInfo and visualVersion when created");
     this.visualVersion = visualVersion;
-    this.observers = Object.values(observerInfo);
+    this.observers = observerInfo ? Object.values(observerInfo) : undefined;
   }
 
-  update(newProps) {
-    return {
-      observers: Object.values(newProps.observerInfo || {}),
-      visualVersion: newProps.visualVersion
-    };
+  static update(newProps, oldProps) {
+    return newProps;
   }
 };
 

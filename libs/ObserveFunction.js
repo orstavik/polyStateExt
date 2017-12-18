@@ -26,7 +26,6 @@ export class ObserveFunction extends HyperHTMLElement {
   }
 
   render() {
-    console.log("statepath");
     this.html`
       <style>
         span.funcName {
