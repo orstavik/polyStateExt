@@ -1,4 +1,6 @@
 .tasklist {
+    display: flex;
+    flex-direction: column;
     grid-area: tasklist;
     overflow-y: auto;
 }
