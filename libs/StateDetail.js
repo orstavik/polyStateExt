@@ -5,7 +5,7 @@ import {ObserveFunction} from "./ObserveFunction.js";
 class StateDetail extends HyperHTMLElement {
 
   /**
-   * Creates an instance of TaskLI
+   * Creates an instance of StateDetail
    * @param {StateDetail.Props} props Properties of class
    * @param {Object} attribs Attributes of component
    */
