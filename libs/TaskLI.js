@@ -2,7 +2,7 @@
 
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 import AddedDuration from "./AddedDuration.js";
-import {DetailedObject} from "./DetailedObject.js";
+import DetailedObject from "./DetailedObject.js";
 
 /**
  * Webcomponent state task view
@@ -49,10 +49,7 @@ class TaskLI extends HyperHTMLElement {
             'data-test': 'test'
           })}
         </summary>
-        ${new DetailedObject({
-          name: p.task.taskName,
-          obj: p.task.event
-        })}
+        ${new DetailedObject(new DetailedObject.Props(p.task.taskName, p.task.event))}
       </details>
     `;
   }

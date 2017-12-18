@@ -4,20 +4,12 @@ import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 
 /**
  * Webcomponent tree view of an object
- * @export
- * @extends {HyperHTMLElement}
  */
-export class DetailedObject extends HyperHTMLElement {
-  
-  /**
-   * @typedef {Object} Props
-   * @property {number} props.name Name of object
-   * @property {number} props.obj Body of object
-   */
+class DetailedObject extends HyperHTMLElement {
   
   /**
    * Creates an instance of DetailedObject
-   * @param {Props} props Properties of class
+   * @param {DetailedObject.Props} props Properties of class
    * @param {Object} attribs Attributes of component
    */
   constructor(props, attribs) {
@@ -25,40 +17,28 @@ export class DetailedObject extends HyperHTMLElement {
     this.attachShadow({mode: 'open'});
     for (let key in attribs)
       this.setAttribute(key, attribs[key]);
-    props = Object.assign({}, DetailedObject.initProps, props);
+    this._props = props;
     this.updateProps(props);
   }
 
   /**
-   * Returns default props
-   * @readonly
-   * @static
-   */
-  static get initProps() {
-    return {
-      name: 'unset',
-      obj: null
-    };
-  }
-
-  /**
-   * Updates props and rerenders component
-   * @param {Props} props New properties of class
+   * Call this method to update its properties and rerender its DOM node.
+   * @param {DetailedObject.Props} props New properties of class
    */
   updateProps(props) {
-    props = Object.assign({}, this._props, props);
-    props.childObjs = !props.obj || typeof props.obj !== "object" ? [] : Object.entries(props.obj);
-    this._props = props;
-
+    this._props = this._props.update(props);
+    this._props.childObjs = !this._props.obj || typeof this._props.obj !== "object" ? [] : Object.entries(this._props.obj);
     this.render();
   }
 
   /**
-   * Renders html to the shadow dom of a component
+   * Call this method to update the html code inside this element to the current state of its properties and attributes.
+   * updateProps calls this method by default, but you must call this method manually if you need the DOM to reflect
+   * changes to some of its attributes that should change the HTML structure.
    */
   render() {
     if (this._props.childObjs.length === 0) {
-      this.html `
+      this.html`
         <style>
           span.valueNew {
             color: pink;
@@ -68,7 +48,7 @@ export class DetailedObject extends HyperHTMLElement {
         <span class="valueNew">${this._props.obj}</span>
       `;
     } else {
-      this.html `
+      this.html`
         <style>
           details {
             padding-left: 15px; 
@@ -79,10 +59,7 @@ export class DetailedObject extends HyperHTMLElement {
             <span class="stateName">${this._props.name}</span>
           </summary>
           ${this._props.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
-            ${new DetailedObject({
-              name: key,
-              obj: value
-            })}
+            ${new DetailedObject(new DetailedObject.Props(key, value))}
           `)}
         </details>
       `;
@@ -90,4 +67,29 @@ export class DetailedObject extends HyperHTMLElement {
   }
 }
 
+/**
+ * DetailedObject props interface
+ */
+DetailedObject.Props = class {
+  /**
+   * @param {string} name Name of object
+   * @param {Object} obj Body of object
+   */
+  constructor(name, obj) {
+    this.name = name || 'unset';
+    this.obj = obj || null;
+  }
+
+  /**
+   * @param {Object} newProps
+   * @param {string} newProps.name
+   * @param {Object} newProps.obj
+   */
+  update(newProps){
+    return Object.assign({}, this, newProps);
+  }
+};
+
 customElements.define("detailed-object", DetailedObject);
+
+export default DetailedObject;

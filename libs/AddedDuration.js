@@ -93,9 +93,9 @@ AddedDuration.Props = class {
 
   /**
    * @param {Object} newProps
-   * @param {number} newProps.timestamp
-   * @param {number} newProps.start
-   * @param {number} newProps.stop
+   * @param {} newProps.timestamp
+   * @param {} newProps.start
+   * @param {} newProps.stop
    */
   update(newProps){
     return Object.assign({}, this, newProps);
