@@ -59,7 +59,7 @@ class AddedDuration extends HyperHTMLElement {
       <style>
         :host {
           display: inline-block;
-          color: grey;
+          color: var(--secondary-text-color);
         }
       </style>
     `;

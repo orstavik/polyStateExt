@@ -95,18 +95,22 @@ class TaskLI extends HyperHTMLElement {
         .task__summary:focus {
           outline: none;
         }
+
+        .task__summary {
+          background-color: var(--default-background-color);
+        }
         
         :host(.task:nth-child(2n)) .task__summary {
-          background-color: #f5f5f5;
+          background-color: var(--even-background-color);
         }
         
         :host(.task--active) .task__summary {
-          background-color: #3879d9 !important;
-          color: white;
+          background-color: var(--focus-background-color) !important;
+          color: var(--focus-text-color);
         }
 
         :host(.task--active) .task__timestamp {
-          color: white;
+          color: var(--focus-text-color);
         }
         
         .task__method {
@@ -115,7 +119,8 @@ class TaskLI extends HyperHTMLElement {
 
         .task__details {
           padding: 10px;
-          border-bottom: 1px solid #dadada;
+          border-top: 1px solid var(--default-border-color);
+          border-bottom: 1px solid var(--default-border-color);
           overflow-x: auto;
         }
       </style>

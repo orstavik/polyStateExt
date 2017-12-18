@@ -1,0 +1,11 @@
+html {
+    --default-background-color: #ffffff;
+    --focus-background-color: #3879d9;
+    --even-background-color: #f5f5f5;
+
+    --default-text-color: #000000;
+    --secondary-text-color: #808080;
+    --focus-text-color: #ffffff;
+
+    --default-border-color: #dadada;
+}
