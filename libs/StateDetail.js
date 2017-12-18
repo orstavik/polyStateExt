@@ -14,7 +14,7 @@ class StateDetail extends HyperHTMLElement {
     this.attachShadow({mode: 'open'});
     for (let key in attribs)
       this.setAttribute(key, attribs[key]);
-    this._props = props;
+    this.state = props;
     this.render();
     this.addEventListener("path-clicked", StateDetail.pathClicked);
   }
@@ -24,7 +24,7 @@ class StateDetail extends HyperHTMLElement {
    * @param {StateDetail.Props} props The new properties of this component
    */
   updateProps(props) {
-    this._props = StateDetail.Props.update(props, this._props);
+    this.state = StateDetail.Props.update(props, this.state);
     this.render();
   }
 
@@ -32,21 +32,22 @@ class StateDetail extends HyperHTMLElement {
     this.html`
         ${this._renderObservers()}
         <h4 class="state-observer__header2">State</h4>
-        ${this._props && this._props.visualVersion ?
-          StateTree.make("state", this._props.visualVersion, "state-observer__state") :
+        ${this.state.visualVersion ?
+          StateTree.make("state", this.state.visualVersion, "state-observer__state") :
           null
         }
+        <p>selected path: ${this.state.selectedPath}</p>
       `;
   }
 
   _renderObservers() {
-    if (!this._props || !this._props.observers)
+    if (!this.state.observers)
       return HyperHTMLElement.wire()`<h5>No observers registered</h5>`;
 
     return HyperHTMLElement.wire()`
       <h4 class="state-observer__header1">Observers</h4>
       <ul class="state-observer__observers">
-        ${this._props.observers.map(observer => HyperHTMLElement.wire()`
+        ${this.state.observers.map(observer => HyperHTMLElement.wire()`
           ${ObserveFunction.make(observer)}
         `)}
       </ul>
@@ -70,9 +71,10 @@ StateDetail.Props = class {
    * @param {Object} observerInfo the whole debugInfo
    * @param {Object} visualVersion computed merged into the state detail
    */
-  constructor(observerInfo, visualVersion) {
+  constructor(observerInfo, visualVersion, selectedPath) {
     this.visualVersion = visualVersion;
     this.observers = observerInfo ? Object.values(observerInfo) : undefined;
+    this.selectedPath = selectedPath;
   }
 
   static update(newProps, oldProps) {
