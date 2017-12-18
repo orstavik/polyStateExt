@@ -47,10 +47,10 @@ export class ComputeListing extends HyperHTMLElement {
       <div class="compute">
         <span class="compute__icon">&#9881;</span>
         <span class="compute__description">
-          <span class="compute__return">${StatePath.make(this._props.triggerReturn)}</span> = 
+          <span class="compute__return">${StatePath.make(this._props.triggerReturn, this._props.triggerReturn.triggered)}</span> = 
           <span class="compute__name">${this._props.funcName}</span>(<span class="compute__args">
           ${(this._props.triggerPaths || []).map((arg, i) =>
-            HyperHTMLElement.wire()`${i !== 0 ? ", " : ""}${StatePath.make(arg)}`
+            HyperHTMLElement.wire()`${i !== 0 ? ", " : ""}${StatePath.make(arg, arg.triggered)}`
           )}
           </span>)
         </span>

@@ -2,9 +2,11 @@ import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 
 export class StatePath extends HyperHTMLElement {
 
-  static make(path) {
+  static make(path, triggered) {
     const res = new StatePath();
     res.updatePath(path);
+    if (triggered)
+      res.setAttribute("triggered", true);
     return res;
   }
 
@@ -17,7 +19,6 @@ export class StatePath extends HyperHTMLElement {
 
   setPathObj(path) {
     this.contentValue = path ? path.path.join(".") : "unset";
-    this.classes = path && path.triggered ? "triggered" : "";
   }
 
   updatePath(path) {
@@ -28,11 +29,14 @@ export class StatePath extends HyperHTMLElement {
   render() {
     this.html`
       <style>
+        :host([triggered]) *{
+          font-weight: bold;
+        }
         span {
           color: darkgreen;
         }
       </style>
-      <span class="${this.classes}">${this.contentValue}</span>
+      <span>${this.contentValue}</span>
     `;
   }
 

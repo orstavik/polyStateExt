@@ -36,7 +36,7 @@ export class ObserveFunction extends HyperHTMLElement {
       <span class="pointsTo argsStart">(</span>
       <span class="funcArgs">
       ${this.funcArgs.map((arg, i) =>
-      HyperHTMLElement.wire()`${i !== 0 ? ", " : ""}${StatePath.make(arg)}`
+      HyperHTMLElement.wire()`${i !== 0 ? ", " : ""}${StatePath.make(arg, arg.triggered)}`
     )}
       </span>
       <span class="pointsTo argsEnd">)</span>
