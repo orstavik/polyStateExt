@@ -39,31 +39,89 @@ class DetailedObject extends HyperHTMLElement {
   render() {
     if (this._props.childObjs.length === 0) {
       this.html`
-        <style>
-          span.valueNew {
-            color: pink;
-          }
-        </style>
-        <span class="stateName">${this._props.name}</span> : 
-        <span class="valueNew">${this._props.obj}</span>
+        ${DetailedObject._style()}
+        <span class="details__key key--primitive">${this._props.name}</span>
+        <span class="${DetailedObject.primitiveClass(this._props.obj)}">${String(this._props.obj)}</span>
       `;
     } else {
       this.html`
-        <style>
-          details {
-            padding-left: 15px; 
-          }
-        </style>
-        <details>
-          <summary>
-            <span class="stateName">${this._props.name}</span>
+        ${DetailedObject._style()}
+        <details class="details">
+          <summary class="details__summary">
+            <span class="details__key">${this._props.name}</span>
           </summary>
           ${this._props.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
-            ${new DetailedObject(new DetailedObject.Props(key, value))}
+            ${new DetailedObject(new DetailedObject.Props(key, value), {
+              class: 'details__value'
+            })}
           `)}
         </details>
       `;
     }
+  }
+
+  /**
+   * Helper function to isolate css style
+   * @returns {HTMLStyleElement}
+   */
+  static _style() {
+    return HyperHTMLElement.wire()`
+      <style>
+        :host {
+          display: block;
+          font-family: Consolas;
+          line-height: 16px;
+          white-space: nowrap;
+        }
+        :host(.details__value) {
+          padding-left: 13px;
+        }
+        .key--primitive {
+          margin-left: 13.5px;
+        }
+        .details__key {
+          color: #881391
+        }
+        .details__key::after {
+          content: ':';
+        }
+        .primitive--type-undefined,
+        .primitive--type-null {
+          color: #808080;
+        }
+        
+        .primitive--type-boolean {
+          color: #0d22aa;
+        }
+        
+        .primitive--type-number {
+          color: #1c00cf;
+        }
+        
+        .primitive--type-string {
+          color: #c41a16;
+        }
+        
+        .primitive--type-string::before,
+        .primitive--type-string::after {
+          content: '"';
+        }
+        .details__summary {
+          display: block;
+        }
+        .details__summary:focus {
+          outline: none;
+        }
+        .details__summary::-webkit-details-marker {
+          margin-right: -1px;
+        }
+      </style>
+    `;
+  }
+
+  static primitiveClass(value) {
+    const type = value ? (value.constructor.name).toLowerCase() : String(value);
+    return `details__value primitive--type-${type}`;
   }
 }
 

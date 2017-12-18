@@ -49,7 +49,9 @@ class TaskLI extends HyperHTMLElement {
             'data-test': 'test'
           })}
         </summary>
-        ${new DetailedObject(new DetailedObject.Props(p.task.taskName, p.task.event))}
+        <div class="task__details">
+          ${new DetailedObject(new DetailedObject.Props(p.task.taskName, p.task.event))}
+        </div>
       </details>
     `;
   }
@@ -61,6 +63,9 @@ class TaskLI extends HyperHTMLElement {
   static _style() {
     return HyperHTMLElement.wire()`
       <style>
+        :host {
+          display: block;
+        }
         .task__summary {
           display: flex;
           align-items: center;
@@ -106,6 +111,12 @@ class TaskLI extends HyperHTMLElement {
         
         .task__method {
           flex: 1;
+        }
+
+        .task__details {
+          padding: 10px;
+          border-bottom: 1px solid #dadada;
+          overflow-x: auto;
         }
       </style>
     `;
