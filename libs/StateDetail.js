@@ -1,5 +1,5 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
-import {StateTree} from "./StateTree.js";
+import StateTree from "./StateTree.js";
 import ObserveFunction from "./ObserveFunction.js";
 
 class StateDetail extends HyperHTMLElement {
@@ -33,7 +33,7 @@ class StateDetail extends HyperHTMLElement {
         ${this._renderObservers()}
         <h4 class="state-observer__header2">State</h4>
         ${this.state.visualVersion ?
-          StateTree.make("state", this.state.visualVersion, "state-observer__state") :
+          new StateTree(new StateTree.Props("state", this.state.visualVersion), {class: "state-observer__state"}) :
           null
         }
         <p>selected path: ${this.state.selectedPath}</p>
