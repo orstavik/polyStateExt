@@ -29,7 +29,7 @@ export class StatePath extends HyperHTMLElement {
   render() {
     this.html`
       <style>
-        :host([triggered]) *{
+        :host([triggered]) span {
           font-weight: bold;
         }
         span {
