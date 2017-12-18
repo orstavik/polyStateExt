@@ -6,20 +6,11 @@ import {DetailedObject} from "./DetailedObject.js";
 
 /**
  * Webcomponent state task view
- * @export
- * @extends {HyperHTMLElement}
  */
-export class TaskLI extends HyperHTMLElement {
-
-  /**
-   * @typedef {Object} Props
-   * @property {number} index Index of task
-   * @property {Object} task Body of task
-   */
-
+class TaskLI extends HyperHTMLElement {
   /**
    * Creates an instance of TaskLI
-   * @param {Props} props Properties of class
+   * @param {TaskLI.Props} props Properties of class
    * @param {Object} attribs Attributes of component
    */
   constructor(props, attribs) {
@@ -27,58 +18,42 @@ export class TaskLI extends HyperHTMLElement {
     this.attachShadow({mode: 'open'});
     for (let key in attribs)
       this.setAttribute(key, attribs[key]);
-    props = Object.assign({}, TaskLI.initProps, props);
-    this.updateProps(props);
+    this._props = props;
+    this._render();
     this.addEventListener('mousedown', TaskLI.showActiveState);
   }
 
   /**
-   * Returns default props
-   * @readonly
-   * @static
-   */
-  static get initProps() {
-    return {
-      index: 0,
-      task: {
-        taskName: 'unset',
-      }
-    }
-  }
-
-  /**
    * Updates props and rerenders component
-   * @param {Props} props New properties of class
+   * @param {TaskLI.Props} props New properties of class
    */
   updateProps(props) {
-    props = Object.assign({}, this._props, props);
-    this._props = props;
-
-    this.render();
+    this._props = this._props.update(props);
+    this._render();
   }
 
   /**
    * Renders html to the shadow dom of a component
    */
-  render() {
+  _render() {
     return this.html`
-      ${TaskLI.style()}
+      ${TaskLI._style()}
       <details class="task__body" data-index="${this._props.index}">
         <summary class="task__summary">
           <span class="task__method">${this._props.task.taskName}</span>
           ${new AddedDuration({
-            timestamp: this._props.task.added,
-            start: this._props.task.start,
-            stop: this._props.task.stop
-          }, {
-            class: 'task__timestamp',
-            'data-test': 'test'
-          })}
+      timestamp: this._props.task.added,
+      start: this._props.task.start,
+      stop: this._props.task.stop
+    }, {
+      class: 'task__timestamp',
+      'data-test': 'test'
+    })}
         </summary>
         ${new DetailedObject({
-          name: this._props.task.taskName,
-          obj: this._props.task.event
-        })}
+      name: this._props.task.taskName,
+      obj: this._props.task.event
+    })}
       </details>
     `;
   }
@@ -87,7 +62,7 @@ export class TaskLI extends HyperHTMLElement {
    * Returns style html element
    * @returns {HTMLStyleElement}
    */
-  static style() {
+  static _style() {
     return HyperHTMLElement.wire()`
       <style>
         .task__summary {
@@ -139,9 +114,9 @@ export class TaskLI extends HyperHTMLElement {
       </style>
     `;
   }
+
   /**
    * Changes the current active task and state detail
-   * @static
    * @param {MouseEvent} e
    */
   static showActiveState(e) {
@@ -160,4 +135,21 @@ export class TaskLI extends HyperHTMLElement {
   }
 }
 
+TaskLI.Props = class {
+  /**
+   * @param {number} index Index of task
+   * @param {Object} task Body of task
+   */
+  constructor(index, task) {
+    this.index = index || 0;
+    this.task = task || {taskName: "unset"};
+  }
+
+  update(newProps){
+    return Object.assign({}, this, newProps);
+  }
+};
+
 customElements.define('task-li', TaskLI);
+
+export default TaskLI;

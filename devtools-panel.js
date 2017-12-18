@@ -1,5 +1,5 @@
 import {StateDetail} from "./libs/StateDetail.js";
-import {TaskLI} from "./libs/TaskLI.js";
+import TaskLI from "./libs/TaskLI.js";
 
 //1. load the content-script by sending a message to the background.js script that has access to load content scripts.
 //   Att! the content-script loaded as a file can be debugged in the content-script tab in the application window.
@@ -29,10 +29,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 });
 
 const makeTasklistItem = function (id, task) {
-  return new TaskLI({
-    index: id,
-    task: task
-  }, {
+  return new TaskLI(new TaskLI.Props(id, task), {
     class: 'tasklist__item task',
     id: 'task_' + id,
     'data-index': id
