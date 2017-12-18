@@ -1,5 +1,4 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
-import StatePath from "./StatePath.js";
 
 export class ComputeListing extends HyperHTMLElement {
 
@@ -47,11 +46,14 @@ export class ComputeListing extends HyperHTMLElement {
       <div class="compute">
         <span class="compute__icon">&#9881;</span>
         <span class="compute__description">
-          <span class="compute__return">${new StatePath(new StatePath.Props(this._props.triggerReturn.path), {triggered: this._props.triggerReturn.triggered})}</span> = 
+          <span class="compute__return">
+            <state-path triggered="${this._props.triggerReturn.triggered}">${this._props.triggerReturn.path.join(".")}</state-path>
+          </span> = 
           <span class="compute__name">${this._props.funcName}</span>(<span class="compute__args">
-          ${(this._props.triggerPaths || []).map((arg, i) =>
-            HyperHTMLElement.wire()`${i !== 0 ? ", " : ""}${new StatePath(new StatePath.Props(arg.path), {triggered: arg.triggered})}`
-          )}
+          ${(this._props.triggerPaths || []).map((arg, i) => HyperHTMLElement.wire()`
+            ${i !== 0 ? ", " : ""}
+            <state-path triggered="${arg.triggered}">${arg.path.join(".")}</state-path>
+          `)}
           </span>)
         </span>
       </div>

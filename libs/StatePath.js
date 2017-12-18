@@ -1,6 +1,6 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 
-export class StatePath extends HyperHTMLElement {
+class StatePath extends HyperHTMLElement {
 
   /**
    * Creates an instance of StateDetail
@@ -29,19 +29,20 @@ export class StatePath extends HyperHTMLElement {
   render() {
     this.html`
       <style>
-        :host([triggered="true"]) span {
-          font-weight: bold;
-        }
-        span {
+        :host {
           color: darkgreen;
         }
+        :host([triggered="true"])  {
+          font-weight: bold;
+        }
       </style>
-      <span>${this.state.path.join(".")}</span>
+      <slot></slot>
     `;
   }
 
   static togglePathArgs(e) {
-    this.dispatchEvent(new CustomEvent("path-clicked", {composed: true, bubbles: true, detail: this.state.contentValue}));
+    let content = this.shadowRoot.querySelector("slot").assignedNodes()[0];
+    this.dispatchEvent(new CustomEvent("path-clicked", {composed: true, bubbles: true, detail: content}));
   }
 }
 

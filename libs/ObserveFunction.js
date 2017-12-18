@@ -1,5 +1,4 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
-import {StatePath} from "./StatePath.js";
 
 export class ObserveFunction extends HyperHTMLElement {
 
@@ -28,6 +27,9 @@ export class ObserveFunction extends HyperHTMLElement {
   render() {
     this.html`
       <style>
+        :host {
+          display: block;
+        }
         span.funcName {
           color: lightgreen;
         }
@@ -35,9 +37,10 @@ export class ObserveFunction extends HyperHTMLElement {
       <span class="funcName">${this.funcName}</span>
       <span class="pointsTo argsStart">(</span>
       <span class="funcArgs">
-      ${this.funcArgs.map((arg, i) =>
-      HyperHTMLElement.wire()`${i !== 0 ? ", " : ""}${new StatePath(new StatePath.Props(arg.path), {triggered: arg.triggered})}`
-    )}
+        ${this.funcArgs.map((arg, i) => HyperHTMLElement.wire()`
+          ${i !== 0 ? ", " : ""}
+          <state-path triggered="${arg.triggered}">${arg.path.join(".")}</state-path>
+        `)}
       </span>
       <span class="pointsTo argsEnd">)</span>
     `;
