@@ -19,23 +19,25 @@ class TaskLI extends HyperHTMLElement {
     for (let key in attribs)
       this.setAttribute(key, attribs[key]);
     this._props = props;
-    this._render();
+    this.render();
     this.addEventListener('mousedown', TaskLI.showActiveState);
   }
 
   /**
-   * Updates props and rerenders component
-   * @param {TaskLI.Props} props New properties of class
+   * Call this method to update its properties and rerender its DOM node.
+   * @param {TaskLI.Props} props The new properties of this component
    */
   updateProps(props) {
     this._props = this._props.update(props);
-    this._render();
+    this.render();
   }
 
   /**
-   * Renders html to the shadow dom of a component
+   * Call this method to update the html code inside this element to the current state of its properties and attributes.
+   * updateProps calls this method by default, but you must call this method manually if you need the DOM to reflect
+   * changes to some of its attributes that should change the HTML structure.
    */
-  _render() {
+  render() {
     return this.html`
       ${TaskLI._style()}
       <details class="task__body" data-index="${this._props.index}">
@@ -59,7 +61,7 @@ class TaskLI extends HyperHTMLElement {
   }
 
   /**
-   * Returns style html element
+   * Helper function to isolate css style
    * @returns {HTMLStyleElement}
    */
   static _style() {
@@ -144,6 +146,7 @@ TaskLI.Props = class {
     this.index = index || 0;
     this.task = task || {taskName: "unset"};
   }
+
 
   update(newProps){
     return Object.assign({}, this, newProps);
