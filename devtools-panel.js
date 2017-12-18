@@ -1,4 +1,4 @@
-import {StateDetail} from "./libs/StateDetail.js";
+import StateDetail from "./libs/StateDetail.js";
 import TaskLI from "./libs/TaskLI.js";
 
 //1. load the content-script by sending a message to the background.js script that has access to load content scripts.
@@ -19,22 +19,14 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.name === 'new-client-state') {
     let data = JSON.parse(request.payload);
     let id = debugCounter++;
-    tasksList.append(makeTasklistItem(id, data.task));
+    tasksList.append(new TaskLI(new TaskLI.Props(id, data.task), {id: 'task_' + id, class: 'tasklist__item task', 'data-index': id}));
 
     let li2 = document.createElement("li");
-    let detail = new StateDetail({debugInfo: data, visualVersion: data.visualVersion, id:"s"+id});
+    let detail = new StateDetail(new StateDetail.Props(data.observerInfo, data.visualVersion), {id: "s" + id});
     li2.append(detail);
     stateListUL.append(li2);
   }
 });
-
-const makeTasklistItem = function (id, task) {
-  return new TaskLI(new TaskLI.Props(id, task), {
-    class: 'tasklist__item task',
-    id: 'task_' + id,
-    'data-index': id
-  });
-};
 
 //3. get and inject the injected-script.
 //   the injected-script will hook into the ITObservableState.debugHook method to process
@@ -42,7 +34,7 @@ const makeTasklistItem = function (id, task) {
 //   Only chrome.devtools.inspectedWindow.eval has access to do this.
 //   Att!! If you need to debug the injected script, the content of the injected script must be added to the running app
 //         as a normal js code, for example as part of the ITObservableState.js file.
-(async function (){
+(async function () {
   let response = await fetch("injected-script.js");
   let text = await response.text();
   chrome.devtools.inspectedWindow.eval(text);
