@@ -34,7 +34,8 @@ export class StateDetail extends HyperHTMLElement {
 
   render() {
     this.html`
-        <h4 class="state-observer__header2">State</h4>
+        ${StateDetail._style()}
+        <h4 class="state__header">State</h4>
         ${StateDetail.makeStateTree(this.state.visualVersion)}
         <p>selected path: ${this.state.selectedPath}</p>
       `;
@@ -55,6 +56,13 @@ export class StateDetail extends HyperHTMLElement {
   static _style() {
     return HyperHTMLElement.wire()`
       <style>
+        :host {
+          display: block;
+          padding: 12px 24px;
+        }
+        .state__header {
+          margin: 0 0 12px;
+        }
       </style>
     `;
   }

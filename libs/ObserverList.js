@@ -36,8 +36,9 @@ export class ObserverList extends HyperHTMLElement {
       return this.html`<h5>No observers registered</h5>`;
 
     return this.html`
-      <h4 class="state-observer__header1">Observers</h4>
-      <ul class="state-observer__observers">
+      ${ObserverList._style()}
+      <h4 class="observer__header">Observers</h4>
+      <ul class="observer__observers">
         ${this.state.observers.map(observer => HyperHTMLElement.wire()`
           ${ObserveFunction.makeOrUpdate(null, observer)}
         `)}
@@ -52,6 +53,14 @@ export class ObserverList extends HyperHTMLElement {
   static _style() {
     return HyperHTMLElement.wire()`
       <style>
+        :host {
+          display: block;
+          padding: 12px 24px;
+          border-bottom: 1px solid var(--default-border-color);
+        }
+        .observer__header {
+          margin: 0 0 12px;
+        }
       </style>
     `;
   }
