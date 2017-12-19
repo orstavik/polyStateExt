@@ -14,7 +14,7 @@ body {
         grid-template-rows: 1fr 2fr;
         grid-template-areas: 'tasklist' 'details';
     }
-    #stateDetails {
+    .state {
         border-left: none !important;
         border-top: 1px solid lightgray;
     }
@@ -22,4 +22,22 @@ body {
 
 * {
     cursor: default;
+}
+
+.tasklist {
+    display: flex;
+    flex-direction: column;
+    grid-area: tasklist;
+    overflow-y: auto;
+    background-color: var(--default-background-color);
+    color: var(--default-text-color);
+    border-right: 1px solid var(--default-border-color);
+}
+
+.state {
+    display: flex;
+    box-sizing: border-box;
+    flex-direction: column;
+    padding: 12px;
+    overflow: auto;
 }

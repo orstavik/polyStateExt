@@ -1,9 +1,0 @@
-.tasklist {
-    display: flex;
-    flex-direction: column;
-    grid-area: tasklist;
-    overflow-y: auto;
-    background-color: var(--default-background-color);
-    color: var(--default-text-color);
-    border-right: 1px solid var(--default-border-color);
-}
