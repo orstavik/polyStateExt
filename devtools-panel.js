@@ -1,4 +1,4 @@
-import StateDetail from "./libs/StateDetail.js";
+import {StateDetail} from "./libs/StateDetail.js";
 import TaskLI from "./libs/TaskLI.js";
 
 //1. load the content-script by sending a message to the background.js script that has access to load content scripts.
@@ -16,16 +16,19 @@ const debugInfoList = [];
 let selectedPath = null;
 let selectedDetail = null;
 
+const updateView = function(){
+  StateDetail.makeOrUpdate(stateDetail, selectedDetail.observerInfo, selectedDetail.visualVersion, selectedPath);
+};
+
 tasksList.addEventListener("task-selected", e=> {
   selectedPath = null;
-  const taskId = Number(e.detail);
-  selectedDetail = debugInfoList[taskId];
-  stateDetail.updateProps(new StateDetail.Props(selectedDetail.observerInfo, selectedDetail.visualVersion, null));
+  selectedDetail = debugInfoList[Number(e.detail)];
+  updateView();
 });
 
 stateDetail.addEventListener("path-clicked", e=> {
   selectedPath = e.detail;
-  stateDetail.updateProps(new StateDetail.Props(selectedDetail.observerInfo, selectedDetail.visualVersion, selectedPath));
+  updateView();
 });
 
 //2b. add listener for new client states that decorate the devtools-panel DOM

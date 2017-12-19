@@ -1,27 +1,30 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 
-class ObserveFunction extends HyperHTMLElement {
+export class ObserveFunction extends HyperHTMLElement {
+
+  static makeOrUpdate(el, observeFunc){
+    el = el || new ObserveFunction(true);
+    el.updateState(observeFunc);
+    return el;
+  }
 
   /**
    * Creates an instance of a observer function description
-   * @param {ObserveFunction.Props} props Properties of class
-   * @param {Object} attribs Attributes of component
+   * @param {boolean} skipRender
    */
-  constructor(props, attribs) {
+  constructor(skipRender) {
     super();
     this.attachShadow({mode: 'open'});
-    for (let key in attribs)
-      this.setAttribute(key, attribs[key]);
-    this.state = props;
-    this.render();
+    if (!skipRender)
+      this.render();
   }
 
   /**
    * Call this method to update its properties and rerender its DOM node.
    * @param {ObserveFunction.Props} props The new properties of this component
    */
-  updateProps(props) {
-    this.state = ObserveFunction.Props.update(props, this.state);
+  updateState(props) {
+    this.state = props;
     this.render();
   }
 
@@ -38,7 +41,7 @@ class ObserveFunction extends HyperHTMLElement {
       <span class="funcName">${this.state.funcName}</span>
       <span class="pointsTo argsStart">(</span>
       <span class="funcArgs">
-        ${(this.state.funcArgs || []).map((arg, i) => HyperHTMLElement.wire()`
+        ${(this.state.triggerPaths || []).map((arg, i) => HyperHTMLElement.wire()`
           ${i !== 0 ? ", " : ""}
           <state-path triggered="${arg.triggered}">${arg.path.join(".")}</state-path>
         `)}
@@ -47,21 +50,5 @@ class ObserveFunction extends HyperHTMLElement {
     `;
   }
 }
-
-ObserveFunction.Props = class {
-  /**
-   * @param {{funcName: string, triggerPaths: []}} functionObj representing the function being called
-   */
-  constructor(functionObj) {
-    this.funcName = functionObj ? functionObj.funcName : "unset";
-    this.funcArgs = functionObj ? functionObj.triggerPaths : [];
-  }
-
-  static update(newProps, oldProps) {
-    return newProps;
-  }
-};
-
-export default ObserveFunction;
 
 customElements.define('observe-function', ObserveFunction);
