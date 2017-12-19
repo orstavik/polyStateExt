@@ -8,4 +8,47 @@ html {
     --focus-text-color: #ffffff;
 
     --default-border-color: #dadada;
+
+
+    /*theme grid*/
+    --color-light-0: var(--color-grey-200);
+    --color-light-1: var(--color-grey-200);
+    --color-light-2: var(--color-grey-200);
+    --color-light-3: var(--color-grey-200);
+    --color-light-4: var(--color-grey-200);
+    --color-light-5: var(--color-grey-200);
+
+    --color-dark-0: var(--color-grey-200);     /*text strong normal*/
+    --color-dark-1: var(--color-grey-200);     /*text strong normal*/
+    --color-dark-2: var(--color-grey-200);     /*divider area*/
+    --color-dark-3: var(--color-grey-200);     /*divider area*/
+    --color-dark-4: var(--color-grey-200);     /*text disabled*/
+
+    --color-primary-light: var(--color-blue-200);                        /*text disabled*/
+    --color-primary-normal: var(--color-blue-500);                        /*text disabled*/
+    --color-primary-dark: var(--color-blue-700);                        /*text disabled*/
+
+    /*--color-first-light-1: var(--color-blue-100);                        !*text disabled*!*/
+
+    --color-secondary-light: var(--color-grey-200);                        /*text disabled*/
+    --color-secondary-normal: var(--color-grey-200);                        /*text disabled*/
+    --color-secondary-dark: var(--color-grey-200);                        /*text disabled*/
+
+    --color-accent-light: var(--color-grey-200);                        /*text disabled*/
+    --color-accent-normal: var(--color-grey-200);                        /*text disabled*/
+    --color-accent-dark: var(--color-grey-200);                        /*text disabled*/
+
+    /* app colors*/
+    /*--color-property: var(--color-text-light-0);     !*text disabled*!*/
+    --color-string-normal: var(--color-grey-200);     /*text disabled*/
+
+    --color-number-normal: var(--color-grey-200);     /*text disabled*/
+    --color-boolean-normal: var(--color-grey-200);     /*text disabled*/
+    --color-nothing-normal: var(--color-grey-200);     /*text disabled*/
+    --color-path-normal: var(--color-secondary-normal);     /*text disabled*/
+
+    --color-hover-light: var(--color-grey-200);     /*text disabled*/
+
+    --enabled: 1.0;
+    --disabled: 0.5;
 }
