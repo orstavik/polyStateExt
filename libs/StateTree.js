@@ -42,7 +42,7 @@ export class StateTree extends HyperHTMLElement {
         ${StateTree._style()}
         <span class="details__key key--primitive">${this.state.name}</span>
         <span class="${StateTree.primitiveClass(this.state.values.newState)}">${String(this.state.values.newState)}</span>
-        ${this.state.compute ? ComputeListing.makeOrUpdate(null, this.state.compute) : null}
+        ${StateTree.makeComputeListing(this.state.compute)}
       `;
     } else {
       this.html`
@@ -50,7 +50,7 @@ export class StateTree extends HyperHTMLElement {
         <details class="details">
           <summary class="details__summary">
             <span class="details__key">${this.state.name}</span>
-            ${this.state.compute ? ComputeListing.makeOrUpdate(null, this.state.compute) : null}
+            ${StateTree.makeComputeListing(this.state.compute)}
           </summary>
           ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
             ${StateTree.makeSubStateTree(key, value)}
@@ -61,9 +61,17 @@ export class StateTree extends HyperHTMLElement {
   }
 
   static makeSubStateTree(key, value) {
-    let child = StateTree.makeOrUpdate(null, key, value);
+    const child = StateTree.makeOrUpdate(null, key, value);
     child.setAttribute("class", 'details__value');
     return child;
+  }
+
+  static makeComputeListing(compute) {
+    if (compute) {
+      let child = ComputeListing.makeOrUpdate(null, compute);
+      child.setAttribute("class", 'details__computed');
+      return child;
+    }
   }
 
   /**
