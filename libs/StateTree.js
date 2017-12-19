@@ -29,33 +29,91 @@ class StateTree extends HyperHTMLElement {
   render() {
     if (this.state.childObjs.length === 0) {
       this.html`
-        <style>
-          span.valueNew {
-            color: pink;
-          }
-        </style>
+        ${StateTree._style()}
         ${this.state.compute ? new ComputeListing(new ComputeListing.Props(this.state.compute), null) : ""}
-        <span class="stateName">${this.state.name}</span> : 
-        <span class="valueNew">${this.state.values.newState}</span>
+        <span class="details__key key--primitive">${this.state.name}</span>
+        <span class="${StateTree.primitiveClass(this.state.values.newState)}">${String(this.state.values.newState)}</span>
       `;
     } else {
       this.html`
-        <style>
-          details {
-            padding-left: 15px; 
-          }
-        </style>
-        <details>
-          <summary>
+        ${StateTree._style()}
+        <details class="details">
+          <summary class="details__summary">
             ${this.state.compute ? new ComputeListing(this.state.compute, null) : ""}
-            <span class="stateName">${this.state.name}</span>
+            <span class="details__key">${this.state.name}</span>
           </summary>
-          ${this.state.childObjs.map(child => HyperHTMLElement.wire()`
-            ${new StateTree(new StateTree.Props(child[0], child[1]), null)}
+          ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
+            ${new StateTree(new StateTree.Props(key, value), {
+              class: 'details__value'
+            })}
           `)}
         </details>
       `;
     }
+  }
+  
+  /**
+   * Helper function to isolate css style
+   * @returns {HTMLStyleElement}
+   */
+  static _style() {
+    return HyperHTMLElement.wire()`
+      <style>
+        :host {
+          display: block;
+          font-family: Consolas, "dejavu sans mono", monospace;
+          line-height: 16px;
+          white-space: nowrap;
+        }
+        :host(.details__value) {
+          padding-left: 13px;
+        }
+        .key--primitive {
+          margin-left: 13.5px;
+        }
+        .details__key {
+          color: #881391
+        }
+        .details__key::after {
+          content: ':';
+        }
+        .primitive--type-undefined,
+        .primitive--type-null {
+          color: #808080;
+        }
+        
+        .primitive--type-boolean {
+          color: #0d22aa;
+        }
+        
+        .primitive--type-number {
+          color: #1c00cf;
+        }
+        
+        .primitive--type-string {
+          color: #c41a16;
+        }
+        
+        .primitive--type-string::before,
+        .primitive--type-string::after {
+          content: '"';
+        }
+        .details__summary {
+          display: block;
+        }
+        .details__summary:focus {
+          outline: none;
+        }
+        .details__summary::-webkit-details-marker {
+          margin-right: -1px;
+        }
+      </style>
+    `;
+  }
+  
+  static primitiveClass(value) {
+    const type = (value === undefined || value === null) ? String(value) : (value.constructor.name).toLowerCase();
+    return `details__value primitive--type-${type}`;
   }
 }
 
