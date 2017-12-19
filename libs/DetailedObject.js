@@ -69,7 +69,7 @@ class DetailedObject extends HyperHTMLElement {
       <style>
         :host {
           display: block;
-          font-family: Consolas;
+          font-family: Consolas, "dejavu sans mono", monospace;
           line-height: 16px;
           white-space: nowrap;
         }
