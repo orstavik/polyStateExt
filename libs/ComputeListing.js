@@ -40,17 +40,15 @@ export class ComputeListing extends HyperHTMLElement {
     this.html`
       ${ComputeListing._style()}
       <div class="compute">
-        <span class="compute__icon">&#9881;</span>
-        <span class="compute__description">
-          <span class="compute__return">
-            <state-path triggered="${this.state.triggerReturn ? this.state.triggerReturn.triggered: false}">${this.state.triggerReturn ? this.state.triggerReturn.path.join(".") : null}</state-path>
-          </span> = 
-          <span class="compute__name">${this.state.funcName}</span>(<span class="compute__args">
-          ${(this.state.triggerPaths).map((arg, i) => HyperHTMLElement.wire()`
-            ${i !== 0 ? ", " : ""}
-            <state-path triggered="${arg.triggered}">${arg.path.join(".")}</state-path>
-          `)}
-          </span>)
+        <span class="compute__icon" onclick="${this.computeToggle.bind(this)}">&#9881;</span>
+        <span class="compute__description compute--hidden">
+          <span class="compute__name">${this.state.funcName}</span>
+          <span class="compute__args">
+            ${(this.state.triggerPaths).map((arg, i) => HyperHTMLElement.wire()`
+              ${i !== 0 ? ", " : ""}
+              <state-path triggered="${arg.triggered}">${arg.path.join(".")}</state-path>
+            `)}
+          </span>
         </span>
       </div>
     `;
@@ -62,11 +60,29 @@ export class ComputeListing extends HyperHTMLElement {
         :host {
           display: inline-block;
         }
+        .compute__description::before {
+          content: '<=';
+        }
+        .compute--hidden {
+          display: none;
+        }
         .compute__name {
           color: orange;
         }
+        .compute__args::before {
+          content: '(';
+        }
+        .compute__args::after {
+          content: ')';
+        }
       </style>
     `;
+  }
+
+  computeToggle(e) {
+    e.stopPropagation();
+    const descr = this.shadowRoot.querySelector('.compute__description');
+    descr.classList.toggle('compute--hidden');
   }
 }
 
