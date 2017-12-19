@@ -2,21 +2,37 @@ import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 import StateTree from "./StateTree.js";
 import {ObserveFunction} from "./ObserveFunction.js";
 
-class StateDetail extends HyperHTMLElement {
+export class StateDetail extends HyperHTMLElement {
 
   /**
-   * Creates an instance of StateDetail
-   * @param {StateDetail.Props} props Properties of class
-   * @param {Object} attribs Attributes of component
+   * update a computed trigger
+   * @param {HyperHTMLElement} el
+   * @param {Object} observerInfo
+   * @param {Object} visualVersion
+   * @param {string} selectedPath
    */
-  constructor(props, attribs) {
+  static makeOrUpdate(el, observerInfo, visualVersion, selectedPath) {
+    el = el || new StateDetail(true);
+    el.updateState(observerInfo, visualVersion, selectedPath);
+    return el;
+  }
+
+  /**
+   * An entry for a computed trigger
+   */
+  constructor(skipRender) {
     super();
     this.attachShadow({mode: 'open'});
-    for (let key in attribs)
-      this.setAttribute(key, attribs[key]);
-    this.state = props;
-    this.render();
+    if (!skipRender)
+      this.render();
     this.addEventListener("path-clicked", StateDetail.pathClicked);
+  }
+
+  updateState(observerInfo, visualVersion, selectedPath) {
+    this.state.visualVersion = visualVersion;
+    this.state.observers = observerInfo ? Object.values(observerInfo) : undefined;
+    this.state.selectedPath = selectedPath;
+    this.render();
   }
 
   /**
@@ -66,23 +82,6 @@ class StateDetail extends HyperHTMLElement {
   }
 }
 
-StateDetail.Props = class {
-  /**
-   * @param {Object} observerInfo the whole debugInfo
-   * @param {Object} visualVersion computed merged into the state detail
-   */
-  constructor(observerInfo, visualVersion, selectedPath) {
-    this.visualVersion = visualVersion;
-    this.observers = observerInfo ? Object.values(observerInfo) : undefined;
-    this.selectedPath = selectedPath;
-  }
-
-  static update(newProps, oldProps) {
-    return newProps;
-  }
-};
-
-export default StateDetail;
 customElements.define("state-detail", StateDetail);
 
 // static pathClicked (e){
