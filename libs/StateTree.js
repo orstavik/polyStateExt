@@ -1,5 +1,5 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
-import ComputeListing from "./ComputeListing.js";
+import {ComputeListing} from "./ComputeListing.js";
 
 class StateTree extends HyperHTMLElement {
 
@@ -32,7 +32,7 @@ class StateTree extends HyperHTMLElement {
         ${StateTree._style()}
         <span class="details__key key--primitive">${this.state.name}</span>
         <span class="${StateTree.primitiveClass(this.state.values.newState)}">${String(this.state.values.newState)}</span>
-        ${this.state.compute ? new ComputeListing(new ComputeListing.Props(this.state.compute), null) : ""}
+        ${this.state.compute ? ComputeListing.makeOrUpdate(null, this.state.compute) : null}
       `;
     } else {
       this.html`
@@ -40,7 +40,7 @@ class StateTree extends HyperHTMLElement {
         <details class="details">
           <summary class="details__summary">
             <span class="details__key">${this.state.name}</span>
-            ${this.state.compute ? new ComputeListing(this.state.compute, null) : ""}
+            ${this.state.compute ? ComputeListing.makeOrUpdate(null, this.state.compute) : null}
           </summary>
           ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
             ${new StateTree(new StateTree.Props(key, value), {
@@ -51,7 +51,7 @@ class StateTree extends HyperHTMLElement {
       `;
     }
   }
-  
+
   /**
    * Helper function to isolate css style
    * @returns {HTMLStyleElement}
@@ -110,7 +110,7 @@ class StateTree extends HyperHTMLElement {
       </style>
     `;
   }
-  
+
   static primitiveClass(value) {
     const type = (value === undefined || value === null) ? String(value) : (value.constructor.name).toLowerCase();
     return `details__value primitive--type-${type}`;
