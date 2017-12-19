@@ -1,17 +1,17 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
-import {StateTree} from "./StateTree.js";
+import {ObserveFunction} from "./ObserveFunction.js";
 
-export class StateDetail extends HyperHTMLElement {
+export class ObserverList extends HyperHTMLElement {
 
   /**
    * update a computed trigger
    * @param {HyperHTMLElement} el
-   * @param {Object} visualVersion
+   * @param {Object} observerInfo
    * @param {string} selectedPath
    */
-  static makeOrUpdate(el, visualVersion, selectedPath) {
-    el = el || new StateDetail(true);
-    el.updateState(visualVersion, selectedPath);
+  static makeOrUpdate(el, observerInfo, selectedPath) {
+    el = el || new ObserverList(true);
+    el.updateState(observerInfo, selectedPath);
     return el;
   }
 
@@ -23,29 +23,26 @@ export class StateDetail extends HyperHTMLElement {
     this.attachShadow({mode: 'open'});
     if (!skipRender)
       this.render();
-    this.addEventListener("path-clicked", StateDetail.pathClicked);
   }
 
-  updateState(visualVersion, selectedPath) {
-    this.state.visualVersion = visualVersion;
+  updateState(observerInfo, selectedPath) {
+    this.state.observers = observerInfo ? Object.values(observerInfo) : undefined;
     this.state.selectedPath = selectedPath;
     this.render();
   }
 
   render() {
-    this.html`
-        <h4 class="state-observer__header2">State</h4>
-        ${StateDetail.makeStateTree(this.state.visualVersion)}
-        <p>selected path: ${this.state.selectedPath}</p>
-      `;
-  }
+    if (!this.state.observers)
+      return this.html`<h5>No observers registered</h5>`;
 
-  static makeStateTree(visVersion) {
-    if (!visVersion)
-      return null;
-    let stateTree = StateTree.makeOrUpdate(null, "state", visVersion);
-    stateTree.setAttribute("class", "state-observer__state");
-    return stateTree;
+    return this.html`
+      <h4 class="state-observer__header1">Observers</h4>
+      <ul class="state-observer__observers">
+        ${this.state.observers.map(observer => HyperHTMLElement.wire()`
+          ${ObserveFunction.makeOrUpdate(null, observer)}
+        `)}
+      </ul>
+    `;
   }
 
   /**
@@ -60,7 +57,7 @@ export class StateDetail extends HyperHTMLElement {
   }
 }
 
-customElements.define("state-detail", StateDetail);
+customElements.define("observer-list", ObserverList);
 
 // static pathClicked (e){
 //   alert("path clicked: " + e.detail);

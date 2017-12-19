@@ -1,4 +1,5 @@
 import {StateDetail} from "./libs/StateDetail.js";
+import {ObserverList} from "./libs/ObserverList.js";
 import TaskLI from "./libs/TaskLI.js";
 
 //1. load the content-script by sending a message to the background.js script that has access to load content scripts.
@@ -12,12 +13,14 @@ chrome.runtime.sendMessage({
 let debugCounter = 0;
 const tasksList = document.querySelector("aside.tasklist");
 const stateDetail = document.querySelector("state-detail");
+const observers = document.querySelector("observer-list");
 const debugInfoList = [];
 let selectedPath = null;
 let selectedDetail = null;
 
 const updateView = function(){
-  StateDetail.makeOrUpdate(stateDetail, selectedDetail.observerInfo, selectedDetail.visualVersion, selectedPath);
+  StateDetail.makeOrUpdate(stateDetail, selectedDetail.visualVersion, selectedPath);
+  ObserverList.makeOrUpdate(observers, selectedDetail.observerInfo, selectedPath);
 };
 
 tasksList.addEventListener("task-selected", e=> {
