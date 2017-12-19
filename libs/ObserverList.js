@@ -61,6 +61,10 @@ export class ObserverList extends HyperHTMLElement {
         .observer__header {
           margin: 0 0 12px;
         }
+        .observer__observers {
+          padding: 0;
+          margin: 0;
+        }
       </style>
     `;
   }
