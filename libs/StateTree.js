@@ -30,17 +30,17 @@ class StateTree extends HyperHTMLElement {
     if (this.state.childObjs.length === 0) {
       this.html`
         ${StateTree._style()}
-        ${this.state.compute ? ComputeListing.makeOrUpdate(null, this.state.compute) : null}
         <span class="details__key key--primitive">${this.state.name}</span>
         <span class="${StateTree.primitiveClass(this.state.values.newState)}">${String(this.state.values.newState)}</span>
+        ${this.state.compute ? ComputeListing.makeOrUpdate(null, this.state.compute) : null}
       `;
     } else {
       this.html`
         ${StateTree._style()}
         <details class="details">
           <summary class="details__summary">
-            ${this.state.compute ? ComputeListing.makeOrUpdate(null, this.state.compute) : null}
             <span class="details__key">${this.state.name}</span>
+            ${this.state.compute ? ComputeListing.makeOrUpdate(null, this.state.compute) : null}
           </summary>
           ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
             ${new StateTree(new StateTree.Props(key, value), {

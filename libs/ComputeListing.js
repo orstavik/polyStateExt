@@ -38,12 +38,7 @@ export class ComputeListing extends HyperHTMLElement {
 
   render() {
     this.html`
-      <style>
-        span.compute__name {
-          color: orange;
-        }
-      </style>
-  
+      ${ComputeListing._style()}
       <div class="compute">
         <span class="compute__icon">&#9881;</span>
         <span class="compute__description">
@@ -58,6 +53,19 @@ export class ComputeListing extends HyperHTMLElement {
           </span>)
         </span>
       </div>
+    `;
+  }
+
+  static _style() {
+    return HyperHTMLElement.wire()`
+      <style>
+        :host {
+          display: inline-block;
+        }
+        .compute__name {
+          color: orange;
+        }
+      </style>
     `;
   }
 }
