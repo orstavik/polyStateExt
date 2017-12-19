@@ -139,11 +139,7 @@ class TaskLI extends HyperHTMLElement {
     const nextTask = e.currentTarget;
     nextTask.classList.add("task--active");
 
-    const otherOpenedState = document.querySelectorAll("#stateDetails>ul>li.active");
-    for (let active of otherOpenedState)
-      active.classList.remove("active");
-    const stateItem = document.querySelector("#s" + nextTask.dataset.index);
-    stateItem.classList.add("active");
+    this.dispatchEvent(new CustomEvent("task-selected", {composed:true, bubbles:true, detail: nextTask.dataset.index}));
   }
 }
 

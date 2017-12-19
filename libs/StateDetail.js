@@ -1,11 +1,11 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
-import {StateTree} from "./StateTree.js";
-import {ObserveFunction} from "./ObserveFunction.js";
+import StateTree from "./StateTree.js";
+import ObserveFunction from "./ObserveFunction.js";
 
 class StateDetail extends HyperHTMLElement {
 
   /**
-   * Creates an instance of TaskLI
+   * Creates an instance of StateDetail
    * @param {StateDetail.Props} props Properties of class
    * @param {Object} attribs Attributes of component
    */
@@ -14,7 +14,7 @@ class StateDetail extends HyperHTMLElement {
     this.attachShadow({mode: 'open'});
     for (let key in attribs)
       this.setAttribute(key, attribs[key]);
-    this._props = props;
+    this.state = props;
     this.render();
     this.addEventListener("path-clicked", StateDetail.pathClicked);
   }
@@ -24,28 +24,34 @@ class StateDetail extends HyperHTMLElement {
    * @param {StateDetail.Props} props The new properties of this component
    */
   updateProps(props) {
-    this._props = this._props.update(props);
+    this.state = StateDetail.Props.update(props, this.state);
     this.render();
   }
 
   render() {
-
-    if (this._props.observers.length !== 0) {
-      this.html`
-        <h4 class="state-observer__header1">Observers</h4>
-        <ul class="state-observer__observers">
-          ${this._props.observers.map(observer => HyperHTMLElement.wire()`
-            ${ObserveFunction.make(observer)}
-          `)}
-        </ul>
+    this.html`
+        ${this._renderObservers()}
         <h4 class="state-observer__header2">State</h4>
-        ${StateTree.make("state", this._props.visualVersion, "state-observer__state")}
+        ${this.state.visualVersion ?
+          new StateTree(new StateTree.Props("state", this.state.visualVersion), {class: "state-observer__state"}) :
+          null
+        }
+        <p>selected path: ${this.state.selectedPath}</p>
       `;
-    } else {
-      this.html`
-        <h5>No observers registered</h5>
-      `;
-    }
+  }
+
+  _renderObservers() {
+    if (!this.state.observers)
+      return HyperHTMLElement.wire()`<h5>No observers registered</h5>`;
+
+    return HyperHTMLElement.wire()`
+      <h4 class="state-observer__header1">Observers</h4>
+      <ul class="state-observer__observers">
+        ${this.state.observers.map(observer => HyperHTMLElement.wire()`
+          ${new ObserveFunction(new ObserveFunction.Props(observer))}
+        `)}
+      </ul>
+    `;
   }
 
   /**
@@ -65,18 +71,14 @@ StateDetail.Props = class {
    * @param {Object} observerInfo the whole debugInfo
    * @param {Object} visualVersion computed merged into the state detail
    */
-  constructor(observerInfo, visualVersion) {
-    if (!observerInfo || !visualVersion)
-      throw new Error("StateDetail must have both debugInfo and visualVersion when created");
+  constructor(observerInfo, visualVersion, selectedPath) {
     this.visualVersion = visualVersion;
-    this.observers = Object.values(observerInfo);
+    this.observers = observerInfo ? Object.values(observerInfo) : undefined;
+    this.selectedPath = selectedPath;
   }
 
-  update(newProps) {
-    return {
-      observers: Object.values(newProps.observerInfo || {}),
-      visualVersion: newProps.visualVersion
-    };
+  static update(newProps, oldProps) {
+    return newProps;
   }
 };
 
