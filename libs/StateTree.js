@@ -121,7 +121,7 @@ export class StateTree extends HyperHTMLElement {
           content: '"';
         }
         .details__summary {
-          display: block;
+          display: inline-block;
         }
         .details__summary:focus {
           outline: none;
