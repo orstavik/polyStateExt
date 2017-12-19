@@ -120,7 +120,7 @@ class DetailedObject extends HyperHTMLElement {
   }
 
   static primitiveClass(value) {
-    const type = value ? (value.constructor.name).toLowerCase() : String(value);
+    const type = (value === undefined || value === null) ? String(value) : (value.constructor.name).toLowerCase();
     return `details__value primitive--type-${type}`;
   }
 }
