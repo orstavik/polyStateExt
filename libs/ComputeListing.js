@@ -28,18 +28,14 @@ class ComputeListing extends HyperHTMLElement {
 
   render() {
     this.html`
-      <style>
-        span.compute__name {
-          color: orange;
-        }
-      </style>
-  
+      ${ComputeListing._style()}
       <div class="compute">
         <span class="compute__icon">&#9881;</span>
         <span class="compute__description">
           <span class="compute__return">
             <state-path triggered="${this.state.triggerReturn.triggered}">${this.state.triggerReturn.path.join(".")}</state-path>
-          </span> = 
+          </span>
+          <=
           <span class="compute__name">${this.state.funcName}</span>(<span class="compute__args">
           ${(this.state.triggerPaths || []).map((arg, i) => HyperHTMLElement.wire()`
             ${i !== 0 ? ", " : ""}
@@ -48,6 +44,19 @@ class ComputeListing extends HyperHTMLElement {
           </span>)
         </span>
       </div>
+    `;
+  }
+
+  static _style() {
+    return HyperHTMLElement.wire()`
+      <style>
+        :host {
+          display: inline-block;
+        }
+        .compute__name {
+          color: orange;
+        }
+      </style>
     `;
   }
 }
