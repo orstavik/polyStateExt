@@ -10,6 +10,16 @@ chrome.runtime.sendMessage({
 });
 
 //2a. get shortcuts to DOM elements in devtools-panel that will be decorated
+const updateView = function(){
+  StateDetail.makeOrUpdate(stateDetail, selectedDetail.visualVersion, selectedPath);
+  ObserverList.makeOrUpdate(observers, selectedDetail.observerInfo, selectedPath);
+};
+
+const pathClickListener = function(e){
+  selectedPath = e.detail;
+  updateView();
+};
+
 let debugCounter = 0;
 const tasksList = document.querySelector("aside.tasklist");
 const stateDetail = document.querySelector("state-detail");
@@ -18,21 +28,14 @@ const debugInfoList = [];
 let selectedPath = null;
 let selectedDetail = null;
 
-const updateView = function(){
-  StateDetail.makeOrUpdate(stateDetail, selectedDetail.visualVersion, selectedPath);
-  ObserverList.makeOrUpdate(observers, selectedDetail.observerInfo, selectedPath);
-};
-
 tasksList.addEventListener("task-selected", e=> {
   selectedPath = null;
   selectedDetail = debugInfoList[Number(e.detail)];
   updateView();
 });
 
-stateDetail.addEventListener("path-clicked", e=> {
-  selectedPath = e.detail;
-  updateView();
-});
+stateDetail.addEventListener("path-clicked", pathClickListener);
+observers.addEventListener("path-clicked", pathClickListener);
 
 //2b. add listener for new client states that decorate the devtools-panel DOM
 //    Att! the devtools-panel.js script can be debugged by right-clicking on the panel in devtools -> inspect.
