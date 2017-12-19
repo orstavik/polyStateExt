@@ -1,28 +1,38 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 import {ComputeListing} from "./ComputeListing.js";
 
-class StateTree extends HyperHTMLElement {
+export class StateTree extends HyperHTMLElement {
 
   /**
-   * Creates an instance of StateDetail
-   * @param {StateTree.Props} props Properties of class
-   * @param {Object} attribs Attributes of component
+   * update a computed trigger
+   * @param {HyperHTMLElement} el
+   * @param {string} name
+   * @param {Object} data
    */
-  constructor(props, attribs) {
-    super();
-    this.attachShadow({mode: 'open'});
-    for (let key in attribs)
-      this.setAttribute(key, attribs[key]);
-    this.state = props;
-    this.render();
+  static makeOrUpdate(el, name, data) {
+    el = el || new StateTree(true);
+    el.updateState(name, data);
+    return el;
   }
 
   /**
-   * Call this method to update its properties and rerender its DOM node.
-   * @param {StateTree.Props} props The new properties of this component
+   * An entry for a computed trigger
    */
-  updateProps(props) {
-    this.state = StateTree.Props.update(props, this.state);
+  constructor(skipRender) {
+    super();
+    this.attachShadow({mode: 'open'});
+    if (!skipRender)
+      this.render();
+  }
+
+  updateState(name, data) {
+    this.state.childObjs = !data || !data.children ? [] : Object.entries(data.children);
+    // this.rawChildren = data.children;
+    if (!data)
+      return;
+    this.state.name = name;
+    this.state.compute = data.compute;
+    this.state.values = data.values;
     this.render();
   }
 
@@ -43,13 +53,17 @@ class StateTree extends HyperHTMLElement {
             ${this.state.compute ? ComputeListing.makeOrUpdate(null, this.state.compute) : null}
           </summary>
           ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
-            ${new StateTree(new StateTree.Props(key, value), {
-              class: 'details__value'
-            })}
+            ${StateTree.makeSubStateTree(key, value)}
           `)}
         </details>
       `;
     }
+  }
+
+  static makeSubStateTree(key, value) {
+    let child = StateTree.makeOrUpdate(null, key, value);
+    child.setAttribute("class", 'details__value');
+    return child;
   }
 
   /**
@@ -116,27 +130,6 @@ class StateTree extends HyperHTMLElement {
     return `details__value primitive--type-${type}`;
   }
 }
-
-StateTree.Props = class {
-  /**
-   * @param {string[]} path the path as array of strings
-   */
-  constructor(name, data) {
-    this.childObjs = !data || !data.children ? [] : Object.entries(data.children);
-    // this.rawChildren = data.children;
-    if (!data)
-      return;
-    this.name = name;
-    this.compute = data.compute;
-    this.values = data.values;
-  }
-
-  static update(newProps, oldProps) {
-    return newProps;
-  }
-};
-
-export default StateTree;
 
 customElements.define("state-tree", StateTree);
 
