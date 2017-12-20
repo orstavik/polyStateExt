@@ -9,46 +9,49 @@ html {
 
     --default-border-color: #dadada;
 
-
     /*theme grid*/
-    --color-light-0: var(--color-grey-200);
-    --color-light-1: var(--color-grey-200);
-    --color-light-2: var(--color-grey-200);
-    --color-light-3: var(--color-grey-200);
-    --color-light-4: var(--color-grey-200);
-    --color-light-5: var(--color-grey-200);
+    --color-light-0: #ffffff; /* default background */
+    --color-light-1: #f7f7f7; /* shadow root lv1 */
+    --color-light-2: #f2f2f2; /* shadow root lv2 */
+    --color-light-3: #f3f3f3; /* background */
+    --color-light-4: #f5f5f5; /* even background */
+    --color-light-5: #efefef; /* shadow root vl3+ */
+    --color-light-6: #e6e6e6; /* border light */
+    --color-light-7: #e5e5e5; /* hover background */
+    --color-light-8: #eeeeee; /* background */
+    --color-light-9: #dadada; /* selected unfocused */
+    --color-light-10: #dddddd; /* background */
+    --color-light-11: #cccccc; /* border normal */
+    --color-light-12: #c0c0c0; /* doctupe text */
+    --color-light-13: #bbbbbb; /* border dark */
+    --color-light-14: #b1b1b1; /* disabled icons */
+    --color-light-15: #aaaaaa; /* border darker */
 
-    --color-dark-0: var(--color-grey-200);     /*text strong normal*/
-    --color-dark-1: var(--color-grey-200);     /*text strong normal*/
-    --color-dark-2: var(--color-grey-200);     /*divider area*/
-    --color-dark-3: var(--color-grey-200);     /*divider area*/
-    --color-dark-4: var(--color-grey-200);     /*text disabled*/
+    --color-dark-0: #222222; /* default text */
+    --color-dark-1: #333333; /* hovered icons */
+    --color-dark-2: #555555; /* text */
+    --color-dark-3: #6e6e6e; /* default icons */
+    --color-dark-4: #808080; /* text */
+    --color-dark-5: #888888; /* text */
 
-    --color-primary-light: var(--color-blue-200);                        /*text disabled*/
-    --color-primary-normal: var(--color-blue-500);                        /*text disabled*/
-    --color-primary-dark: var(--color-blue-700);                        /*text disabled*/
+    /* --color-primary-light: var(--color-blue-200); */
+    /* --color-primary-normal: var(--color-blue-500); */
+    /* --color-primary-dark: var(--color-blue-700); */
 
-    /*--color-first-light-1: var(--color-blue-100);                        !*text disabled*!*/
+    /* --color-secondary-light: var(--color-grey-200); */
+    /* --color-secondary-normal: var(--color-grey-200); */
+    /* --color-secondary-dark: var(--color-grey-200); */
 
-    --color-secondary-light: var(--color-grey-200);                        /*text disabled*/
-    --color-secondary-normal: var(--color-grey-200);                        /*text disabled*/
-    --color-secondary-dark: var(--color-grey-200);                        /*text disabled*/
-
-    --color-accent-light: var(--color-grey-200);                        /*text disabled*/
-    --color-accent-normal: var(--color-grey-200);                        /*text disabled*/
-    --color-accent-dark: var(--color-grey-200);                        /*text disabled*/
+    --color-accent-light: #f2f7fd; /* even background */
+    --color-accent-normal: #ebf1fb; /* hover */
+    --color-accent-bright: #196cfa; /* accent icons */
+    --color-accent-dark: #3879d9; /* selected focused */
 
     /* app colors*/
-    /*--color-property: var(--color-text-light-0);     !*text disabled*!*/
-    --color-string-normal: var(--color-grey-200);     /*text disabled*/
-
-    --color-number-normal: var(--color-grey-200);     /*text disabled*/
-    --color-boolean-normal: var(--color-grey-200);     /*text disabled*/
-    --color-nothing-normal: var(--color-grey-200);     /*text disabled*/
-    --color-path-normal: var(--color-secondary-normal);     /*text disabled*/
-
-    --color-hover-light: var(--color-grey-200);     /*text disabled*/
-
-    --enabled: 1.0;
-    --disabled: 0.5;
+    --color-property-normal: #881391;
+    --color-string-normal: #c41a16;
+    --color-number-normal: #1c00cf;
+    --color-boolean-normal: #0d22aa;
+    --color-nothing-normal: #808080;
+    /* --color-path-normal: var(--color-secondary-normal); */
 }
