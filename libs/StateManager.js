@@ -8,7 +8,6 @@ export class StateManager {
     this.selectedDetail = null;
     this.debugCounter = 0;
 
-
     window.addEventListener("task-selected", e => this.setSelectDetail(e.detail));
     window.addEventListener("path-clicked", e => this.setSelectPath(e.detail));
   }
@@ -34,6 +33,13 @@ export class StateManager {
   }
 
   getObserverInfo(){
+    // let observers = this.selectedDetail.observerInfo;
+    // for (let funcName in this.selectedDetail.observerInfo) {
+    //   let func = this.selectedDetail.observerInfo[funcName]
+    //   for (let arg of func.triggerPaths) {
+    //     observers = Tools.setIn(observers, [funcName, "triggerPaths", i, "selected"], arg.path.join(".") === this.selectedPath);
+    //   }
+    // }
     return this.selectedDetail.observerInfo;
   }
 
