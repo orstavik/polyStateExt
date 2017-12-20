@@ -81,6 +81,7 @@ export class ComputeListing extends HyperHTMLElement {
 
   computeToggle(e) {
     e.preventDefault();
+    e.stopPropagation();
     const descr = this.shadowRoot.querySelector('.compute__description');
     descr.classList.toggle('compute--hidden');
   }
