@@ -7,6 +7,7 @@ export class StateManager {
     this.selectedPath = null;
     this.selectedDetail = null;
     this.debugCounter = 0;
+    this.openedPaths = {"state": true};
 
     window.addEventListener("task-selected", e => this.setSelectDetail(e.detail));
     window.addEventListener("path-clicked", e => this.setSelectPath(e.detail));
@@ -30,11 +31,34 @@ export class StateManager {
   }
 
   toogleOpen(path) {
-    alert(path);
+    if (this.openedPaths[path]) {                  //remove path, but also all sub paths opened
+      for (let sub in this.openedPaths) {
+        if (sub.startsWith(path))
+          delete this.openedPaths[sub];
+      }
+    } else {
+      this.openedPaths[path] = true;               //add a path
+    }
+    this.notify(this);
   }
 
   getVisualVersion() {
-    return this.selectedDetail ? StateManager.addSelectedToVisualVersion(this.selectedDetail.visualVersion, this.selectedPath) : undefined;
+    if (!this.selectedDetail)
+      return undefined;
+    let visVers = StateManager.addSelectedToVisualVersion(this.selectedDetail.visualVersion, this.selectedPath);
+    return StateManager.addToogleOpen(this.openedPaths, visVers);
+  }
+
+  static addToogleOpen(openedPaths, visVers) {
+    for (let togglePath in openedPaths) {
+      let pathArray = togglePath.split(".");
+      for (let i = 0; i < pathArray.length; i++) {
+        let path = pathArray.slice(0, i + 1);
+        path = path.join(".children.").split(".").slice(1);
+        visVers = Tools.setIn(visVers, path.concat(["open"]), true);
+      }
+    }
+    return visVers;
   }
 
   getObserverInfo() {
@@ -47,7 +71,7 @@ export class StateManager {
 
   static addSelectedPathToObservers(observers, selectedPath) {
     for (let funcName in observers) {
-      let func = observers[funcName]
+      let func = observers[funcName];
       for (let argNumber in func.triggerPaths) {
         let arg = func.triggerPaths[argNumber];
         observers = Tools.setIn(observers, [funcName, "triggerPaths", argNumber, "selected"], arg.path.join(".") === selectedPath);

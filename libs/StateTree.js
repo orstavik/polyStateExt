@@ -33,6 +33,8 @@ export class StateTree extends HyperHTMLElement {
     this.state.name = name;
     this.state.compute = data.compute;
     this.state.values = data.values;
+    if (data.open)
+      this.state.open = data.open;
     this.render();
   }
 
@@ -47,7 +49,7 @@ export class StateTree extends HyperHTMLElement {
     } else {
       this.html`
         ${StateTree._style()}
-        <details class="details">
+        <details class="details" open="${this.state.open}">
           <summary class="details__summary" onclick="${this.openDetail.bind(this)}">
             <span class="details__key">${this.state.name}</span>
             ${StateTree.makeComputeListing(this.state.compute)}
