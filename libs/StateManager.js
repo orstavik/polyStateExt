@@ -29,18 +29,32 @@ export class StateManager {
   }
 
   getVisualVersion(){
-    return this.selectedDetail ? this.selectedDetail.visualVersion : undefined;
+    if (!this.selectedDetail)
+      return undefined;
+
+    let visVers = this.selectedDetail.visualVersion;
+    for (let propName in this.selectedDetail.visualVersion.children) {
+      let prop = this.selectedDetail.visualVersion.children[propName];
+      if (!prop.compute)
+        continue;
+      for (let argName in prop.compute.triggerPaths) {
+        let arg = prop.compute.triggerPaths[argName];
+        visVers= Tools.setIn(visVers, ["children", propName, "compute", "triggerPaths", argName, "selected"], arg.path.join(".") === this.selectedPath);
+      }
+    }
+    return visVers;
   }
 
   getObserverInfo(){
-    // let observers = this.selectedDetail.observerInfo;
-    // for (let funcName in this.selectedDetail.observerInfo) {
-    //   let func = this.selectedDetail.observerInfo[funcName]
-    //   for (let arg of func.triggerPaths) {
-    //     observers = Tools.setIn(observers, [funcName, "triggerPaths", i, "selected"], arg.path.join(".") === this.selectedPath);
-    //   }
-    // }
-    return this.selectedDetail.observerInfo;
+    let observers = this.selectedDetail.observerInfo;
+    for (let funcName in this.selectedDetail.observerInfo) {
+      let func = this.selectedDetail.observerInfo[funcName]
+      for (let argNumber in func.triggerPaths) {
+        let arg = func.triggerPaths[argNumber];
+        observers = Tools.setIn(observers, [funcName, "triggerPaths", argNumber, "selected"], arg.path.join(".") === this.selectedPath);
+      }
+    }
+    return observers;
   }
 
   onChange(cb) {

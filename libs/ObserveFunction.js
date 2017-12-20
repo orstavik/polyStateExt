@@ -41,7 +41,7 @@ export class ObserveFunction extends HyperHTMLElement {
       <span class="funcName">${this.state.func.funcName}</span>
       <span class="funcArgs">
         ${(Object.values(this.state.func.triggerPaths) || []).map((arg, i) => HyperHTMLElement.wire(arg)`
-          <state-path triggered="${arg.triggered}" selected="${arg.path.join(".") === this.state.selectedPath}">${arg.path.join(".")}</state-path>
+          <state-path triggered="${arg.triggered}" selected="${arg.selected}">${arg.path.join(".")}</state-path>
         `)}
       </span>
     `;
