@@ -36,15 +36,15 @@ export class StateDetail extends HyperHTMLElement {
     this.html`
         ${StateDetail._style()}
         <h4 class="state__header">State</h4>
-        ${StateDetail.makeStateTree(this.state.visualVersion)}
+        ${StateDetail.makeStateTree(this.state.visualVersion, this.state.selectedPath)}
         <p>selected path: ${this.state.selectedPath}</p>
       `;
   }
 
-  static makeStateTree(visVersion) {
+  static makeStateTree(visVersion, selectedPath) {
     if (!visVersion)
       return null;
-    let stateTree = StateTree.makeOrUpdate(null, "state", visVersion);
+    let stateTree = StateTree.makeOrUpdate(null, "state", visVersion, selectedPath);
     stateTree.setAttribute("class", "state-observer__state");
     return stateTree;
   }

@@ -7,9 +7,9 @@ export class ComputeListing extends HyperHTMLElement {
    * @param {HyperHTMLElement} el
    * @param {Object} computeObj
    */
-  static makeOrUpdate(el, computeObj) {
+  static makeOrUpdate(el, computeObj, selectedPath) {
     el = el || new ComputeListing(true);
-    el.updateState(computeObj);
+    el.updateState(computeObj, selectedPath);
     return el;
   }
 
@@ -31,8 +31,9 @@ export class ComputeListing extends HyperHTMLElement {
       this.render();
   }
 
-  updateState(computeObj) {
-    this.state = computeObj;
+  updateState(computeObj, selectedPath) {
+    this.state.func = computeObj;
+    this.state.selectedPath = selectedPath;
     this.render();
   }
 
@@ -42,11 +43,11 @@ export class ComputeListing extends HyperHTMLElement {
       <div class="compute">
         <span class="compute__icon" onclick="${this.computeToggle.bind(this)}">&#9881;</span>
         <span class="compute__description compute--hidden">
-          <span class="compute__name">${this.state.funcName}</span>
+          <span class="compute__name">${this.state.func.funcName}</span>
           <span class="compute__args">
-            ${(this.state.triggerPaths).map((arg, i) => HyperHTMLElement.wire()`
+            ${(this.state.func.triggerPaths).map((arg, i) => HyperHTMLElement.wire()`
               ${i !== 0 ? ", " : ""}
-              <state-path triggered="${arg.triggered}">${arg.path.join(".")}</state-path>
+              <state-path triggered="${arg.triggered}" selected="${arg.path.join(".") === this.state.selectedPath}">${arg.path.join(".")}</state-path>
             `)}
           </span>
         </span>

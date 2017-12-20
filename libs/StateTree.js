@@ -9,10 +9,11 @@ export class StateTree extends HyperHTMLElement {
    * @param {HyperHTMLElement} el
    * @param {string} name
    * @param {Object} data
+   * @param {string} selectedPath
    */
-  static makeOrUpdate(el, name, data) {
+  static makeOrUpdate(el, name, data, selectedPath) {
     el = el || new StateTree(true);
-    el.updateState(name, data);
+    el._updateState(name, data, selectedPath);
     return el;
   }
 
@@ -26,7 +27,7 @@ export class StateTree extends HyperHTMLElement {
       this.render();
   }
 
-  updateState(name, data) {
+  _updateState(name, data, selectedPath) {
     this.state.childObjs = !data || !data.children ? [] : Object.entries(data.children);
     // this.rawChildren = data.children;
     if (!data)
@@ -34,6 +35,7 @@ export class StateTree extends HyperHTMLElement {
     this.state.name = name;
     this.state.compute = data.compute;
     this.state.values = data.values;
+    this.state.selectedPath = selectedPath;
     this.render();
   }
 
@@ -43,7 +45,7 @@ export class StateTree extends HyperHTMLElement {
         ${StateTree._style()}
         <span class="details__key key--primitive">${this.state.name}</span>
         <span class="${StateTree.primitiveClass(this.state.values.newState)}">${String(this.state.values.newState)}</span>
-        ${StateTree.makeComputeListing(this.state.compute)}
+        ${StateTree.makeComputeListing(this.state.compute, this.state.selectedPath)}
       `;
     } else {
       this.html`
@@ -51,18 +53,18 @@ export class StateTree extends HyperHTMLElement {
         <details class="details">
           <summary class="details__summary">
             <span class="details__key">${this.state.name}</span>
-            ${StateTree.makeComputeListing(this.state.compute)}
+            ${StateTree.makeComputeListing(this.state.compute, this.state.selectedPath)}
           </summary>
           ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
-            ${Tools.setAttribute(StateTree.makeOrUpdate(null, key, value), "class", 'details__value')}
+            ${Tools.setAttribute(StateTree.makeOrUpdate(null, key, value, this.state.selectedPath), "class", 'details__value')}
           `)}
         </details>
       `;
     }
   }
 
-  static makeComputeListing(compute) {
-    return compute ? Tools.setAttribute(ComputeListing.makeOrUpdate(null, compute), "class", 'details__computed'): null;
+  static makeComputeListing(compute, selectedPath) {
+    return compute ? Tools.setAttribute(ComputeListing.makeOrUpdate(null, compute, selectedPath), "class", 'details__computed'): null;
   }
 
   /**
