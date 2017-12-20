@@ -11,16 +11,13 @@ chrome.runtime.sendMessage({
 });
 
 //2a. get shortcuts to DOM elements in devtools-panel that will be decorated
-const state = new StateManager();
-
 const stateDetail = document.querySelector("state-detail");
 const observers = document.querySelector("observer-list");
 
+const state = new StateManager();
 state.onChange(function (newState) {
-  let selectedPath = newState.selectedPath;
-  let selectedDetail = newState.selectedDetail;
-  StateDetail.makeOrUpdate(stateDetail, selectedDetail.visualVersion, selectedPath);
-  ObserverList.makeOrUpdate(observers, selectedDetail.observerInfo, selectedPath);
+  StateDetail.makeOrUpdate(stateDetail, newState.getVisualVersion(), newState.selectedPath);
+  ObserverList.makeOrUpdate(observers, newState.getObserverInfo(), newState.selectedPath);
 });
 
 const tasksList = document.querySelector("aside.tasklist");

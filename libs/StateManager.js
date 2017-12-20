@@ -12,6 +12,7 @@ export class StateManager {
   }
 
   addDebugInfo(deb) {
+    deb.visualVersion = StateManager.appendComputesToState(deb.visualVersion, deb.computerInfo);
     this.debugInfoList[(this.debugCounter++)] = (deb);
     return this.debugCounter;
   }
@@ -26,9 +27,26 @@ export class StateManager {
     this.notify(this);
   }
 
+  getVisualVersion(){
+    return this.selectedDetail.visualVersion;
+  }
+
+  getObserverInfo(){
+    return this.selectedDetail.observerInfo;
+  }
+
   onChange(cb) {
     this.notify = cb;
   }
 
+  static appendComputesToState(visualVersion, computerInfo) {
+    for (let computeName in computerInfo) {
+      let compute = computerInfo[computeName];
+      if (!visualVersion.children[computeName])
+        visualVersion.children[computeName] = {children: [], style: [], values: {}};
+      visualVersion.children[computeName].compute = compute;
+    }
+    return visualVersion;
+  }
 }
 
