@@ -7,9 +7,9 @@ export class ComputeListing extends HyperHTMLElement {
    * @param {HyperHTMLElement} el
    * @param {Object} computeObj
    */
-  static makeOrUpdate(el, computeObj, selectedPath) {
+  static makeOrUpdate(el, computeObj) {
     el = el || new ComputeListing(true);
-    el.updateState(computeObj, selectedPath);
+    el.updateState(computeObj);
     return el;
   }
 
@@ -31,9 +31,8 @@ export class ComputeListing extends HyperHTMLElement {
       this.render();
   }
 
-  updateState(computeObj, selectedPath) {
+  updateState(computeObj) {
     this.state.func = computeObj;
-    this.state.selectedPath = selectedPath;
     this.render();
   }
 
