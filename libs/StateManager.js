@@ -10,6 +10,7 @@ export class StateManager {
 
     window.addEventListener("task-selected", e => this.setSelectDetail(e.detail));
     window.addEventListener("path-clicked", e => this.setSelectPath(e.detail));
+    window.addEventListener("state-open", e => this.toogleOpen(e.detail));
   }
 
   addDebugInfo(deb) {
@@ -28,15 +29,16 @@ export class StateManager {
     this.notify(this);
   }
 
+  toogleOpen(path) {
+    alert(path);
+  }
+
   getVisualVersion() {
     return this.selectedDetail ? StateManager.addSelectedToVisualVersion(this.selectedDetail.visualVersion, this.selectedPath) : undefined;
   }
 
   getObserverInfo() {
-    let selectedPath = this.selectedPath;
-    let observers = this.selectedDetail.observerInfo;
-    observers = StateManager.addSelectedPathToObservers(observers, selectedPath);
-    return observers;
+    return StateManager.addSelectedPathToObservers(this.selectedDetail.observerInfo, this.selectedPath);
   }
 
   onChange(cb) {
