@@ -1,6 +1,6 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 import {ComputeListing} from "./ComputeListing.js";
-import {Tools} from "./Tools.js";
+import {Tools2} from "./Tools2.js";
 
 export class StateTree extends HyperHTMLElement {
 
@@ -56,7 +56,7 @@ export class StateTree extends HyperHTMLElement {
             ${StateTree.makeComputeListing(this.state.compute, this.state.selectedPath)}
           </summary>
           ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
-            ${Tools.setAttribute(StateTree.makeOrUpdate(null, key, value, this.state.selectedPath), "class", 'details__value')}
+            ${Tools2.setAttribute(StateTree.makeOrUpdate(null, key, value, this.state.selectedPath), "class", 'details__value')}
           `)}
         </details>
       `;
@@ -64,7 +64,7 @@ export class StateTree extends HyperHTMLElement {
   }
 
   static makeComputeListing(compute, selectedPath) {
-    return compute ? Tools.setAttribute(ComputeListing.makeOrUpdate(null, compute, selectedPath), "class", 'details__computed'): null;
+    return compute ? Tools2.setAttribute(ComputeListing.makeOrUpdate(null, compute, selectedPath), "class", 'details__computed'): null;
   }
 
   /**
