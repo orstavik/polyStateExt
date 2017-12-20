@@ -1,31 +1,19 @@
 html {
-    --default-background-color: #ffffff;
-    --focus-background-color: #3879d9;
-    --even-background-color: #f5f5f5;
-
-    --default-text-color: #000000;
-    --secondary-text-color: #808080;
-    --focus-text-color: #ffffff;
-
     --default-border-color: #dadada;
 
     /*theme grid*/
-    --color-light-0: #ffffff; /* default background */
+    --color-light-0: #ffffff; /* default background, focus text */
     --color-light-1: #f7f7f7; /* shadow root lv1 */
     --color-light-2: #f2f2f2; /* shadow root lv2 */
     --color-light-3: #f3f3f3; /* background */
     --color-light-4: #f5f5f5; /* even background */
     --color-light-5: #efefef; /* shadow root vl3+ */
-    --color-light-6: #e6e6e6; /* border light */
-    --color-light-7: #e5e5e5; /* hover background */
-    --color-light-8: #eeeeee; /* background */
-    --color-light-9: #dadada; /* selected unfocused */
-    --color-light-10: #dddddd; /* background */
-    --color-light-11: #cccccc; /* border normal */
-    --color-light-12: #c0c0c0; /* doctupe text */
-    --color-light-13: #bbbbbb; /* border dark */
-    --color-light-14: #b1b1b1; /* disabled icons */
-    --color-light-15: #aaaaaa; /* border darker */
+    --color-light-6: #e5e5e5; /* hover background */
+    --color-light-7: #eeeeee; /* background */
+    --color-light-8: #dadada; /* selected unfocused */
+    --color-light-9: #dddddd; /* background */
+    --color-light-10: #c0c0c0; /* doctupe text */
+    --color-light-11: #b1b1b1; /* disabled icons */
 
     --color-dark-0: #222222; /* default text */
     --color-dark-1: #333333; /* hovered icons */
@@ -41,6 +29,11 @@ html {
     /* --color-secondary-light: var(--color-grey-200); */
     /* --color-secondary-normal: var(--color-grey-200); */
     /* --color-secondary-dark: var(--color-grey-200); */
+
+    --color-border-1: #aaaaaa;
+    --color-border-2: #bbbbbb;
+    --color-border-3: #cccccc;
+    --color-border-4: #e6e6e6;
 
     --color-accent-light: #f2f7fd; /* even background */
     --color-accent-normal: #ebf1fb; /* hover */

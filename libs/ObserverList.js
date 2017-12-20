@@ -54,7 +54,7 @@ export class ObserverList extends HyperHTMLElement {
         :host {
           display: block;
           padding: 12px 24px;
-          border-bottom: 1px solid var(--default-border-color);
+          border-bottom: 1px solid var(--color-border-4);
         }
         .observer__header {
           margin: 0 0 12px;

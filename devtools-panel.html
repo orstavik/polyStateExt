@@ -4,16 +4,17 @@
   <link rel="stylesheet" href="node_modules/normalize.css/normalize.css">
   <link rel="stylesheet" href="style/variables.css">
   <link rel="stylesheet" href="style/main.css">
+  <script src="libs/FlexibleGrid.js" type="module"></script>
 </head>
 
 <body>
-  <aside class="tasklist">
-    
-  </aside>
-  <main class="state">
-    <observer-list></observer-list>
-    <state-detail></state-detail>
-  </main>
+  <flexible-grid separator="400px">
+    <aside class="tasklist" slot="first"></aside>
+    <main class="state" slot="second">
+      <observer-list></observer-list>
+      <state-detail></state-detail>
+    </main>
+  </flexible-grid>
 
   <script src="devtools-panel.js" type="module"></script>
   <script src="libs/StatePath.js" type="module"></script>

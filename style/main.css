@@ -1,14 +1,15 @@
 body {
-    display: grid;
     box-sizing: border-box;
-    height: 100vh;
     margin: 0;
-    grid-template-columns: minmax(300px, 33vw) auto;
-    grid-template-rows: 1fr;
-    grid-template-areas: 'tasklist details';
+    background-color: var(--color-light-0);
+    color:  var(--color-dark-0);
 }
 
-@media (max-width: 600px) {
+flexible-grid {
+    height: 100vh;
+}
+
+/* @media (max-width: 600px) {
     body {
         grid-template-columns: 1fr;
         grid-template-rows: 1fr 2fr;
@@ -16,9 +17,9 @@ body {
     }
     .state {
         border-left: none !important;
-        border-top: 1px solid lightgray;
+        border-top: 1px solid  var(--color-border-1);
     }
-}
+} */
 
 * {
     cursor: default;
@@ -27,11 +28,8 @@ body {
 .tasklist {
     display: flex;
     flex-direction: column;
-    grid-area: tasklist;
     overflow-y: auto;
-    background-color: var(--default-background-color);
-    color: var(--default-text-color);
-    border-right: 1px solid var(--default-border-color);
+    border-right: 1px solid var(--color-border-1);
 }
 
 .state {
