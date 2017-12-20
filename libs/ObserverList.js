@@ -40,7 +40,7 @@ export class ObserverList extends HyperHTMLElement {
       <h4 class="observer__header">Observers</h4>
       <ul class="observer__observers">
         ${this.state.observers.map(observer => HyperHTMLElement.wire()`
-          ${ObserveFunction.makeOrUpdate(null, observer)}
+          ${ObserveFunction.makeOrUpdate(null, observer, this.state.selectedPath)}
         `)}
       </ul>
     `;

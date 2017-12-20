@@ -21,13 +21,16 @@ export class StatePath extends HyperHTMLElement {
         :host([triggered="true"])  {
           font-weight: bold;
         }
+        :host([selected="true"])  {
+          text-decoration: underline;
+        }
       </style>
       <slot></slot>
     `;
   }
 
   static togglePathArgs(e) {
-    let content = this.shadowRoot.querySelector("slot").assignedNodes()[0];
+    let content = this.shadowRoot.querySelector("slot").assignedNodes()[0].nodeValue;
     this.dispatchEvent(new CustomEvent("path-clicked", {composed: true, bubbles: true, detail: content}));
   }
 }
