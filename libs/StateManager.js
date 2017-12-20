@@ -1,3 +1,5 @@
+import {Tools} from "./Tools.js";
+
 export class StateManager {
 
   constructor() {
@@ -44,9 +46,8 @@ export class StateManager {
     for (let computeName in computerInfo) {
       let compute = computerInfo[computeName];
       if (!visualVersion.children[computeName])
-        visualVersion.children[computeName] = {children: [], style: [], values: {}};
-      visualVersion.children[computeName].compute = compute;
-    }
+        visualVersion = Tools.setIn(visualVersion, ["children", computeName], {children: [], style: [], values: {}});
+      visualVersion = Tools.setIn(visualVersion, ["children", computeName, "compute"], compute);    }
     return visualVersion;
   }
 }

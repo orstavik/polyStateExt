@@ -1,7 +1,7 @@
 /**
  * Created by ivar.orstavik and tom.fales 2017.
  */
-class Tools {
+export class Tools {
 
   static navigate(path) {
     history.pushState({}, null, path);
