@@ -14,7 +14,8 @@ export class StateManager {
   }
 
   addDebugInfo(deb) {
-    this.debugInfoList[(this.debugCounter++)] = (deb);
+    deb.visualVersion = StateManager.appendComputesToState(deb.visualVersion, deb.computerInfo);
+    this.debugInfoList[this.debugCounter++] = deb;
     return this.debugCounter;
   }
 
@@ -29,9 +30,7 @@ export class StateManager {
   }
 
   getVisualVersion(){
-    if (!this.selectedDetail)
-      return undefined;
-    return StateManager.appendComputesToState(this.selectedDetail.visualVersion, this.selectedDetail.computerInfo);
+    return this.selectedDetail ? this.selectedDetail.visualVersion : undefined;
   }
 
   getObserverInfo(){
