@@ -7,11 +7,10 @@ export class StateDetail extends HyperHTMLElement {
    * update a computed trigger
    * @param {HyperHTMLElement} el
    * @param {Object} visualVersion
-   * @param {string} selectedPath
    */
-  static makeOrUpdate(el, visualVersion, selectedPath) {
+  static makeOrUpdate(el, visualVersion) {
     el = el || new StateDetail(true);
-    el.updateState(visualVersion, selectedPath);
+    el.updateState(visualVersion);
     return el;
   }
 
@@ -26,9 +25,8 @@ export class StateDetail extends HyperHTMLElement {
     this.addEventListener("path-clicked", StateDetail.pathClicked);
   }
 
-  updateState(visualVersion, selectedPath) {
+  updateState(visualVersion) {
     this.state.visualVersion = visualVersion;
-    this.state.selectedPath = selectedPath;
     this.render();
   }
 
@@ -36,15 +34,14 @@ export class StateDetail extends HyperHTMLElement {
     this.html`
         ${StateDetail._style()}
         <h4 class="state__header">State</h4>
-        ${StateDetail.makeStateTree(this.state.visualVersion, this.state.selectedPath)}
-        <p>selected path: ${this.state.selectedPath}</p>
+        ${StateDetail.makeStateTree(this.state.visualVersion)}
       `;
   }
 
-  static makeStateTree(visVersion, selectedPath) {
+  static makeStateTree(visVersion) {
     if (!visVersion)
       return null;
-    let stateTree = StateTree.makeOrUpdate(null, "state", visVersion, selectedPath);
+    let stateTree = StateTree.makeOrUpdate(null, "state", visVersion);
     stateTree.setAttribute("class", "state-observer__state");
     return stateTree;
   }

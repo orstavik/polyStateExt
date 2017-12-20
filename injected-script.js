@@ -37,7 +37,7 @@ class StatePrinter {
     return {
       funcName: start.funcName,
       triggerReturn: StatePrinter.makeTriggerPath(start.returnPath, start.returnValue, stop.returnValue),
-      triggerPaths: start.argsPaths.map((p, i) => StatePrinter.makeTriggerPath(p, start.argsValue[i], stop.argsValue[i]))
+      triggerPaths: StatePrinter.arrToObj(start.argsPaths.map((p, i) => StatePrinter.makeTriggerPath(p, start.argsValue[i], stop.argsValue[i])))
     };
   }
 
@@ -115,6 +115,13 @@ class StatePrinter {
         return false;
     }
     return true;
+  }
+
+  static arrToObj(arr) {
+    const res = {};
+    for (let i = 0; i < arr.length; ++i)
+      res[i] = arr[i];
+    return res;
   }
 }
 
