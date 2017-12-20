@@ -87,26 +87,26 @@ export class StateTree extends HyperHTMLElement {
           margin-left: 13.5px;
         }
         .details__key {
-          color: #881391
+          color: var(--color-property-normal);
         }
         .details__key::after {
           content: ':';
         }
         .primitive--type-undefined,
         .primitive--type-null {
-          color: #808080;
+          color: var(--color-nothing-normal);
         }
         
         .primitive--type-boolean {
-          color: #0d22aa;
+          color: var(--color-boolean-normal);
         }
         
         .primitive--type-number {
-          color: #1c00cf;
+          color: var(--color-number-normal);
         }
         
         .primitive--type-string {
-          color: #c41a16;
+          color: var(--color-string-normal);
         }
         
         .primitive--type-string::before,
