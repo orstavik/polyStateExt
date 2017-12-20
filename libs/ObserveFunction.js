@@ -9,7 +9,7 @@ export class ObserveFunction extends HyperHTMLElement {
    * @param {String} selectedPath The name of the currently selected path
    * @returns {HyperHTMLElement} el The existing element updated or the new element created.
    */
-  static makeOrUpdate(el, observeFunc, selectedPath){
+  static makeOrUpdate(el, observeFunc, selectedPath) {
     el = el || new ObserveFunction(true);
     el._updateState(observeFunc, selectedPath);
     return el;
@@ -21,6 +21,7 @@ export class ObserveFunction extends HyperHTMLElement {
    */
   constructor(skipRender) {
     super();
+    this.cachedStyle = this._style();
     this.attachShadow({mode: 'open'});
     if (!skipRender)
       this.render();
@@ -36,6 +37,18 @@ export class ObserveFunction extends HyperHTMLElement {
 
   render() {
     this.html`
+      ${this.cachedStyle}
+      <span class="funcName">${this.state.func.funcName}</span>
+      <span class="funcArgs">
+        ${(this.state.func.triggerPaths || []).map((arg, i) => HyperHTMLElement.wire(arg)`
+          <state-path triggered="${arg.triggered}" selected="${arg.path.join(".") === this.state.selectedPath}">${arg.path.join(".")}</state-path>
+        `)}
+      </span>
+    `;
+  }
+
+  _style(){
+    return HyperHTMLElement.wire()`
       <style>
         :host {
           display: block;
@@ -43,16 +56,16 @@ export class ObserveFunction extends HyperHTMLElement {
         span.funcName {
           color: lightgreen;
         }
+        .funcArgs::before {
+          content: "("
+        }
+        .funcArgs::after {
+          content: ")"
+        }
+        state-path:not(:last-child)::after{
+          content: ", "
+        }
       </style>
-      <span class="funcName">${this.state.func.funcName}</span>
-      <span class="pointsTo argsStart">(</span>
-      <span class="funcArgs">
-        ${(this.state.func.triggerPaths || []).map((arg, i) => HyperHTMLElement.wire()`
-          ${i !== 0 ? ", " : ""}
-          <state-path triggered="${arg.triggered}" selected="${arg.path.join(".") === this.state.selectedPath}">${arg.path.join(".")}</state-path>
-        `)}
-      </span>
-      <span class="pointsTo argsEnd">)</span>
     `;
   }
 }
