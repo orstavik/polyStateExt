@@ -7,28 +7,48 @@ class FlexibleGrid extends HyperHTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.separator = this.getAttribute('separator') || `${window.innerWidth/2}px`;
-    this.min = this.getAttribute('min') || '300px';
+    this.minCols = this.getAttribute('min-cols').split(' ') || [`${window.innerWidth/2}px`, `${window.innerWidth/2}px`];
+    this.direction = this.getAttribute('direction') || 'horizontal';
     this.cachedStyle = this._style();
     this.render();
     this.setDraggableSeparator();
   }
 
-  _gridStyle() {
-    return `grid-template-columns: ${this.separator} auto`;
+  static _gridStyle(dir, sep) {
+    if (dir === 'horizontal')
+      return `grid-template-columns: ${sep} auto`;
+    else if (dir === 'vertical')
+      return `grid-template-rows: ${sep} auto`;
   }
 
-  _colsStyle() {
-    return `left: ${this.separator}`;
+  static _colsStyle(dir, sep) {
+    if (dir === 'horizontal')
+      return `left: ${sep}`;
+    else if (dir === 'vertical')
+      return `top: ${sep}`;
   }
 
-  _normalizeSeparator(x) {
-    const min = this.min.match(/\d+/)[0];
-    if (x < min)
-      return min;
-    else if (x > (window.innerWidth-min))
-      return window.innerWidth-min;
-    else
-      return x;
+  static _getSeparator(e, dir, minCols) {
+    let diff;
+    if (dir === 'horizontal')
+      diff = e.x;
+    else if (dir === 'vertical')
+      diff = e.y
+
+    const minOne = minCols[0].match(/\d+/)[0];
+    const minTwo = minCols[1].match(/\d+/)[0];
+
+    if (diff < minOne) {
+      return minOne;
+    } else if (dir === 'horizontal') {
+      if (diff > (window.innerWidth-minTwo))
+        return window.innerWidth-minTwo;
+      else return diff;
+    } else if (dir === 'vertical') {
+      if (diff > (window.innerHeight-minTwo))
+        return window.innerHeight-minTwo;
+      else return diff;
+    }
   }
 
   setDraggableSeparator() {
@@ -43,8 +63,7 @@ class FlexibleGrid extends HyperHTMLElement {
     }.bind(this);
     const moveCallback = function(e) {
       e.preventDefault();
-      this.separator = `${this._normalizeSeparator(e.x)}px`;
-      console.log(this.separator);
+      this.separator = `${FlexibleGrid._getSeparator(e, this.direction, this.minCols)}px`;
       this.render();
     }.bind(this);
     const upCallback = function(e) {
@@ -60,10 +79,10 @@ class FlexibleGrid extends HyperHTMLElement {
       <style>
         ${this.cachedStyle}
       </style>
-      <div class="grid" style="${this._gridStyle()}">
+      <div class="grid" style="${FlexibleGrid._gridStyle(this.direction, this.separator)}">
         <slot name="first" class="grid__container"></slot>
         <slot name="second" class="grid__container"></slot>
-        <div class="grid__separator" style="${this._colsStyle()}"></div>
+        <div class="grid__separator" style="${FlexibleGrid._colsStyle(this.direction, this.separator)}"></div>
       </div>
     `;
   }
@@ -78,25 +97,47 @@ class FlexibleGrid extends HyperHTMLElement {
       .grid {
         display: grid;
         height: 100%;
+      }
+      :host([direction="horizontal"]) .grid {
         grid-template-columns: ${this.separator} auto;
       }
-      .grid__container:first-child::slotted(*) {
+      :host([direction="vertical"]) .grid {
+        grid-template-rows: ${this.separator} auto;
+      }
+      :host([direction="horizontal"]) .grid__container:first-child::slotted(*) {
         border-right: 1px solid var(--separator-color);
+      }
+      :host([direction="vertical"]) .grid__container:first-child::slotted(*) {
+        border-bottom: 1px solid var(--separator-color);
       }
       .grid__separator {
         display: inline-block;
-        height: 100%;
-        width: 6px;
-        margin-left: -3px;
         position: absolute;
-        top: 0;
-        left: ${this.separator};
-        cursor: ew-resize;
         z-index: 100;
       }
-      .grid--dragged .grid__separator {
+      :host([direction="horizontal"]) .grid__separator {
+        width: 6px;
+        height: 100%;
+        margin-left: -3px;
+        left: ${this.separator};
+        top: 0;
+        cursor: ew-resize;
+      }
+      :host([direction="vertical"]) .grid__separator {
+        width: 100%;
+        height: 6px;
+        margin-top: -3px;
+        left: 0;
+        top: ${this.separator};
+        cursor: ns-resize;
+      }
+      :host([direction="horizontal"]) .grid--dragged .grid__separator {
         width: 600px;
         margin-left: -300px;
+      }
+      :host([direction="vertical"]) .grid--dragged .grid__separator {
+        height: 600px;
+        margin-top: -300px;
       }
     `;
   }
