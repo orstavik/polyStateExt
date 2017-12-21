@@ -7,9 +7,11 @@ export class StateManager {
     this.selectedPath = null;
     this.selectedDetail = null;
     this.debugCounter = 0;
+    this.openedPaths = {"state": true};
 
     window.addEventListener("task-selected", e => this.setSelectDetail(e.detail));
     window.addEventListener("path-clicked", e => this.setSelectPath(e.detail));
+    window.addEventListener("state-open", e => this.toogleOpen(e.detail));
   }
 
   addDebugInfo(deb) {
@@ -28,37 +30,67 @@ export class StateManager {
     this.notify(this);
   }
 
-  getVisualVersion(){
+  toogleOpen(path) {
+    if (this.openedPaths[path]) {                  //remove path, but also all sub paths opened
+      for (let sub in this.openedPaths) {
+        if (sub.startsWith(path))
+          delete this.openedPaths[sub];
+      }
+    } else {
+      this.openedPaths[path] = true;               //add a path
+    }
+    this.notify(this);
+  }
+
+  getVisualVersion() {
     if (!this.selectedDetail)
       return undefined;
+    let visVers = StateManager.addSelectedToVisualVersion(this.selectedDetail.visualVersion, this.selectedPath);
+    return StateManager.addToogleOpen(this.openedPaths, visVers);
+  }
 
-    let visVers = this.selectedDetail.visualVersion;
-    for (let propName in this.selectedDetail.visualVersion.children) {
-      let prop = this.selectedDetail.visualVersion.children[propName];
-      if (!prop.compute)
-        continue;
-      for (let argName in prop.compute.triggerPaths) {
-        let arg = prop.compute.triggerPaths[argName];
-        visVers= Tools.setIn(visVers, ["children", propName, "compute", "triggerPaths", argName, "selected"], arg.path.join(".") === this.selectedPath);
+  static addToogleOpen(openedPaths, visVers) {
+    for (let togglePath in openedPaths) {
+      let pathArray = togglePath.split(".");
+      for (let i = 0; i < pathArray.length; i++) {
+        let path = pathArray.slice(0, i + 1);
+        path = path.join(".children.").split(".").slice(1);
+        visVers = Tools.setIn(visVers, path.concat(["open"]), true);
       }
     }
     return visVers;
   }
 
-  getObserverInfo(){
-    let observers = this.selectedDetail.observerInfo;
-    for (let funcName in this.selectedDetail.observerInfo) {
-      let func = this.selectedDetail.observerInfo[funcName]
+  getObserverInfo() {
+    return StateManager.addSelectedPathToObservers(this.selectedDetail.observerInfo, this.selectedPath);
+  }
+
+  onChange(cb) {
+    this.notify = cb;
+  }
+
+  static addSelectedPathToObservers(observers, selectedPath) {
+    for (let funcName in observers) {
+      let func = observers[funcName];
       for (let argNumber in func.triggerPaths) {
         let arg = func.triggerPaths[argNumber];
-        observers = Tools.setIn(observers, [funcName, "triggerPaths", argNumber, "selected"], arg.path.join(".") === this.selectedPath);
+        observers = Tools.setIn(observers, [funcName, "triggerPaths", argNumber, "selected"], arg.path.join(".") === selectedPath);
       }
     }
     return observers;
   }
 
-  onChange(cb) {
-    this.notify = cb;
+  static addSelectedToVisualVersion(visVers, selectedPath) {
+    for (let propName in visVers.children) {
+      let prop = visVers.children[propName];
+      if (prop.compute) {
+        for (let argName in prop.compute.triggerPaths) {
+          let arg = prop.compute.triggerPaths[argName];
+          visVers = Tools.setIn(visVers, ["children", propName, "compute", "triggerPaths", argName, "selected"], arg.path.join(".") === selectedPath);
+        }
+      }
+    }
+    return visVers;
   }
 
   static appendComputesToState(visualVersion, computerInfo) {
@@ -66,7 +98,8 @@ export class StateManager {
       let compute = computerInfo[computeName];
       if (!visualVersion.children[computeName])
         visualVersion = Tools.setIn(visualVersion, ["children", computeName], {children: [], style: [], values: {}});
-      visualVersion = Tools.setIn(visualVersion, ["children", computeName, "compute"], compute);    }
+      visualVersion = Tools.setIn(visualVersion, ["children", computeName, "compute"], compute);
+    }
     return visualVersion;
   }
 }

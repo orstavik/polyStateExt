@@ -1,6 +1,5 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 import {ComputeListing} from "./ComputeListing.js";
-import {Tools2} from "./Tools2.js";
 
 export class StateTree extends HyperHTMLElement {
 
@@ -34,6 +33,8 @@ export class StateTree extends HyperHTMLElement {
     this.state.name = name;
     this.state.compute = data.compute;
     this.state.values = data.values;
+    if (data.open)
+      this.state.open = data.open;
     this.render();
   }
 
@@ -48,21 +49,42 @@ export class StateTree extends HyperHTMLElement {
     } else {
       this.html`
         ${StateTree._style()}
-        <details class="details">
-          <summary class="details__summary">
+        <details class="details" open="${this.state.open}">
+          <summary class="details__summary" onclick="${this.openDetail.bind(this)}">
             <span class="details__key">${this.state.name}</span>
             ${StateTree.makeComputeListing(this.state.compute)}
           </summary>
           ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
-            ${Tools2.setAttribute(StateTree.makeOrUpdate(null, key, value), "class", 'details__value')}
-          `)}
+            ${this.makeChildTree(key, value)}
+          `)}                                            
         </details>
       `;
     }
   }
 
+  makeChildTree(key, value) {
+    let el = StateTree.makeOrUpdate(null, key, value);
+    el.addEventListener("state-open", this.extendOpen.bind(this));
+    el.setAttribute("class", 'details__value');
+    return el;
+  }
+
+  extendOpen(e){
+    e.stopPropagation();
+    this.dispatchEvent(new CustomEvent("state-open", {composed: true, bubbles: true, detail: this.state.name + "." + e.detail}));
+  }
+
+  openDetail(e) {
+    e.stopPropagation();
+    this.dispatchEvent(new CustomEvent("state-open", {composed: true, bubbles: true, detail: this.state.name}));
+  }
+
   static makeComputeListing(compute) {
-    return compute ? Tools2.setAttribute(ComputeListing.makeOrUpdate(null, compute), "class", 'details__computed'): null;
+    if (!compute)
+      return null;
+    const el = ComputeListing.makeOrUpdate(null, compute);
+    el.setAttribute("class", 'details__computed');
+    return el;
   }
 
   /**
