@@ -37,8 +37,8 @@ export class StateTree extends HyperHTMLElement {
     this.render();
   }
 
-  render() {
   // <!--<style>${StateTree._style()}</style>-->
+  render() {
     if (this.state.childObjs.length === 0) {
       this.html`
         <span class="details__key key--primitive">${this.state.name}</span>
@@ -46,11 +46,6 @@ export class StateTree extends HyperHTMLElement {
         ${StateTree.makeComputeListing(this.state.compute)}
       `;
     } else {
-    // <style>${StateTree._style()}</style>
-    //   <!--<details class="details" open="${this.state.open}">-->
-    //   <!--<summary class="details__summary" >-->
-    // <!--</summary>-->
-    // <!--</details>-->
       this.html`
             <span class="details__key" onclick="${this.openDetail.bind(this)}">${this.state.name}</span>
             ${StateTree.makeComputeListing(this.state.compute)}
@@ -96,36 +91,6 @@ export class StateTree extends HyperHTMLElement {
     return `
       state-tree .details__value {
         padding-left: 13px;
-      }
-      .key--primitive {
-        margin-left: 13.5px;
-      }
-      .details__key {
-        color: var(--color-property-normal);
-      }
-      .details__key::after {
-        content: ':';
-      }
-      .primitive--type-undefined,
-      .primitive--type-null {
-        color: var(--color-nothing-normal);
-      }
-      
-      .primitive--type-boolean {
-        color: var(--color-boolean-normal);
-      }
-      
-      .primitive--type-number {
-        color: var(--color-number-normal);
-      }
-      
-      .primitive--type-string {
-        color: var(--color-string-normal);
-      }
-      
-      .primitive--type-string::before,
-      .primitive--type-string::after {
-        content: '"';
       }
       .details__summary {
         display: inline-block;

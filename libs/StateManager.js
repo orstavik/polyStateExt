@@ -5,7 +5,6 @@ export class StateManager {
   constructor() {
     this.debugInfoList = [];
     this.selectedPath2 = {};
-    this.selectedDetail = null;
     this.debugCounter = 0;
     this.openedPaths = {"state": true};
 
@@ -27,7 +26,13 @@ export class StateManager {
   }
 
   setSelectDetail(id) {
-    this.selectedDetail = this.debugInfoList[Number(id)];
+    let data = this.debugInfoList[Number(id)];
+    if (!data) {
+      console.log(id);
+      return;
+    }
+    this.visualVersion = data.visualVersion;
+    this.observerInfo = data.observerInfo;
     this.notify(this);
   }
 
@@ -44,29 +49,15 @@ export class StateManager {
   }
 
   getVisualVersion() {
-    if (!this.selectedDetail)
-      return undefined;
-    return StateManager.addToogleOpen(this.openedPaths, this.selectedDetail.visualVersion);
+    return this.visualVersion;
   }
 
   getHighlights(){
     return this.openedPaths;
   }
 
-  static addToogleOpen(openedPaths, visVers) {
-    for (let togglePath in openedPaths) {
-      let pathArray = togglePath.split(".");
-      for (let i = 0; i < pathArray.length; i++) {
-        let path = pathArray.slice(0, i + 1);
-        path = path.join(".children.").split(".").slice(1);
-        visVers = Tools.setIn(visVers, path.concat(["open"]), true);
-      }
-    }
-    return visVers;
-  }
-
   getObserverInfo() {
-    return this.selectedDetail.observerInfo;
+    return this.observerInfo;
   }
 
   getSelectedPath2() {

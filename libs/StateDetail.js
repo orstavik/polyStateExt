@@ -79,6 +79,36 @@ export class StateDetail extends HyperHTMLElement {
       ${selectedPathsSelect} {
         display: block;
       }
+      .key--primitive {
+        margin-left: 13.5px;
+      }
+      .details__key {
+        color: var(--color-property-normal);
+      }
+      .details__key::after {
+        content: ':';
+      }
+      .primitive--type-undefined,
+      .primitive--type-null {
+        color: var(--color-nothing-normal);
+      }
+      
+      .primitive--type-boolean {
+        color: var(--color-boolean-normal);
+      }
+      
+      .primitive--type-number {
+        color: var(--color-number-normal);
+      }
+      
+      .primitive--type-string {
+        color: var(--color-string-normal);
+      }
+      
+      .primitive--type-string::before,
+      .primitive--type-string::after {
+        content: '"';
+      }
     `;
   }
 
@@ -94,34 +124,3 @@ export class StateDetail extends HyperHTMLElement {
 }
 
 customElements.define("state-detail", StateDetail);
-
-// static pathClicked (e){
-//   alert("path clicked: " + e.detail);
-//   let segments2 = ("state."+e.detail).split(".");
-//   let stateTree = this.shadowRoot.querySelector("state-tree");
-//   stateTree.flashPath(segments2);
-//   // while (segments2.length){
-//   //   let first = segments2.shift();
-//   //   stateTree = stateTree.shadowRoot.querySelector("state-tree." + first);
-//   //   if (!stateTree)
-//   //     return alert("no such path: " + e.detail);
-//   //   stateTree.classList.toggle("flash");
-//   // }
-//   // const oldFlash = document.querySelectorAll(".flash");
-//   // for (let oldi of oldFlash)
-//   //   oldi.classList.remove("flash");
-//   //
-//   // const index = e.path[5].contentID;
-//   // let segments = e.currentTarget.textContent.split(".");
-//   //
-//   // for (let i = 0; i < segments.length; i++) {
-//   //   let partialPath = segments.slice(0, segments.length - i);
-//   //   let argPath = partialPath.join("_");
-//   //   let detail = document.querySelector("#" + index + "_state_" + argPath);
-//   //   detail.classList.add("opened");
-//   // }
-//   //
-//   // let argPath = segments.join("_");
-//   // let detail = document.querySelector("#s" + index + "_state_" + argPath);
-//   // detail.classList.add("flash");
-// };
