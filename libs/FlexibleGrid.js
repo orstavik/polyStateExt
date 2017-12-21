@@ -34,7 +34,7 @@ class FlexibleGrid extends HyperHTMLElement {
     if (dir === 'horizontal')
       diff = e.x;
     else if (dir === 'vertical')
-      diff = e.y
+      diff = e.y;
 
     const minOne = minCols[0].match(/\d+/)[0];
     const minTwo = minCols[1].match(/\d+/)[0];
@@ -56,14 +56,14 @@ class FlexibleGrid extends HyperHTMLElement {
     const separator = this.shadowRoot.querySelector('.grid__separator');
     const grid = this.shadowRoot.querySelector('.grid');
     draggable(separator);
-    separator.addEventListener('draggingstart', (e) => {
+    separator.addEventListener('dragstart', (e) => {
       grid.classList.add('grid--dragged');
     });
-    separator.addEventListener('dragging', (e) => {
+    separator.addEventListener('drag', (e) => {
       this.separator = `${FlexibleGrid._getSeparator(e.detail, this.direction, this.minCols)}px`;
       this.render();
     });
-    separator.addEventListener('draggingend', (e) => {
+    separator.addEventListener('dragend', (e) => {
       grid.classList.remove('grid--dragged');
     });
   }
