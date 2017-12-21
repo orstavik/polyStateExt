@@ -1,6 +1,7 @@
 /** @module libs/FlexibleGrid */
 
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
+import draggable from "./draggable.js";
 
 class FlexibleGrid extends HyperHTMLElement {
   constructor() {
@@ -54,24 +55,17 @@ class FlexibleGrid extends HyperHTMLElement {
   setDraggableSeparator() {
     const separator = this.shadowRoot.querySelector('.grid__separator');
     const grid = this.shadowRoot.querySelector('.grid');
-    const downCallback = function(e) {
-      if (e.which === 1) {
-        window.addEventListener('mousemove', moveCallback);
-        window.addEventListener('mouseup', upCallback);
-        grid.classList.add('grid--dragged');
-      }
-    }.bind(this);
-    const moveCallback = function(e) {
-      e.preventDefault();
-      this.separator = `${FlexibleGrid._getSeparator(e, this.direction, this.minCols)}px`;
+    draggable(separator);
+    separator.addEventListener('draggingstart', (e) => {
+      grid.classList.add('grid--dragged');
+    });
+    separator.addEventListener('dragging', (e) => {
+      this.separator = `${FlexibleGrid._getSeparator(e.detail, this.direction, this.minCols)}px`;
       this.render();
-    }.bind(this);
-    const upCallback = function(e) {
-      window.removeEventListener('mousemove', moveCallback);
-      window.removeEventListener('mouseup', upCallback);
+    });
+    separator.addEventListener('draggingend', (e) => {
       grid.classList.remove('grid--dragged');
-    }.bind(this);
-    separator.addEventListener('mousedown', downCallback);
+    });
   }
 
   render() {
