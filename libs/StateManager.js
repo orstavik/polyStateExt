@@ -5,6 +5,7 @@ export class StateManager {
   constructor() {
     this.debugInfoList = [];
     this.selectedPath = null;
+    this.selectedPath2 = {};
     this.selectedDetail = null;
     this.debugCounter = 0;
     this.openedPaths = {"state": true};
@@ -22,6 +23,8 @@ export class StateManager {
 
   setSelectPath(path) {
     this.selectedPath = path;
+    this.selectedPath2 = {};
+    this.selectedPath2[path] = true;
     this.notify(this);
   }
 
@@ -49,6 +52,10 @@ export class StateManager {
     return StateManager.addToogleOpen(this.openedPaths, visVers);
   }
 
+  getHighlights(){
+    return Object.assign({}, this.openedPaths, this.selectedPath2);
+  }
+
   static addToogleOpen(openedPaths, visVers) {
     for (let togglePath in openedPaths) {
       let pathArray = togglePath.split(".");
@@ -62,22 +69,15 @@ export class StateManager {
   }
 
   getObserverInfo() {
-    return StateManager.addSelectedPathToObservers(this.selectedDetail.observerInfo, this.selectedPath);
+    return this.selectedDetail.observerInfo;
+  }
+
+  getSelectedPath2() {
+    return this.selectedPath2;
   }
 
   onChange(cb) {
     this.notify = cb;
-  }
-
-  static addSelectedPathToObservers(observers, selectedPath) {
-    for (let funcName in observers) {
-      let func = observers[funcName];
-      for (let argNumber in func.triggerPaths) {
-        let arg = func.triggerPaths[argNumber];
-        observers = Tools.setIn(observers, [funcName, "triggerPaths", argNumber, "selected"], arg.path.join(".") === selectedPath);
-      }
-    }
-    return observers;
   }
 
   static addSelectedToVisualVersion(visVers, selectedPath) {

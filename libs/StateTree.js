@@ -20,14 +20,13 @@ export class StateTree extends HyperHTMLElement {
    */
   constructor(skipRender) {
     super();
-    this.attachShadow({mode: 'open'});
+    // this.attachShadow({mode: 'open'});
     if (!skipRender)
       this.render();
   }
 
   _updateState(name, data) {
     this.state.childObjs = !data || !data.children ? [] : Object.entries(data.children);
-    // this.rawChildren = data.children;
     if (!data)
       return;
     this.state.name = name;
@@ -65,6 +64,7 @@ export class StateTree extends HyperHTMLElement {
   makeChildTree(key, value) {
     let el = StateTree.makeOrUpdate(null, key, value);
     el.addEventListener("state-open", this.extendOpen.bind(this));
+    el.setAttribute("name", key);
     el.setAttribute("class", 'details__value');
     return el;
   }
@@ -92,15 +92,24 @@ export class StateTree extends HyperHTMLElement {
    * @returns {HTMLStyleElement}
    */
   static _style() {
-    return HyperHTMLElement.wire()`
-      <style>
-        :host {
+    // language=CSS
+    `   state-tree {
           display: block;
           font-family: Consolas, "dejavu sans mono", monospace;
           line-height: 16px;
           white-space: nowrap;
         }
-        :host(.details__value) {
+     `;
+
+    return HyperHTMLElement.wire()`
+      <style>
+        state-tree {
+          display: block;
+          font-family: Consolas, "dejavu sans mono", monospace;
+          line-height: 16px;
+          white-space: nowrap;
+        }
+        state-tree .details__value {
           padding-left: 13px;
         }
         .key--primitive {
@@ -154,15 +163,4 @@ export class StateTree extends HyperHTMLElement {
 
 customElements.define("state-tree", StateTree);
 
-// flashPath(segments) {
-//   let first = segments.shift();
-//   this.name === first ? this.classList.add("flash") : this.classList.remove("flash");
-//   if (segments.length === 0)
 //     this.scrollIntoViewIfNeeded();
-//   else{
-//     if (this.rawChildren[segments[0]])
-//       this.shadowRoot.querySelectorAll("state-detail").map(child => child.flashPath(segments));
-//     else
-//       alert("This part of your path is not to be found: " + segments.join("."));
-//   }
-// }

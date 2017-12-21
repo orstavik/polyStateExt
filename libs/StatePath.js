@@ -21,9 +21,6 @@ export class StatePath extends HyperHTMLElement {
         :host([triggered="true"])  {
           font-weight: bold;
         }
-        :host([selected="true"])  {
-          text-decoration: underline;
-        }
       </style>
       <slot></slot>
     `;

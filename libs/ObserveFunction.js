@@ -21,7 +21,7 @@ export class ObserveFunction extends HyperHTMLElement {
   constructor(skipRender) {
     super();
     this.cachedStyle = this._style();
-    this.attachShadow({mode: 'open'});
+    // this.attachShadow({mode: 'open'});
     if (!skipRender)
       this.render();
   }
@@ -39,7 +39,7 @@ export class ObserveFunction extends HyperHTMLElement {
       <span class="funcName">${this.state.func.funcName}</span>
       <span class="funcArgs">
         ${(Object.values(this.state.func.triggerPaths) || []).map((arg, i) => HyperHTMLElement.wire(arg)`
-          <state-path triggered="${arg.triggered}" selected="${arg.selected}">${arg.path.join(".")}</state-path>
+          <state-path path="${arg.path.join(".")}" triggered="${arg.triggered}">${arg.path.join(".")}</state-path>
         `)}
       </span>
     `;
@@ -48,7 +48,7 @@ export class ObserveFunction extends HyperHTMLElement {
   _style(){
     return HyperHTMLElement.wire()`
       <style>
-        :host {
+        observe-function {
           display: block;
         }
         span.funcName {

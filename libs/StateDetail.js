@@ -8,9 +8,9 @@ export class StateDetail extends HyperHTMLElement {
    * @param {HyperHTMLElement} el
    * @param {Object} visualVersion
    */
-  static makeOrUpdate(el, visualVersion) {
+  static makeOrUpdate(el, visualVersion, highlights) {
     el = el || new StateDetail(true);
-    el.updateState(visualVersion);
+    el.updateState(visualVersion, highlights);
     return el;
   }
 
@@ -25,23 +25,25 @@ export class StateDetail extends HyperHTMLElement {
     this.addEventListener("path-clicked", StateDetail.pathClicked);
   }
 
-  updateState(visualVersion) {
+  updateState(visualVersion, highlights) {
     this.state.visualVersion = visualVersion;
+    this.state.highlights= highlights;
     this.render();
   }
 
   render() {
     this.html`
-        ${StateDetail._style()}
-        <h4 class="state__header">State</h4>
-        ${StateDetail.makeStateTree(this.state.visualVersion)}
-      `;
+      <style>${this._style(this.state.highlights)}</style>
+      <h4 class="state__header">State</h4>
+      ${StateDetail.makeStateTree(this.state.visualVersion)}
+    `;
   }
 
   static makeStateTree(visVersion) {
     if (!visVersion)
       return null;
     let stateTree = StateTree.makeOrUpdate(null, "state", visVersion);
+    stateTree.setAttribute("name", "state");
     stateTree.setAttribute("class", "state-observer__state");
     return stateTree;
   }
@@ -50,17 +52,25 @@ export class StateDetail extends HyperHTMLElement {
    * Helper function to isolate css style
    * @returns {HTMLStyleElement}
    */
-  static _style() {
-    return HyperHTMLElement.wire()`
-      <style>
-        :host {
-          display: block;
-          padding: 12px 24px;
-        }
-        .state__header {
-          margin: 0 0 12px;
-        }
-      </style>
+  _style(paths) {
+    let generatedCss = null;
+    if (paths && paths instanceof Object && Object.keys(paths).length > 0) {
+      generatedCss = "";
+      for (let path in paths) {
+        console.log(path);
+        let cssPath = path.split(".").map(str => `state-tree[name='${str}']`).join(">details>") + ">details>summary";
+        generatedCss += cssPath + "{ font-weight: bold; } "
+      }
+    }
+    return `
+      :host {
+        display: block;
+        padding: 12px 24px;
+      }
+      .state__header {
+        margin: 0 0 12px;
+      }
+      ${generatedCss}
     `;
   }
 }
