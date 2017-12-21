@@ -8,9 +8,9 @@ export class StateDetail extends HyperHTMLElement {
    * @param {HyperHTMLElement} el
    * @param {Object} visualVersion
    */
-  static makeOrUpdate(el, visualVersion, highlights) {
+  static makeOrUpdate(el, visualVersion, highlights, selected) {
     el = el || new StateDetail(true);
-    el.updateState(visualVersion, highlights);
+    el.updateState(visualVersion, highlights, selected);
     return el;
   }
 
@@ -25,15 +25,16 @@ export class StateDetail extends HyperHTMLElement {
     this.addEventListener("path-clicked", StateDetail.pathClicked);
   }
 
-  updateState(visualVersion, highlights) {
+  updateState(visualVersion, highlights, selected) {
     this.state.visualVersion = visualVersion;
     this.state.highlights= highlights;
+    this.state.selected= selected;
     this.render();
   }
 
   render() {
     this.html`
-      <style>${this._style(this.state.highlights)}</style>
+      <style>${this._style(this.state.highlights, this.state.selected)}</style>
       <h4 class="state__header">State</h4>
       ${StateDetail.makeStateTree(this.state.visualVersion)}
     `;
@@ -52,15 +53,18 @@ export class StateDetail extends HyperHTMLElement {
    * Helper function to isolate css style
    * @returns {HTMLStyleElement}
    */
-  _style(paths) {
-    let generatedCss = null;
+  _style(paths, selected) {
+    let generatedCss = "";
     if (paths && paths instanceof Object && Object.keys(paths).length > 0) {
-      generatedCss = "";
       for (let path in paths) {
-        console.log(path);
         let cssPath = path.split(".").map(str => `state-tree[name='${str}']`).join(">details>") + ">details>summary";
         generatedCss += cssPath + "{ font-weight: bold; } "
       }
+    }
+    if (selected && selected instanceof Object && Object.keys(selected).length > 0) {
+      let select = Object.keys(selected)[0];
+        let cssPath = select.split(".").map(str => `state-tree[name='${str}']`).join(">details>") + ">details>summary";
+        generatedCss += cssPath + "{ text-decoration: line-through; } "
     }
     return `
       :host {

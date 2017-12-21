@@ -4,7 +4,6 @@ export class StateManager {
 
   constructor() {
     this.debugInfoList = [];
-    this.selectedPath = null;
     this.selectedPath2 = {};
     this.selectedDetail = null;
     this.debugCounter = 0;
@@ -22,7 +21,6 @@ export class StateManager {
   }
 
   setSelectPath(path) {
-    this.selectedPath = path;
     this.selectedPath2 = {};
     this.selectedPath2[path] = true;
     this.notify(this);
@@ -48,12 +46,13 @@ export class StateManager {
   getVisualVersion() {
     if (!this.selectedDetail)
       return undefined;
-    let visVers = StateManager.addSelectedToVisualVersion(this.selectedDetail.visualVersion, this.selectedPath);
-    return StateManager.addToogleOpen(this.openedPaths, visVers);
+    // let visVers = StateManager.addSelectedToVisualVersion(this.selectedDetail.visualVersion, this.selectedPath);
+    // return StateManager.addToogleOpen(this.openedPaths, visVers);
+    return StateManager.addToogleOpen(this.openedPaths, this.selectedDetail.visualVersion);
   }
 
   getHighlights(){
-    return Object.assign({}, this.openedPaths, this.selectedPath2);
+    return this.openedPaths;
   }
 
   static addToogleOpen(openedPaths, visVers) {
@@ -80,19 +79,19 @@ export class StateManager {
     this.notify = cb;
   }
 
-  static addSelectedToVisualVersion(visVers, selectedPath) {
-    for (let propName in visVers.children) {
-      let prop = visVers.children[propName];
-      if (prop.compute) {
-        for (let argName in prop.compute.triggerPaths) {
-          let arg = prop.compute.triggerPaths[argName];
-          visVers = Tools.setIn(visVers, ["children", propName, "compute", "triggerPaths", argName, "selected"], arg.path.join(".") === selectedPath);
-        }
-      }
-    }
-    return visVers;
-  }
-
+  // static addSelectedToVisualVersion(visVers, selectedPath) {
+  //   for (let propName in visVers.children) {
+  //     let prop = visVers.children[propName];
+  //     if (prop.compute) {
+  //       for (let argName in prop.compute.triggerPaths) {
+  //         let arg = prop.compute.triggerPaths[argName];
+  //         visVers = Tools.setIn(visVers, ["children", propName, "compute", "triggerPaths", argName, "selected"], arg.path.join(".") === selectedPath);
+  //       }
+  //     }
+  //   }
+  //   return visVers;
+  // }
+  //
   static appendComputesToState(visualVersion, computerInfo) {
     for (let computeName in computerInfo) {
       let compute = computerInfo[computeName];
