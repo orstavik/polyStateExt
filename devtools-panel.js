@@ -16,8 +16,8 @@ const observers = document.querySelector("observer-list");
 
 const state = new StateManager();
 state.onChange(function (newState) {
-  StateDetail.makeOrUpdate(stateDetail, newState.getVisualVersion());
-  ObserverList.makeOrUpdate(observers, newState.getObserverInfo());
+  StateDetail.makeOrUpdate(stateDetail, newState.getVisualVersion(), newState.getHighlights(), newState.getSelectedPath2());
+  ObserverList.makeOrUpdate(observers, newState.getObserverInfo(), newState.getSelectedPath2());
 });
 
 const tasksList = document.querySelector("aside.tasklist");

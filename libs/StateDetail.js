@@ -8,9 +8,9 @@ export class StateDetail extends HyperHTMLElement {
    * @param {HyperHTMLElement} el
    * @param {Object} visualVersion
    */
-  static makeOrUpdate(el, visualVersion) {
+  static makeOrUpdate(el, visualVersion, openedPaths, selectedPaths) {
     el = el || new StateDetail(true);
-    el.updateState(visualVersion);
+    el.updateState(visualVersion, openedPaths, selectedPaths);
     return el;
   }
 
@@ -25,23 +25,26 @@ export class StateDetail extends HyperHTMLElement {
     this.addEventListener("path-clicked", StateDetail.pathClicked);
   }
 
-  updateState(visualVersion) {
+  updateState(visualVersion, openedPaths, selectedPaths) {
     this.state.visualVersion = visualVersion;
+    this.state.openedPaths = openedPaths;
+    this.state.selectedPaths = selectedPaths;
     this.render();
   }
 
   render() {
     this.html`
-        ${StateDetail._style()}
-        <h4 class="state__header">State</h4>
-        ${StateDetail.makeStateTree(this.state.visualVersion)}
-      `;
+      <style>${this._style(this.state.openedPaths, this.state.selectedPaths)}</style>
+      <h4 class="state__header">State</h4>
+      ${StateDetail.makeStateTree(this.state.visualVersion)}
+    `;
   }
 
   static makeStateTree(visVersion) {
     if (!visVersion)
       return null;
     let stateTree = StateTree.makeOrUpdate(null, "state", visVersion);
+    stateTree.setAttribute("name", "state");
     stateTree.setAttribute("class", "state-observer__state");
     return stateTree;
   }
@@ -50,18 +53,33 @@ export class StateDetail extends HyperHTMLElement {
    * Helper function to isolate css style
    * @returns {HTMLStyleElement}
    */
-  static _style() {
-    return HyperHTMLElement.wire()`
-      <style>
-        :host {
-          display: block;
-          padding: 12px 24px;
-        }
-        .state__header {
-          margin: 0 0 12px;
-        }
-      </style>
+  _style(openedPaths, selectedPaths) {
+    //language=CSS
+    return `
+      :host {
+        display: block;
+        padding: 12px 24px;
+      }
+      .state__header {
+        margin: 0 0 12px;
+      }
+      ${StateDetail.pathsToCSSSelectors(selectedPaths)} {
+        text-decoration: line-through;
+      }
+      ${StateDetail.pathsToCSSSelectors(openedPaths)} {
+        font-weight: bold;
+      }
     `;
+  }
+
+  static pathsToCSSSelectors(paths) {
+    if (!paths || !(paths instanceof Object) || Object.keys(paths).length === 0)
+      return "inactive";
+    return Object.keys(paths).map(path => StateDetail.pathToCSSSelector(path)).join(", ");
+  }
+
+  static pathToCSSSelector(path) {
+    return path.split(".").map(str => `state-tree[name='${str}']`).join(">details>") + ">details>summary";
   }
 }
 
