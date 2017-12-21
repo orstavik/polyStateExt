@@ -8,9 +8,9 @@ export class StateDetail extends HyperHTMLElement {
    * @param {HyperHTMLElement} el
    * @param {Object} visualVersion
    */
-  static makeOrUpdate(el, visualVersion, highlights, selected) {
+  static makeOrUpdate(el, visualVersion, openedPaths, selectedPaths) {
     el = el || new StateDetail(true);
-    el.updateState(visualVersion, highlights, selected);
+    el.updateState(visualVersion, openedPaths, selectedPaths);
     return el;
   }
 
@@ -25,16 +25,16 @@ export class StateDetail extends HyperHTMLElement {
     this.addEventListener("path-clicked", StateDetail.pathClicked);
   }
 
-  updateState(visualVersion, highlights, selected) {
+  updateState(visualVersion, openedPaths, selectedPaths) {
     this.state.visualVersion = visualVersion;
-    this.state.highlights= highlights;
-    this.state.selected= selected;
+    this.state.openedPaths = openedPaths;
+    this.state.selectedPaths = selectedPaths;
     this.render();
   }
 
   render() {
     this.html`
-      <style>${this._style(this.state.highlights, this.state.selected)}</style>
+      <style>${this._style(this.state.openedPaths, this.state.selectedPaths)}</style>
       <h4 class="state__header">State</h4>
       ${StateDetail.makeStateTree(this.state.visualVersion)}
     `;
@@ -53,19 +53,8 @@ export class StateDetail extends HyperHTMLElement {
    * Helper function to isolate css style
    * @returns {HTMLStyleElement}
    */
-  _style(paths, selected) {
-    let generatedCss = "";
-    if (paths && paths instanceof Object && Object.keys(paths).length > 0) {
-      for (let path in paths) {
-        let cssPath = path.split(".").map(str => `state-tree[name='${str}']`).join(">details>") + ">details>summary";
-        generatedCss += cssPath + "{ font-weight: bold; } "
-      }
-    }
-    if (selected && selected instanceof Object && Object.keys(selected).length > 0) {
-      let select = Object.keys(selected)[0];
-        let cssPath = select.split(".").map(str => `state-tree[name='${str}']`).join(">details>") + ">details>summary";
-        generatedCss += cssPath + "{ text-decoration: line-through; } "
-    }
+  _style(openedPaths, selectedPaths) {
+    //language=CSS
     return `
       :host {
         display: block;
@@ -74,8 +63,23 @@ export class StateDetail extends HyperHTMLElement {
       .state__header {
         margin: 0 0 12px;
       }
-      ${generatedCss}
+      ${StateDetail.pathsToCSSSelectors(selectedPaths)} {
+        text-decoration: line-through;
+      }
+      ${StateDetail.pathsToCSSSelectors(openedPaths)} {
+        font-weight: bold;
+      }
     `;
+  }
+
+  static pathsToCSSSelectors(paths) {
+    if (!paths || !(paths instanceof Object) || Object.keys(paths).length === 0)
+      return "inactive";
+    return Object.keys(paths).map(path => StateDetail.pathToCSSSelector(path)).join(", ");
+  }
+
+  static pathToCSSSelector(path) {
+    return path.split(".").map(str => `state-tree[name='${str}']`).join(">details>") + ">details>summary";
   }
 }
 
