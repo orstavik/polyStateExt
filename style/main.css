@@ -28,13 +28,14 @@ flexible-grid {
 .tasklist {
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
-    border-right: 1px solid var(--color-border-1);
+    min-width: 260px;
+    overflow: auto;
 }
 
 .state {
     display: flex;
     box-sizing: border-box;
     flex-direction: column;
+    min-width: 400px;
     overflow: auto;
 }
