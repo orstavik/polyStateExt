@@ -38,25 +38,25 @@ export class StateTree extends HyperHTMLElement {
   }
 
   render() {
+  // <!--<style>${StateTree._style()}</style>-->
     if (this.state.childObjs.length === 0) {
       this.html`
-        ${StateTree._style()}
         <span class="details__key key--primitive">${this.state.name}</span>
         <span class="${StateTree.primitiveClass(this.state.values.newState)}">${String(this.state.values.newState)}</span>
         ${StateTree.makeComputeListing(this.state.compute)}
       `;
     } else {
+    // <style>${StateTree._style()}</style>
+    //   <!--<details class="details" open="${this.state.open}">-->
+    //   <!--<summary class="details__summary" >-->
+    // <!--</summary>-->
+    // <!--</details>-->
       this.html`
-        ${StateTree._style()}
-        <details class="details" open="${this.state.open}">
-          <summary class="details__summary" onclick="${this.openDetail.bind(this)}">
-            <span class="details__key">${this.state.name}</span>
+            <span class="details__key" onclick="${this.openDetail.bind(this)}">${this.state.name}</span>
             ${StateTree.makeComputeListing(this.state.compute)}
-          </summary>
           ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
             ${this.makeChildTree(key, value)}
-          `)}                                            
-        </details>
+          `)}  
       `;
     }
   }
@@ -93,65 +93,49 @@ export class StateTree extends HyperHTMLElement {
    */
   static _style() {
     // language=CSS
-    `   state-tree {
-          display: block;
-          font-family: Consolas, "dejavu sans mono", monospace;
-          line-height: 16px;
-          white-space: nowrap;
-        }
-     `;
-
-    return HyperHTMLElement.wire()`
-      <style>
-        state-tree {
-          display: block;
-          font-family: Consolas, "dejavu sans mono", monospace;
-          line-height: 16px;
-          white-space: nowrap;
-        }
-        state-tree .details__value {
-          padding-left: 13px;
-        }
-        .key--primitive {
-          margin-left: 13.5px;
-        }
-        .details__key {
-          color: var(--color-property-normal);
-        }
-        .details__key::after {
-          content: ':';
-        }
-        .primitive--type-undefined,
-        .primitive--type-null {
-          color: var(--color-nothing-normal);
-        }
-        
-        .primitive--type-boolean {
-          color: var(--color-boolean-normal);
-        }
-        
-        .primitive--type-number {
-          color: var(--color-number-normal);
-        }
-        
-        .primitive--type-string {
-          color: var(--color-string-normal);
-        }
-        
-        .primitive--type-string::before,
-        .primitive--type-string::after {
-          content: '"';
-        }
-        .details__summary {
-          display: inline-block;
-        }
-        .details__summary:focus {
-          outline: none;
-        }
-        .details__summary::-webkit-details-marker {
-          margin-right: -1px;
-        }
-      </style>
+    return `
+      state-tree .details__value {
+        padding-left: 13px;
+      }
+      .key--primitive {
+        margin-left: 13.5px;
+      }
+      .details__key {
+        color: var(--color-property-normal);
+      }
+      .details__key::after {
+        content: ':';
+      }
+      .primitive--type-undefined,
+      .primitive--type-null {
+        color: var(--color-nothing-normal);
+      }
+      
+      .primitive--type-boolean {
+        color: var(--color-boolean-normal);
+      }
+      
+      .primitive--type-number {
+        color: var(--color-number-normal);
+      }
+      
+      .primitive--type-string {
+        color: var(--color-string-normal);
+      }
+      
+      .primitive--type-string::before,
+      .primitive--type-string::after {
+        content: '"';
+      }
+      .details__summary {
+        display: inline-block;
+      }
+      .details__summary:focus {
+        outline: none;
+      }
+      .details__summary::-webkit-details-marker {
+        margin-right: -1px;
+      }
     `;
   }
 

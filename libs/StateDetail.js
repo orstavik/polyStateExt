@@ -22,7 +22,7 @@ export class StateDetail extends HyperHTMLElement {
     this.attachShadow({mode: 'open'});
     if (!skipRender)
       this.render();
-    this.addEventListener("path-clicked", StateDetail.pathClicked);
+    // this.addEventListener("path-clicked", StateDetail.pathClicked);
   }
 
   updateState(visualVersion, openedPaths, selectedPaths) {
@@ -54,8 +54,8 @@ export class StateDetail extends HyperHTMLElement {
    * @returns {HTMLStyleElement}
    */
   _style(openedPaths, selectedPaths) {
-    const openedPathsSelects = StateDetail.pathsToCSSSelectors(selectedPaths);
-    const selectedPathsSelect = StateDetail.pathsToCSSSelectors(openedPaths);
+    const openedPathsSelects = StateDetail.pathsToCSSSelectors(selectedPaths, ">span");
+    const selectedPathsSelect = StateDetail.pathsToCSSSelectors(openedPaths, ">state-tree");
     //language=CSS
     return `
       :host {
@@ -67,21 +67,29 @@ export class StateDetail extends HyperHTMLElement {
       }
       ${openedPathsSelects} {
         text-decoration: line-through;
+      }                                                                             
+      state-tree {
+        display: none;
+        font-family: Consolas, "dejavu sans mono", monospace;
+        line-height: 16px;
+        white-space: nowrap;
+        margin-left: 16px;
       }
+      state-tree[name='state'],
       ${selectedPathsSelect} {
-        font-weight: bold;
+        display: block;
       }
     `;
   }
 
-  static pathsToCSSSelectors(paths) {
+  static pathsToCSSSelectors(paths, ending) {
     if (!paths || !(paths instanceof Object) || Object.keys(paths).length === 0)
       return "inactive";
-    return Object.keys(paths).map(path => StateDetail.pathToCSSSelector(path)).join(", ");
+    return Object.keys(paths).map(path => StateDetail.pathToCSSSelector(path, ending)).join(", ");
   }
 
-  static pathToCSSSelector(path) {
-    return path.split(".").map(str => `state-tree[name='${str}']`).join(">details>") + ">details>summary";
+  static pathToCSSSelector(path, ending) {
+    return path.split(".").map(str => `state-tree[name='${str}']`).join(">") + ending;
   }
 }
 
