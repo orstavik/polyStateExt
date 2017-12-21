@@ -51,7 +51,7 @@ export class ObserverList extends HyperHTMLElement {
    */
   static _style(selected) {
     let selectedSelector = "inactive";
-    if (!selected || !(selected instanceof Object) || Object.keys(selected).length === 0)
+    if (selected && (selected instanceof Object) && Object.keys(selected).length !== 0)
       selectedSelector = `state-path[path="${Object.keys(selected)[0]}"]`;
 
     // language=CSS

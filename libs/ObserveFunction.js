@@ -34,8 +34,9 @@ export class ObserveFunction extends HyperHTMLElement {
   }
 
   render() {
+
     this.html`
-      ${this.cachedStyle}
+      <style>${this.cachedStyle}</style>
       <span class="funcName">${this.state.func.funcName}</span>
       <span class="funcArgs">
         ${(Object.values(this.state.func.triggerPaths) || []).map((arg, i) => HyperHTMLElement.wire(arg)`
@@ -46,8 +47,8 @@ export class ObserveFunction extends HyperHTMLElement {
   }
 
   _style(){
-    return HyperHTMLElement.wire()`
-      <style>
+    //language=CSS
+    return `
         observe-function {
           display: block;
         }
@@ -63,7 +64,6 @@ export class ObserveFunction extends HyperHTMLElement {
         state-path:not(:last-child)::after{
           content: ", "
         }
-      </style>
     `;
   }
 }
