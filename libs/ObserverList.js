@@ -50,8 +50,12 @@ export class ObserverList extends HyperHTMLElement {
    * @returns {HTMLStyleElement}
    */
   static _style(selected) {
+    let selectedSelector = "inactive";
+    if (!selected || !(selected instanceof Object) || Object.keys(selected).length === 0)
+      selectedSelector = `state-path[path="${Object.keys(selected)[0]}"]`;
+
     // language=CSS
-    const genCSS = `
+    return `
       :host {
         display: block;
         padding: 12px 24px;
@@ -64,14 +68,7 @@ export class ObserverList extends HyperHTMLElement {
         padding: 0;
         margin: 0;
       }
-    `;
-    if (!selected || !(selected instanceof Object) || Object.keys(selected).length === 0)
-      return genCSS;
-    // language=CSS
-    const selectPath = Object.keys(selected)[0];
-    return `
-      ${genCSS}
-      state-path[path="${selectPath}"] {
+      ${selectedSelector} {
         text-decoration: line-through;
       }
     `;

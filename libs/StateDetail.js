@@ -54,6 +54,8 @@ export class StateDetail extends HyperHTMLElement {
    * @returns {HTMLStyleElement}
    */
   _style(openedPaths, selectedPaths) {
+    const openedPathsSelects = StateDetail.pathsToCSSSelectors(selectedPaths);
+    const selectedPathsSelect = StateDetail.pathsToCSSSelectors(openedPaths);
     //language=CSS
     return `
       :host {
@@ -63,10 +65,10 @@ export class StateDetail extends HyperHTMLElement {
       .state__header {
         margin: 0 0 12px;
       }
-      ${StateDetail.pathsToCSSSelectors(selectedPaths)} {
+      ${openedPathsSelects} {
         text-decoration: line-through;
       }
-      ${StateDetail.pathsToCSSSelectors(openedPaths)} {
+      ${selectedPathsSelect} {
         font-weight: bold;
       }
     `;
