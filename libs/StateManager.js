@@ -7,6 +7,7 @@ export class StateManager {
     this.selectedPath = {};
     this.debugCounter = 0;
     this.openedPaths = {};
+    this.relevants = {};
 
     window.addEventListener("task-selected", e => this.setSelectDetail(e.detail));
     window.addEventListener("path-clicked", e => this.setSelectPath(e.detail));
@@ -40,10 +41,6 @@ export class StateManager {
     this.notify(this);
   }
 
-  getRelevants() {
-    return this.relevants ? this.relevants : {};
-  }
-
   toogleOpen(path) {
     if (this.openedPaths[path]) {                  //remove path, but also all sub paths opened
       for (let sub in this.openedPaths) {
@@ -60,11 +57,6 @@ export class StateManager {
     return this.visualVersion;
   }
 
-  getOpenPaths() {
-    let openedPaths = Object.assign({}, this.openedPaths, this.selectedPath, this.relevants);
-    return StateManager.openParentPaths(openedPaths);
-  }
-
   getObserverInfo() {
     return this.observerInfo;
   }
@@ -73,10 +65,20 @@ export class StateManager {
     return this.selectedPath;
   }
 
+  getRelevants() {
+    return this.relevants;
+  }
+
+  getOpenPaths() {
+    let openedPaths = Object.assign({}, this.openedPaths, this.selectedPath, this.relevants);
+    return StateManager.allPathsAndParentPaths(openedPaths);
+  }
+
   onChange(cb) {
     this.notify = cb;
   }
 
+  //todo see if the paths in the funcObj maybe should be made into strings at outset.
   static getArgumentPathsAsObject(funcObj) {
     if (!funcObj)
       return {};
@@ -88,13 +90,13 @@ export class StateManager {
     return argPathsObj;
   }
 
-  static openParentPaths(openedPaths) {
+  static allPathsAndParentPaths(openedPaths) {
     let res = {};
-    for (let path of Object.keys(openedPaths)) {
+    for (let path in openedPaths) {
       let parentPaths = path.split(".");
-      for (let i = 1; i<=parentPaths.length; i++) {
-        let pPath = parentPaths.slice(0,i);
-        res[pPath.join(".")] = true;
+      for (let i = 1; i <= parentPaths.length; i++) {
+        let pPath = parentPaths.slice(0, i).join(".");
+        res[pPath] = true;
       }
     }
     return res;

@@ -1,6 +1,5 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 import {StateTree} from "./StateTree.js";
-import {Tools} from "./Tools.js";
 
 export class StateDetail extends HyperHTMLElement {
 
@@ -56,9 +55,6 @@ export class StateDetail extends HyperHTMLElement {
    * @returns {HTMLStyleElement}
    */
   _style(openedPaths, selectedPaths, relevantPaths) {
-    if (!Tools.emptyObject(relevantPaths))
-      openedPaths = Object.assign({}, selectedPaths, relevantPaths);
-    openedPaths = StateDetail.openParentPaths(openedPaths);
     const selectedSelector = StateDetail.pathsToCSSSelectors(selectedPaths, "");
     const openSelector = StateDetail.pathsToCSSSelectors(openedPaths, ">state-tree");
     const relevantsSelector = StateDetail.pathsToCSSSelectors(relevantPaths, "");
@@ -140,18 +136,6 @@ export class StateDetail extends HyperHTMLElement {
 
   static pathToCSSSelectorFullPath(path, ending) {
     return `state-tree[fullpath='${path}']` + ending;
-  }
-
-  static openParentPaths(openedPaths) {
-    let res = {};
-    for (let path of Object.keys(openedPaths)) {
-      let parentPaths = path.split(".");
-      for (let i = 1; i<=parentPaths.length; i++) {
-        let pPath = parentPaths.slice(0,i);
-        res[pPath.join(".")] = true;
-      }
-    }
-    return res;
   }
 }
 
