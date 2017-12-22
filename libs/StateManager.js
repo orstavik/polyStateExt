@@ -4,7 +4,7 @@ export class StateManager {
 
   constructor() {
     this.debugInfoList = [];
-    this.selectedPath2 = {};
+    this.selectedPath = {};
     this.debugCounter = 0;
     this.openedPaths = {"state": true};
 
@@ -20,8 +20,8 @@ export class StateManager {
   }
 
   setSelectPath(path) {
-    this.selectedPath2 = {};
-    this.selectedPath2[path] = true;
+    this.selectedPath = {};
+    this.selectedPath[path] = true;
     this.notify(this);
   }
 
@@ -60,8 +60,8 @@ export class StateManager {
     return this.observerInfo;
   }
 
-  getSelectedPath2() {
-    return this.selectedPath2;
+  getSelectedPath() {
+    return this.selectedPath;
   }
 
   onChange(cb) {

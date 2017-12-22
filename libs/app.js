@@ -10,8 +10,8 @@ const stateDetail = document.querySelector("state-detail");
 const observers = document.querySelector("observer-list");
 
 state.onChange(function (newState) {
-  StateDetail.makeOrUpdate(stateDetail, newState.getVisualVersion(), newState.getHighlights(), newState.getSelectedPath2());
-  ObserverList.makeOrUpdate(observers, newState.getObserverInfo(), newState.getSelectedPath2());
+  StateDetail.makeOrUpdate(stateDetail, newState.getVisualVersion(), newState.getHighlights(), newState.getSelectedPath());
+  ObserverList.makeOrUpdate(observers, newState.getObserverInfo(), newState.getSelectedPath());
 });
 
 const tasksList = document.querySelector("aside.tasklist");
