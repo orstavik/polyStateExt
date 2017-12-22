@@ -12,8 +12,8 @@ function dispatchDragEvent(node, name, mouseevent, prevX, prevY) {
     pageY: mouseevent.pageY,
     screenX: mouseevent.screenX,
     screenY: mouseevent.screenY,
-    movementX: mouseevent.x-prevX,
-    movementY: mouseevent.y-prevY
+    movementX: mouseevent.x - prevX,
+    movementY: mouseevent.y - prevY
   };
   node.dispatchEvent(new CustomEvent(name, {
     composed: true,
@@ -32,7 +32,7 @@ export default function draggable(node) {
       prevY = event.y;
       window.addEventListener('mousemove', dragCallback);
       window.addEventListener('mouseup', endCallback);
-      dispatchDragEvent(node, 'dragstart', event, prevX, prevY);
+      dispatchDragEvent(node, 'draggingstart', event, prevX, prevY);
     }
   };
 
@@ -40,7 +40,7 @@ export default function draggable(node) {
     event.preventDefault();
     prevX = event.x;
     prevY = event.y;
-    dispatchDragEvent(node, 'drag', event, prevX, prevY);
+    dispatchDragEvent(node, 'dragging', event, prevX, prevY);
   };
 
   const endCallback = (event) => {
@@ -48,7 +48,7 @@ export default function draggable(node) {
     window.removeEventListener('mouseup', endCallback);
     prevX = null;
     prevY = null;
-    dispatchDragEvent(node, 'dragend', event, prevX, prevY);
+    dispatchDragEvent(node, 'draggingend', event, prevX, prevY);
   };
   
   node.addEventListener('mousedown', startCallback);

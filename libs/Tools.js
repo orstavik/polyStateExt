@@ -26,6 +26,15 @@ export class Tools {
       callback);
   }
 
+  throttle(callback, ms) {
+    this._throttleTimeout = this._throttleTimeout || null;
+    if (!this._throttleTimeout)
+      this._throttleTimeout = setTimeout(() => {
+        this._throttleTimeout = null;
+        callback();
+      }, ms);
+  }
+
   static lockPath(obj, path, msg){
     return {};//todo not implemented
   }

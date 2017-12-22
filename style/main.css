@@ -28,7 +28,6 @@ flexible-grid {
 .tasklist {
     display: flex;
     flex-direction: column;
-    min-width: 260px;
     overflow: auto;
 }
 
@@ -36,6 +35,5 @@ flexible-grid {
     display: flex;
     box-sizing: border-box;
     flex-direction: column;
-    min-width: 400px;
     overflow: auto;
 }

@@ -2,27 +2,70 @@
 
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 import draggable from "./draggable.js";
+import throttle from "./throttle.js";
 
 class FlexibleGrid extends HyperHTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.separator = this.getAttribute('separator') || `${window.innerWidth/2}px`;
-    this.minCols = this.getAttribute('min-cols').split(' ') || [`${window.innerWidth/2}px`, `${window.innerWidth/2}px`];
-    this.direction = this.getAttribute('direction') || 'horizontal';
+    this.getAttributes()
     this.cachedStyle = this._style();
     this.render();
     this.setDraggableSeparator();
   }
 
-  static _gridStyle(dir, sep) {
-    if (dir === 'horizontal')
-      return `grid-template-columns: ${sep} auto`;
-    else if (dir === 'vertical')
-      return `grid-template-rows: ${sep} auto`;
+  getAttributes() {
+    this.separator = this.getAttribute('separator') || `${window.innerWidth/2}px`;
+    this.minCols = this.getAttribute('min-cols').split(' ') || [`${window.innerWidth/2}px`, `${window.innerWidth/2}px`];
+    this._parseDirection();
   }
 
-  static _colsStyle(dir, sep) {
+  _parseDirection() {
+    let attr = this.getAttribute('direction-media');
+    if (attr) {
+      attr = attr.split(' ');
+      this._mediaWidth = attr[1].match(/\d+/)[0];
+      this._directionBig = attr[0];
+      this._directionSmall = attr[2];
+      if (window.innerWidth > this._mediaWidth) {
+        this.direction = this._directionBig;
+        this.setAttribute('direction', this.direction)
+      } else {
+        this.direction = this._directionSmall;
+        this.setAttribute('direction', this.direction)
+      }
+      if (this._mediaWidth) {
+        this._addResizeListener();
+      }
+    }
+  }
+
+  _addResizeListener() {
+    window.addEventListener('resize', () => {
+      throttle(() => {
+        if (window.innerWidth > this._mediaWidth && this.direction !== this._directionBig) {
+          this.direction = this._directionBig;
+          this.setAttribute('direction', this.direction);
+          this.render();
+        } else if (window.innerWidth <= this._mediaWidth && this.direction !== this._directionSmall) {
+          this.direction = this._directionSmall;
+          this.setAttribute('direction', this.direction);
+          this.render();
+        }
+      }, 1000/30);
+    })
+  }
+
+  static _gridStyle(dir, sep, mCols) {
+    if (dir === 'horizontal')
+      return `grid-template-columns: ${sep} auto`;
+      // return `grid-template-columns: minmax(${mCols[0]}, ${sep}) minmax(${mCols[1]}, auto)`;
+    else if (dir === 'vertical')
+      return `grid-template-rows: ${sep} auto`;
+      // return `grid-template-rows: minmax(${mCols[0]}, ${sep}) minmax(${mCols[1]}, auto)`;
+  }
+
+  static _colsStyle(dir, sep, mCols) {
     if (dir === 'horizontal')
       return `left: ${sep}`;
     else if (dir === 'vertical')
@@ -34,7 +77,7 @@ class FlexibleGrid extends HyperHTMLElement {
     if (dir === 'horizontal')
       diff = e.x;
     else if (dir === 'vertical')
-      diff = e.y;
+      diff = e.y
 
     const minOne = minCols[0].match(/\d+/)[0];
     const minTwo = minCols[1].match(/\d+/)[0];
@@ -56,14 +99,14 @@ class FlexibleGrid extends HyperHTMLElement {
     const separator = this.shadowRoot.querySelector('.grid__separator');
     const grid = this.shadowRoot.querySelector('.grid');
     draggable(separator);
-    separator.addEventListener('dragstart', (e) => {
+    separator.addEventListener('draggingstart', (e) => {
       grid.classList.add('grid--dragged');
     });
-    separator.addEventListener('drag', (e) => {
+    separator.addEventListener('dragging', (e) => {
       this.separator = `${FlexibleGrid._getSeparator(e.detail, this.direction, this.minCols)}px`;
       this.render();
     });
-    separator.addEventListener('dragend', (e) => {
+    separator.addEventListener('draggingend', (e) => {
       grid.classList.remove('grid--dragged');
     });
   }
@@ -73,10 +116,10 @@ class FlexibleGrid extends HyperHTMLElement {
       <style>
         ${this.cachedStyle}
       </style>
-      <div class="grid" style="${FlexibleGrid._gridStyle(this.direction, this.separator)}">
+      <div class="grid" style="${FlexibleGrid._gridStyle(this.direction, this.separator, this.minCols)}">
         <slot name="first" class="grid__container"></slot>
         <slot name="second" class="grid__container"></slot>
-        <div class="grid__separator" style="${FlexibleGrid._colsStyle(this.direction, this.separator)}"></div>
+        <div class="grid__separator" style="${FlexibleGrid._colsStyle(this.direction, this.separator, this.minCols)}"></div>
       </div>
     `;
   }
