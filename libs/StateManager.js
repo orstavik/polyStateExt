@@ -11,11 +11,13 @@ export class StateManager {
     window.addEventListener("task-selected", e => this.setSelectDetail(e.detail));
     window.addEventListener("path-clicked", e => this.setSelectPath(e.detail));
     window.addEventListener("state-open", e => this.toogleOpen(e.detail));
+    window.addEventListener("compute-highlight", e => this.highlightCompute(e.detail));
   }
 
   addDebugInfo(deb) {
     deb.visualVersion = StateManager.appendComputesToState(deb.visualVersion, deb.computerInfo);
-    this.debugInfoList[this.debugCounter++] = deb;
+    this.debugInfoList[++this.debugCounter] = deb;
+    this.setSelectDetail(this.debugCounter);
     return this.debugCounter;
   }
 
@@ -34,6 +36,23 @@ export class StateManager {
     this.visualVersion = data.visualVersion;
     this.observerInfo = data.observerInfo;
     this.notify(this);
+  }
+
+  highlightCompute(funcObj){
+    let returnPath = funcObj.triggerReturn.path;
+    let argPaths = Object.values(funcObj.triggerPaths).map(triggerPath => triggerPath.path.join("."));
+    let argPathsObj = {};
+    for (let argPath of argPaths) {
+      argPathsObj[argPath] = true;
+    }
+    this.selectedPath = {};
+    this.selectedPath[returnPath] = true;
+    this.relevants = argPathsObj;
+    this.notify(this);
+  }
+
+  getRelevants(){
+    return this.relevants ? this.relevants : {};
   }
 
   toogleOpen(path) {

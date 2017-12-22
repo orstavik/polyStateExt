@@ -84,6 +84,7 @@ export class ComputeListing extends HyperHTMLElement {
     e.stopPropagation();
     const descr = this.shadowRoot.querySelector('.compute__description');
     descr.classList.toggle('compute--hidden');
+    this.dispatchEvent(new CustomEvent("compute-highlight", {composed: true, bubbles:true, detail: this.state.func}));
   }
 }
 

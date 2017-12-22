@@ -1,5 +1,6 @@
 import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 import {StateTree} from "./StateTree.js";
+import {Tools} from "./Tools.js";
 
 export class StateDetail extends HyperHTMLElement {
 
@@ -8,9 +9,9 @@ export class StateDetail extends HyperHTMLElement {
    * @param {HyperHTMLElement} el
    * @param {Object} visualVersion
    */
-  static makeOrUpdate(el, visualVersion, openedPaths, selectedPaths) {
+  static makeOrUpdate(el, visualVersion, openedPaths, selectedPaths, relevants) {
     el = el || new StateDetail(true);
-    el.updateState(visualVersion, openedPaths, selectedPaths);
+    el.updateState(visualVersion, openedPaths, selectedPaths, relevants);
     return el;
   }
 
@@ -25,16 +26,17 @@ export class StateDetail extends HyperHTMLElement {
     // this.addEventListener("path-clicked", StateDetail.pathClicked);
   }
 
-  updateState(visualVersion, openedPaths, selectedPaths) {
+  updateState(visualVersion, openedPaths, selectedPaths, relevants) {
     this.state.visualVersion = visualVersion;
     this.state.openedPaths = openedPaths;
     this.state.selectedPaths = selectedPaths;
+    this.state.relevants= relevants;
     this.render();
   }
 
   render() {
     this.html`
-      <style>${this._style(this.state.openedPaths, this.state.selectedPaths)}</style>
+      <style>${this._style(this.state.openedPaths, this.state.selectedPaths, this.state.relevants)}</style>
       <h4 class="state__header">State</h4>
       ${StateDetail.makeStateTree(this.state.visualVersion)}
     `;
@@ -53,9 +55,13 @@ export class StateDetail extends HyperHTMLElement {
    * Helper function to isolate css style
    * @returns {HTMLStyleElement}
    */
-  _style(openedPaths, selectedPaths) {
+  _style(openedPaths, selectedPaths, relevantPaths) {
+    if (!Tools.emptyObject(relevantPaths))
+      openedPaths = Object.assign({}, selectedPaths, relevantPaths);
+    openedPaths = StateDetail.openParentPaths(openedPaths);
     const selectedSelector = StateDetail.pathsToCSSSelectors(selectedPaths, ">span");
     const openSelector = StateDetail.pathsToCSSSelectors(openedPaths, ">state-tree");
+    const relevantsSelector = StateDetail.pathsToCSSSelectors(relevantPaths, ">span");
     //language=CSS
     return `
       :host {
@@ -67,6 +73,9 @@ export class StateDetail extends HyperHTMLElement {
       }
       ${selectedSelector} {
         text-decoration: underline;
+      }                                                                             
+      ${relevantsSelector} {
+        text-decoration: line-through;
       }                                                                             
       state-tree {
         display: none;
@@ -131,6 +140,18 @@ export class StateDetail extends HyperHTMLElement {
 
   static pathToCSSSelectorFullPath(path, ending) {
     return `state-tree[fullpath='${path}']` + ending;
+  }
+
+  static openParentPaths(openedPaths) {
+    let res = {};
+    for (let path of Object.keys(openedPaths)) {
+      let parentPaths = path.split(".");
+      for (let i = 1; i<=parentPaths.length; i++) {
+        let pPath = parentPaths.slice(0,i);
+        res[pPath.join(".")] = true;
+      }
+    }
+    return res;
   }
 }
 
