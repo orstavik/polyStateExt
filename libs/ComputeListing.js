@@ -41,11 +41,10 @@ export class ComputeListing extends HyperHTMLElement {
       ${ComputeListing._style()}
       <div class="compute">
         <span class="compute__icon" onclick="${this.computeToggle.bind(this)}">&#9881;</span>
-        <span class="compute__description compute--hidden">
+        <span class="compute__description">
           <span class="compute__name">${this.state.func.funcName}</span>
           <span class="compute__args">
             ${(Object.values(this.state.func.triggerPaths)).map((arg, i) => HyperHTMLElement.wire()`
-              ${i !== 0 ? ", " : ""}
               <state-path triggered="${arg.triggered}" selected="${arg.selected}">${arg.path.join(".")}</state-path>
             `)}
           </span>
@@ -60,11 +59,14 @@ export class ComputeListing extends HyperHTMLElement {
         :host {
           display: inline-block;
         }
+        .compute__description {
+          display: none;
+        }
+        .compute:hover .compute__description {
+          display: inline-block;
+        }
         .compute__description::before {
           content: '<=';
-        }
-        .compute--hidden {
-          display: none;
         }
         .compute__name {
           color: orange;
@@ -75,6 +77,9 @@ export class ComputeListing extends HyperHTMLElement {
         .compute__args::after {
           content: ')';
         }
+        state-path:not(:last-child)::after {
+          content: ', ';
+        }        
       </style>
     `;
   }
@@ -82,8 +87,6 @@ export class ComputeListing extends HyperHTMLElement {
   computeToggle(e) {
     e.preventDefault();
     e.stopPropagation();
-    const descr = this.shadowRoot.querySelector('.compute__description');
-    descr.classList.toggle('compute--hidden');
     this.dispatchEvent(new CustomEvent("compute-highlight", {composed: true, bubbles:true, detail: this.state.func}));
   }
 }
