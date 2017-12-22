@@ -110,6 +110,16 @@ export class StateDetail extends HyperHTMLElement {
       .primitive--type-string::after {
         content: '"';
       }
+      .details__summary {
+        display: inline-block;
+      }
+      .details__summary:focus {
+        outline: none;
+      }
+      .details__summary::-webkit-details-marker {
+        margin-right: -1px;
+      }
+
     `;
   }
 

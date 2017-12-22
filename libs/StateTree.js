@@ -38,8 +38,8 @@ export class StateTree extends HyperHTMLElement {
     this.render();
   }
 
-  // <!--<style>${StateTree._style()}</style>-->
   render() {
+    //        <style>${StateTree._style()}</style>
     if (this.state.childObjs.length === 0) {
       this.html`
         <span class="details__key key--primitive">${this.state.name}</span>
@@ -48,11 +48,11 @@ export class StateTree extends HyperHTMLElement {
       `;
     } else {
       this.html`
-            <span class="details__key" onclick="${this.openDetail.bind(this)}">${this.state.name}</span>
-            ${StateTree.makeComputeListing(this.state.compute)}
-          ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
-            ${this.makeChildTree(key, value, this.state.fullpath + "." + key)}
-          `)}  
+        <span class="details__key" onclick="${this.openDetail.bind(this)}">${this.state.name}</span>
+        ${StateTree.makeComputeListing(this.state.compute)}
+        ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
+          ${this.makeChildTree(key, value, this.state.fullpath + "." + key)}
+        `)}  
       `;
     }
   }
@@ -94,14 +94,8 @@ export class StateTree extends HyperHTMLElement {
       state-tree .details__value {
         padding-left: 13px;
       }
-      .details__summary {
-        display: inline-block;
-      }
-      .details__summary:focus {
-        outline: none;
-      }
-      .details__summary::-webkit-details-marker {
-        margin-right: -1px;
+      state-tree {
+        cursor: crosshair;
       }
     `;
   }
