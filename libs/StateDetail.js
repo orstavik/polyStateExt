@@ -8,9 +8,9 @@ export class StateDetail extends HyperHTMLElement {
    * @param {HyperHTMLElement} el
    * @param {Object} visualVersion
    */
-  static makeOrUpdate(el, visualVersion, openedPaths, selectedPaths) {
+  static makeOrUpdate(el, visualVersion, openedPaths, selectedPaths, relevants) {
     el = el || new StateDetail(true);
-    el.updateState(visualVersion, openedPaths, selectedPaths);
+    el.updateState(visualVersion, openedPaths, selectedPaths, relevants);
     return el;
   }
 
@@ -25,16 +25,17 @@ export class StateDetail extends HyperHTMLElement {
     // this.addEventListener("path-clicked", StateDetail.pathClicked);
   }
 
-  updateState(visualVersion, openedPaths, selectedPaths) {
+  updateState(visualVersion, openedPaths, selectedPaths, relevants) {
     this.state.visualVersion = visualVersion;
     this.state.openedPaths = openedPaths;
     this.state.selectedPaths = selectedPaths;
+    this.state.relevants= relevants;
     this.render();
   }
 
   render() {
     this.html`
-      <style>${this._style(this.state.openedPaths, this.state.selectedPaths)}</style>
+      <style>${this._style(this.state.openedPaths, this.state.selectedPaths, this.state.relevants)}</style>
       <h4 class="state__header">State</h4>
       ${StateDetail.makeStateTree(this.state.visualVersion)}
     `;
@@ -43,7 +44,7 @@ export class StateDetail extends HyperHTMLElement {
   static makeStateTree(visVersion) {
     if (!visVersion)
       return null;
-    let stateTree = StateTree.makeOrUpdate(null, "state", visVersion);
+    let stateTree = StateTree.makeOrUpdate(null, "state", visVersion, null);
     stateTree.setAttribute("name", "state");
     stateTree.setAttribute("class", "state-observer__state");
     return stateTree;
@@ -53,9 +54,10 @@ export class StateDetail extends HyperHTMLElement {
    * Helper function to isolate css style
    * @returns {HTMLStyleElement}
    */
-  _style(openedPaths, selectedPaths) {
-    const openedPathsSelects = StateDetail.pathsToCSSSelectors(selectedPaths, ">span");
-    const selectedPathsSelect = StateDetail.pathsToCSSSelectors(openedPaths, ">state-tree");
+  _style(openedPaths, selectedPaths, relevantPaths) {
+    const selectedSelector = StateDetail.pathsToCSSSelectors(selectedPaths, "");
+    const openSelector = StateDetail.pathsToCSSSelectors(openedPaths, ">state-tree");
+    const relevantsSelector = StateDetail.pathsToCSSSelectors(relevantPaths, "");
     //language=CSS
     return `
       :host {
@@ -65,8 +67,11 @@ export class StateDetail extends HyperHTMLElement {
       .state__header {
         margin: 0 0 12px;
       }
-      ${openedPathsSelects} {
-        text-decoration: line-through;
+      ${selectedSelector} {
+        border: 2px solid red;
+      }                                                                             
+      ${relevantsSelector} {
+        border: 2px solid orange;
       }                                                                             
       state-tree {
         display: none;
@@ -75,8 +80,9 @@ export class StateDetail extends HyperHTMLElement {
         white-space: nowrap;
         margin-left: 16px;
       }
-      state-tree[name='state'],
-      ${selectedPathsSelect} {
+      state-tree[name="state"],
+      state-tree[name="state"]>state-tree,
+      ${openSelector} {
         display: block;
       }
       .key--primitive {
@@ -109,17 +115,27 @@ export class StateDetail extends HyperHTMLElement {
       .primitive--type-string::after {
         content: '"';
       }
+      .details__summary {
+        display: inline-block;
+      }
+      .details__summary:focus {
+        outline: none;
+      }
+      .details__summary::-webkit-details-marker {
+        margin-right: -1px;
+      }
+
     `;
   }
 
   static pathsToCSSSelectors(paths, ending) {
     if (!paths || !(paths instanceof Object) || Object.keys(paths).length === 0)
       return "inactive";
-    return Object.keys(paths).map(path => StateDetail.pathToCSSSelector(path, ending)).join(", ");
+    return Object.keys(paths).map(path => StateDetail.pathToCSSSelectorFullPath(path, ending)).join(", ");
   }
 
-  static pathToCSSSelector(path, ending) {
-    return path.split(".").map(str => `state-tree[name='${str}']`).join(">") + ending;
+  static pathToCSSSelectorFullPath(path, ending) {
+    return `state-tree[fullpath='${path}']` + ending;
   }
 }
 

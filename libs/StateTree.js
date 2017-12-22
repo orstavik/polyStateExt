@@ -9,9 +9,9 @@ export class StateTree extends HyperHTMLElement {
    * @param {string} name
    * @param {Object} data
    */
-  static makeOrUpdate(el, name, data) {
+  static makeOrUpdate(el, name, data, fullpath) {
     el = el || new StateTree(true);
-    el._updateState(name, data);
+    el._updateState(name, data, fullpath);
     return el;
   }
 
@@ -25,11 +25,12 @@ export class StateTree extends HyperHTMLElement {
       this.render();
   }
 
-  _updateState(name, data) {
+  _updateState(name, data, fullpath) {
     this.state.childObjs = !data || !data.children ? [] : Object.entries(data.children);
     if (!data)
       return;
     this.state.name = name;
+    this.state.fullpath = fullpath;
     this.state.compute = data.compute;
     this.state.values = data.values;
     if (data.open)
@@ -37,8 +38,8 @@ export class StateTree extends HyperHTMLElement {
     this.render();
   }
 
-  // <!--<style>${StateTree._style()}</style>-->
   render() {
+    //        <style>${StateTree._style()}</style>
     if (this.state.childObjs.length === 0) {
       this.html`
         <span class="details__key key--primitive">${this.state.name}</span>
@@ -47,31 +48,27 @@ export class StateTree extends HyperHTMLElement {
       `;
     } else {
       this.html`
-            <span class="details__key" onclick="${this.openDetail.bind(this)}">${this.state.name}</span>
-            ${StateTree.makeComputeListing(this.state.compute)}
-          ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
-            ${this.makeChildTree(key, value)}
-          `)}  
+        <span class="details__key" onclick="${this.openDetail.bind(this)}">${this.state.name}</span>
+        ${StateTree.makeComputeListing(this.state.compute)}
+        ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
+          ${this.makeChildTree(key, value, this.state.fullpath)}
+        `)}  
       `;
     }
   }
 
-  makeChildTree(key, value) {
-    let el = StateTree.makeOrUpdate(null, key, value);
-    el.addEventListener("state-open", this.extendOpen.bind(this));
+  makeChildTree(key, value, fullpath) {
+    fullpath = fullpath ? fullpath + "." + key : key;
+    let el = StateTree.makeOrUpdate(null, key, value, fullpath);
     el.setAttribute("name", key);
+    el.setAttribute("fullpath", fullpath);
     el.setAttribute("class", 'details__value');
     return el;
   }
 
-  extendOpen(e){
-    e.stopPropagation();
-    this.dispatchEvent(new CustomEvent("state-open", {composed: true, bubbles: true, detail: this.state.name + "." + e.detail}));
-  }
-
   openDetail(e) {
     e.stopPropagation();
-    this.dispatchEvent(new CustomEvent("state-open", {composed: true, bubbles: true, detail: this.state.name}));
+    this.dispatchEvent(new CustomEvent("state-open", {composed: true, bubbles: true, detail: this.state.fullpath}));
   }
 
   static makeComputeListing(compute) {
@@ -92,14 +89,8 @@ export class StateTree extends HyperHTMLElement {
       state-tree .details__value {
         padding-left: 13px;
       }
-      .details__summary {
-        display: inline-block;
-      }
-      .details__summary:focus {
-        outline: none;
-      }
-      .details__summary::-webkit-details-marker {
-        margin-right: -1px;
+      state-tree {
+        cursor: crosshair;
       }
     `;
   }

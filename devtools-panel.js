@@ -1,49 +1,35 @@
-import {StateDetail} from "./libs/StateDetail.js";
-import {ObserverList} from "./libs/ObserverList.js";
-import TaskLI from "./libs/TaskLI.js";
-import {StateManager} from "./libs/StateManager.js";
+import {listenerFunc} from "/libs/app.js";
 
 //1. load the content-script by sending a message to the background.js script that has access to load content scripts.
-//   Att! the content-script loaded as a file can be debugged in the content-script tab in the application window.
 chrome.runtime.sendMessage({
   tabId: chrome.devtools.inspectedWindow.tabId,
   filename: "content-script.js"
 });
 
-//2a. get shortcuts to DOM elements in devtools-panel that will be decorated
-const stateDetail = document.querySelector("state-detail");
-const observers = document.querySelector("observer-list");
-
-const state = new StateManager();
-state.onChange(function (newState) {
-  StateDetail.makeOrUpdate(stateDetail, newState.getVisualVersion(), newState.getHighlights(), newState.getSelectedPath2());
-  ObserverList.makeOrUpdate(observers, newState.getObserverInfo(), newState.getSelectedPath2());
-});
-
-const tasksList = document.querySelector("aside.tasklist");
-
-//2b. add listener for new client states that decorate the devtools-panel DOM
-//    Att! the devtools-panel.js script can be debugged by right-clicking on the panel in devtools -> inspect.
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.name === 'new-client-state') {
-    let data = JSON.parse(request.payload);
-    let id = state.addDebugInfo(data);
-    tasksList.append(new TaskLI(new TaskLI.Props(id, data.task), {
-      id: 'task_' + id,
-      class: 'tasklist__item task',
-      'data-index': id
-    }));
-  }
-});
+//2. connect the apps listener method to the messages coming in from the injected-script.
+//   This listener will decorate the devtools-panel DOM with the incoming data.
+chrome.runtime.onMessage.addListener(listenerFunc);
 
 //3. get and inject the injected-script.
 //   the injected-script will hook into the ITObservableState.debugHook method to process
 //   and send messages for each debug state.
 //   Only chrome.devtools.inspectedWindow.eval has access to do this.
-//   Att!! If you need to debug the injected script, the content of the injected script must be added to the running app
-//         as a normal js code, for example as part of the ITObservableState.js file.
 (async function () {
   let response = await fetch("injected-script.js");
   let text = await response.text();
   chrome.devtools.inspectedWindow.eval(text);
 })();
+
+/*
+ * HOW TO DEBUG?
+ *
+ * 1) content-script:
+ * in "normal devtools" > sources > content scripts.
+ *
+ * 2) injected-script:
+ * in "normal devtools" > console > click on console.info message with a link to the injected script.
+ *
+ * 3) dev-tools panel app.js and all sub files:
+ * a) in "normal devtools" > rightclick with mouse on panel polyState > inspect  => opens "devtools of devtools".
+ * b) in "devtools of devtools" the app.js files are under sources.
+ */

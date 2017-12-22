@@ -69,7 +69,7 @@ export class ObserverList extends HyperHTMLElement {
         margin: 0;
       }
       ${selectedSelector} {
-        text-decoration: line-through;
+        text-decoration: underline;
       }
     `;
   }

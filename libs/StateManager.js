@@ -4,24 +4,28 @@ export class StateManager {
 
   constructor() {
     this.debugInfoList = [];
-    this.selectedPath2 = {};
+    this.selectedPath = {};
     this.debugCounter = 0;
-    this.openedPaths = {"state": true};
+    this.openedPaths = {};
+    this.relevants = {};
 
     window.addEventListener("task-selected", e => this.setSelectDetail(e.detail));
     window.addEventListener("path-clicked", e => this.setSelectPath(e.detail));
     window.addEventListener("state-open", e => this.toogleOpen(e.detail));
+    window.addEventListener("compute-highlight", e => this.highlightCompute(e.detail));
   }
 
   addDebugInfo(deb) {
     deb.visualVersion = StateManager.appendComputesToState(deb.visualVersion, deb.computerInfo);
-    this.debugInfoList[this.debugCounter++] = deb;
+    this.debugInfoList[++this.debugCounter] = deb;
+    this.setSelectDetail(this.debugCounter);
     return this.debugCounter;
   }
 
   setSelectPath(path) {
-    this.selectedPath2 = {};
-    this.selectedPath2[path] = true;
+    this.selectedPath = {};
+    this.selectedPath[path] = true;
+    this.relevants = StateManager.getArgumentPathsAsObject(this.computerInfo[path]);
     this.notify(this);
   }
 
@@ -33,6 +37,7 @@ export class StateManager {
     }
     this.visualVersion = data.visualVersion;
     this.observerInfo = data.observerInfo;
+    this.computerInfo = data.computerInfo;
     this.notify(this);
   }
 
@@ -52,20 +57,49 @@ export class StateManager {
     return this.visualVersion;
   }
 
-  getHighlights(){
-    return this.openedPaths;
-  }
-
   getObserverInfo() {
     return this.observerInfo;
   }
 
-  getSelectedPath2() {
-    return this.selectedPath2;
+  getSelectedPath() {
+    return this.selectedPath;
+  }
+
+  getRelevants() {
+    return this.relevants;
+  }
+
+  getOpenPaths() {
+    let openedPaths = Object.assign({}, this.openedPaths, this.selectedPath, this.relevants);
+    return StateManager.allPathsAndParentPaths(openedPaths);
   }
 
   onChange(cb) {
     this.notify = cb;
+  }
+
+  //todo see if the paths in the funcObj maybe should be made into strings at outset.
+  static getArgumentPathsAsObject(funcObj) {
+    if (!funcObj)
+      return {};
+    let argPathsObj = {};
+    Object.values(funcObj.triggerPaths).map(triggerPath => {
+      let path = triggerPath.path.join(".");
+      argPathsObj[path] = true;
+    });
+    return argPathsObj;
+  }
+
+  static allPathsAndParentPaths(openedPaths) {
+    let res = {};
+    for (let path in openedPaths) {
+      let parentPaths = path.split(".");
+      for (let i = 1; i <= parentPaths.length; i++) {
+        let pPath = parentPaths.slice(0, i).join(".");
+        res[pPath] = true;
+      }
+    }
+    return res;
   }
 
   static appendComputesToState(visualVersion, computerInfo) {
