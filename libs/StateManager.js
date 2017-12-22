@@ -24,6 +24,7 @@ export class StateManager {
   setSelectPath(path) {
     this.selectedPath = {};
     this.selectedPath[path] = true;
+    this.relevants = StateManager.getArgumentPathsAsObject(this.computerInfo[path]);
     this.notify(this);
   }
 
@@ -35,23 +36,11 @@ export class StateManager {
     }
     this.visualVersion = data.visualVersion;
     this.observerInfo = data.observerInfo;
+    this.computerInfo = data.computerInfo;
     this.notify(this);
   }
 
-  highlightCompute(funcObj){
-    let returnPath = funcObj.triggerReturn.path;
-    let argPaths = Object.values(funcObj.triggerPaths).map(triggerPath => triggerPath.path.join("."));
-    let argPathsObj = {};
-    for (let argPath of argPaths) {
-      argPathsObj[argPath] = true;
-    }
-    this.selectedPath = {};
-    this.selectedPath[returnPath] = true;
-    this.relevants = argPathsObj;
-    this.notify(this);
-  }
-
-  getRelevants(){
+  getRelevants() {
     return this.relevants ? this.relevants : {};
   }
 
@@ -71,7 +60,7 @@ export class StateManager {
     return this.visualVersion;
   }
 
-  getHighlights(){
+  getHighlights() {
     return this.openedPaths;
   }
 
@@ -85,6 +74,17 @@ export class StateManager {
 
   onChange(cb) {
     this.notify = cb;
+  }
+
+  static getArgumentPathsAsObject(funcObj) {
+    if (!funcObj)
+      return {};
+    let argPathsObj = {};
+    Object.values(funcObj.triggerPaths).map(triggerPath => {
+      let path = triggerPath.path.join(".");
+      argPathsObj[path] = true;
+    });
+    return argPathsObj;
   }
 
   static appendComputesToState(visualVersion, computerInfo) {

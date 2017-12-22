@@ -87,7 +87,7 @@ export class ComputeListing extends HyperHTMLElement {
   computeToggle(e) {
     e.preventDefault();
     e.stopPropagation();
-    this.dispatchEvent(new CustomEvent("compute-highlight", {composed: true, bubbles:true, detail: this.state.func}));
+    this.dispatchEvent(new CustomEvent("path-clicked", {composed: true, bubbles:true, detail: this.state.func.triggerReturn.path.join(".")}));
   }
 }
 
