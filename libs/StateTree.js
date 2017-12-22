@@ -9,9 +9,9 @@ export class StateTree extends HyperHTMLElement {
    * @param {string} name
    * @param {Object} data
    */
-  static makeOrUpdate(el, name, data) {
+  static makeOrUpdate(el, name, data, fullpath) {
     el = el || new StateTree(true);
-    el._updateState(name, data);
+    el._updateState(name, data, fullpath);
     return el;
   }
 
@@ -25,11 +25,12 @@ export class StateTree extends HyperHTMLElement {
       this.render();
   }
 
-  _updateState(name, data) {
+  _updateState(name, data, fullpath) {
     this.state.childObjs = !data || !data.children ? [] : Object.entries(data.children);
     if (!data)
       return;
     this.state.name = name;
+    this.state.fullpath = fullpath;
     this.state.compute = data.compute;
     this.state.values = data.values;
     if (data.open)
@@ -50,16 +51,17 @@ export class StateTree extends HyperHTMLElement {
             <span class="details__key" onclick="${this.openDetail.bind(this)}">${this.state.name}</span>
             ${StateTree.makeComputeListing(this.state.compute)}
           ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
-            ${this.makeChildTree(key, value)}
+            ${this.makeChildTree(key, value, this.state.fullpath + "." + key)}
           `)}  
       `;
     }
   }
 
-  makeChildTree(key, value) {
-    let el = StateTree.makeOrUpdate(null, key, value);
+  makeChildTree(key, value, fullpath) {
+    let el = StateTree.makeOrUpdate(null, key, value, fullpath);
     el.addEventListener("state-open", this.extendOpen.bind(this));
     el.setAttribute("name", key);
+    el.setAttribute("fullpath", fullpath);
     el.setAttribute("class", 'details__value');
     return el;
   }

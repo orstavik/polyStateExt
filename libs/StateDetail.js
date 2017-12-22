@@ -43,8 +43,9 @@ export class StateDetail extends HyperHTMLElement {
   static makeStateTree(visVersion) {
     if (!visVersion)
       return null;
-    let stateTree = StateTree.makeOrUpdate(null, "state", visVersion);
+    let stateTree = StateTree.makeOrUpdate(null, "state", visVersion, "state");
     stateTree.setAttribute("name", "state");
+    stateTree.setAttribute("fullpath", "state");
     stateTree.setAttribute("class", "state-observer__state");
     return stateTree;
   }
@@ -54,8 +55,8 @@ export class StateDetail extends HyperHTMLElement {
    * @returns {HTMLStyleElement}
    */
   _style(openedPaths, selectedPaths) {
-    const openedPathsSelects = StateDetail.pathsToCSSSelectors(selectedPaths, ">span");
-    const selectedPathsSelect = StateDetail.pathsToCSSSelectors(openedPaths, ">state-tree");
+    const selectedSelector = StateDetail.pathsToCSSSelectors(selectedPaths, ">span", "state.");
+    const openSelector = StateDetail.pathsToCSSSelectors(openedPaths, ">state-tree", "");
     //language=CSS
     return `
       :host {
@@ -65,8 +66,8 @@ export class StateDetail extends HyperHTMLElement {
       .state__header {
         margin: 0 0 12px;
       }
-      ${openedPathsSelects} {
-        text-decoration: line-through;
+      ${selectedSelector} {
+        text-decoration: underline;
       }                                                                             
       state-tree {
         display: none;
@@ -76,7 +77,7 @@ export class StateDetail extends HyperHTMLElement {
         margin-left: 16px;
       }
       state-tree[name='state'],
-      ${selectedPathsSelect} {
+      ${openSelector} {
         display: block;
       }
       .key--primitive {
@@ -112,14 +113,14 @@ export class StateDetail extends HyperHTMLElement {
     `;
   }
 
-  static pathsToCSSSelectors(paths, ending) {
+  static pathsToCSSSelectors(paths, ending, prepend) {
     if (!paths || !(paths instanceof Object) || Object.keys(paths).length === 0)
       return "inactive";
-    return Object.keys(paths).map(path => StateDetail.pathToCSSSelector(path, ending)).join(", ");
+    return Object.keys(paths).map(path => StateDetail.pathToCSSSelectorFullPath(path, ending, prepend)).join(", ");
   }
 
-  static pathToCSSSelector(path, ending) {
-    return path.split(".").map(str => `state-tree[name='${str}']`).join(">") + ending;
+  static pathToCSSSelectorFullPath(path, ending, prepend) {
+    return `state-tree[fullpath='${prepend}${path}']` + ending;
   }
 }
 
