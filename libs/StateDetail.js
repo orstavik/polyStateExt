@@ -59,9 +59,9 @@ export class StateDetail extends HyperHTMLElement {
     if (!Tools.emptyObject(relevantPaths))
       openedPaths = Object.assign({}, selectedPaths, relevantPaths);
     openedPaths = StateDetail.openParentPaths(openedPaths);
-    const selectedSelector = StateDetail.pathsToCSSSelectors(selectedPaths, ">span");
+    const selectedSelector = StateDetail.pathsToCSSSelectors(selectedPaths, "");
     const openSelector = StateDetail.pathsToCSSSelectors(openedPaths, ">state-tree");
-    const relevantsSelector = StateDetail.pathsToCSSSelectors(relevantPaths, ">span");
+    const relevantsSelector = StateDetail.pathsToCSSSelectors(relevantPaths, "");
     //language=CSS
     return `
       :host {
@@ -72,10 +72,10 @@ export class StateDetail extends HyperHTMLElement {
         margin: 0 0 12px;
       }
       ${selectedSelector} {
-        text-decoration: underline;
+        border: 2px solid red;
       }                                                                             
       ${relevantsSelector} {
-        text-decoration: line-through;
+        border: 2px solid orange;
       }                                                                             
       state-tree {
         display: none;

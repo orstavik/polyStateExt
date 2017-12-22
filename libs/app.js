@@ -10,7 +10,7 @@ const stateDetail = document.querySelector("state-detail");
 const observers = document.querySelector("observer-list");
 
 state.onChange(function (newState) {
-  StateDetail.makeOrUpdate(stateDetail, newState.getVisualVersion(), newState.getHighlights(), newState.getSelectedPath(), newState.getRelevants());
+  StateDetail.makeOrUpdate(stateDetail, newState.getVisualVersion(), newState.getOpenPaths(), newState.getSelectedPath(), newState.getRelevants());
   ObserverList.makeOrUpdate(observers, newState.getObserverInfo(), newState.getSelectedPath());
 });
 

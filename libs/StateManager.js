@@ -60,8 +60,9 @@ export class StateManager {
     return this.visualVersion;
   }
 
-  getHighlights() {
-    return this.openedPaths;
+  getOpenPaths() {
+    let openedPaths = Object.assign({}, this.openedPaths, this.selectedPath, this.relevants);
+    return StateManager.openParentPaths(openedPaths);
   }
 
   getObserverInfo() {
@@ -85,6 +86,18 @@ export class StateManager {
       argPathsObj[path] = true;
     });
     return argPathsObj;
+  }
+
+  static openParentPaths(openedPaths) {
+    let res = {};
+    for (let path of Object.keys(openedPaths)) {
+      let parentPaths = path.split(".");
+      for (let i = 1; i<=parentPaths.length; i++) {
+        let pPath = parentPaths.slice(0,i);
+        res[pPath.join(".")] = true;
+      }
+    }
+    return res;
   }
 
   static appendComputesToState(visualVersion, computerInfo) {
