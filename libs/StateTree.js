@@ -51,13 +51,14 @@ export class StateTree extends HyperHTMLElement {
         <span class="details__key" onclick="${this.openDetail.bind(this)}">${this.state.name}</span>
         ${StateTree.makeComputeListing(this.state.compute)}
         ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
-          ${this.makeChildTree(key, value, this.state.fullpath + "." + key)}
+          ${this.makeChildTree(key, value, this.state.fullpath)}
         `)}  
       `;
     }
   }
 
   makeChildTree(key, value, fullpath) {
+    fullpath = fullpath ? fullpath + "." + key : key;
     let el = StateTree.makeOrUpdate(null, key, value, fullpath);
     el.setAttribute("name", key);
     el.setAttribute("fullpath", fullpath);

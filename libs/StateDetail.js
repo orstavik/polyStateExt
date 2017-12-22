@@ -43,9 +43,8 @@ export class StateDetail extends HyperHTMLElement {
   static makeStateTree(visVersion) {
     if (!visVersion)
       return null;
-    let stateTree = StateTree.makeOrUpdate(null, "state", visVersion, "state");
+    let stateTree = StateTree.makeOrUpdate(null, "state", visVersion, null);
     stateTree.setAttribute("name", "state");
-    stateTree.setAttribute("fullpath", "state");
     stateTree.setAttribute("class", "state-observer__state");
     return stateTree;
   }
@@ -55,8 +54,8 @@ export class StateDetail extends HyperHTMLElement {
    * @returns {HTMLStyleElement}
    */
   _style(openedPaths, selectedPaths) {
-    const selectedSelector = StateDetail.pathsToCSSSelectors(selectedPaths, ">span", "state.");
-    const openSelector = StateDetail.pathsToCSSSelectors(openedPaths, ">state-tree", "");
+    const selectedSelector = StateDetail.pathsToCSSSelectors(selectedPaths, ">span");
+    const openSelector = StateDetail.pathsToCSSSelectors(openedPaths, ">state-tree");
     //language=CSS
     return `
       :host {
@@ -76,7 +75,8 @@ export class StateDetail extends HyperHTMLElement {
         white-space: nowrap;
         margin-left: 16px;
       }
-      state-tree[name='state'],
+      state-tree[name="state"],
+      state-tree[name="state"]>state-tree,
       ${openSelector} {
         display: block;
       }
@@ -123,14 +123,14 @@ export class StateDetail extends HyperHTMLElement {
     `;
   }
 
-  static pathsToCSSSelectors(paths, ending, prepend) {
+  static pathsToCSSSelectors(paths, ending) {
     if (!paths || !(paths instanceof Object) || Object.keys(paths).length === 0)
       return "inactive";
-    return Object.keys(paths).map(path => StateDetail.pathToCSSSelectorFullPath(path, ending, prepend)).join(", ");
+    return Object.keys(paths).map(path => StateDetail.pathToCSSSelectorFullPath(path, ending)).join(", ");
   }
 
-  static pathToCSSSelectorFullPath(path, ending, prepend) {
-    return `state-tree[fullpath='${prepend}${path}']` + ending;
+  static pathToCSSSelectorFullPath(path, ending) {
+    return `state-tree[fullpath='${path}']` + ending;
   }
 }
 

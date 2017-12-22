@@ -6,7 +6,7 @@ export class StateManager {
     this.debugInfoList = [];
     this.selectedPath = {};
     this.debugCounter = 0;
-    this.openedPaths = {"state": true};
+    this.openedPaths = {};
 
     window.addEventListener("task-selected", e => this.setSelectDetail(e.detail));
     window.addEventListener("path-clicked", e => this.setSelectPath(e.detail));
