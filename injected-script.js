@@ -1,3 +1,5 @@
+console.info("To debug the injected script StatePrinter, click here!");
+
 class StatePrinter {
 
   constructor() {
@@ -126,5 +128,3 @@ class StatePrinter {
 }
 
 new StatePrinter();
-
-console.info("To debug the injected script StatePrinter, click here!");
