@@ -59,21 +59,15 @@ export class StateTree extends HyperHTMLElement {
 
   makeChildTree(key, value, fullpath) {
     let el = StateTree.makeOrUpdate(null, key, value, fullpath);
-    el.addEventListener("state-open", this.extendOpen.bind(this));
     el.setAttribute("name", key);
     el.setAttribute("fullpath", fullpath);
     el.setAttribute("class", 'details__value');
     return el;
   }
 
-  extendOpen(e){
-    e.stopPropagation();
-    this.dispatchEvent(new CustomEvent("state-open", {composed: true, bubbles: true, detail: this.state.name + "." + e.detail}));
-  }
-
   openDetail(e) {
     e.stopPropagation();
-    this.dispatchEvent(new CustomEvent("state-open", {composed: true, bubbles: true, detail: this.state.name}));
+    this.dispatchEvent(new CustomEvent("state-open", {composed: true, bubbles: true, detail: this.state.fullpath}));
   }
 
   static makeComputeListing(compute) {
