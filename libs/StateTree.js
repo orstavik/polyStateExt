@@ -43,14 +43,19 @@ export class StateTree extends HyperHTMLElement {
     if (this.state.childObjs.length === 0) {
       this.html`
         <span class="statetree__key key--primitive">${this.state.name}</span>
+          <span class="statetree__oldvalue">
+            <span class="${StateTree.primitiveClass(this.state.values.startState)}">${String(this.state.values.startState)}</span>
+            =>
+          </span>
         <span class="${StateTree.primitiveClass(this.state.values.newState)}">${String(this.state.values.newState)}</span>
         ${StateTree.makeComputeListing(this.state.compute)}
       `;
     } else {
       this.html`
         <span class="statetree__opener" onclick="${this.openDetail.bind(this)}"></span>
-        <span class="statetree__key key--composite">${this.state.name}</span></br>
+        <span class="statetree__key key--composite">${this.state.name}</span>
         ${StateTree.makeComputeListing(this.state.compute)}
+        </br>
         ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
           ${this.makeChildTree(key, value, this.state.fullpath)}
         `)}

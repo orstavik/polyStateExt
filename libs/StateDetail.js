@@ -29,7 +29,7 @@ export class StateDetail extends HyperHTMLElement {
     this.state.visualVersion = visualVersion;
     this.state.openedPaths = openedPaths;
     this.state.selectedPaths = selectedPaths;
-    this.state.relevants= relevants;
+    this.state.relevants = relevants;
     this.render();
   }
 
@@ -37,6 +37,8 @@ export class StateDetail extends HyperHTMLElement {
     this.html`
       <style>${this._style(this.state.openedPaths, this.state.selectedPaths, this.state.relevants)}</style>
       <h4 class="state__header">State</h4>
+      <input type="checkbox" id="stateChangeView" onclick="${this.toggleStateChange.bind(this)}">
+      <label for="stateChangeView">Show state changes</label>
       ${StateDetail.makeStateTree(this.state.visualVersion)}
     `;
   }
@@ -92,14 +94,15 @@ export class StateDetail extends HyperHTMLElement {
         display: block;
       }
       .statetree__subtree {
-        display: none;
+        /*display: none;*/
+        display: block;
         padding-left: 13.5px;
       }
       .statetree__opener::before {
         content: "\\25b6";
-        width: 14px;
         font-size: 10px;
-        padding: 4px 0 4px 4px;
+        padding: 4px 0 4px;
+        margin-right: -2px;
         pointer-events: auto;
       }
       .statetree--opened .statetree__opener::before {
@@ -110,6 +113,18 @@ export class StateDetail extends HyperHTMLElement {
       }
       .statetree__key::after {
         content: ':';
+      }
+      .statetree__oldvalue {
+        display: none;
+      }
+      .statetree__oldvalue > .statetree__value {
+        text-decoration: line-through;
+      }
+      :host(.statetree--changes) .statetree__oldvalue {
+        display: inline;
+      }
+      .key--primitive {
+        padding-left: 13.5px;
       }
       .primitive--type-undefined,
       .primitive--type-null {
@@ -129,6 +144,10 @@ export class StateDetail extends HyperHTMLElement {
         content: '"';
       }
     `
+  }
+
+  toggleStateChange(e) {
+    this.classList.toggle("statetree--changes");
   }
 
   static pathsToCSSSelectors(paths, ending) {
