@@ -5,21 +5,9 @@ body {
     color:  var(--color-dark-0);
 }
 
-flexible-grid {
+.topgrid {
     height: 100vh;
 }
-
-/* @media (max-width: 600px) {
-    body {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 2fr;
-        grid-template-areas: 'tasklist' 'details';
-    }
-    .state {
-        border-left: none !important;
-        border-top: 1px solid  var(--color-border-1);
-    }
-} */
 
 * {
     cursor: default;
@@ -28,12 +16,10 @@ flexible-grid {
 .tasklist {
     display: flex;
     flex-direction: column;
-    overflow: auto;
 }
 
 .state {
     display: flex;
     box-sizing: border-box;
     flex-direction: column;
-    overflow: auto;
 }

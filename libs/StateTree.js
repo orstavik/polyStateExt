@@ -42,17 +42,18 @@ export class StateTree extends HyperHTMLElement {
     //        <style>${StateTree._style()}</style>
     if (this.state.childObjs.length === 0) {
       this.html`
-        <span class="details__key key--primitive">${this.state.name}</span>
+        <span class="statetree__key key--primitive">${this.state.name}</span>
         <span class="${StateTree.primitiveClass(this.state.values.newState)}">${String(this.state.values.newState)}</span>
         ${StateTree.makeComputeListing(this.state.compute)}
       `;
     } else {
       this.html`
-        <span class="details__key" onclick="${this.openDetail.bind(this)}">${this.state.name}</span>
+        <span class="statetree__opener" onclick="${this.openDetail.bind(this)}"></span>
+        <span class="statetree__key key--composite">${this.state.name}</span></br>
         ${StateTree.makeComputeListing(this.state.compute)}
         ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`
           ${this.makeChildTree(key, value, this.state.fullpath)}
-        `)}  
+        `)}
       `;
     }
   }
@@ -62,7 +63,7 @@ export class StateTree extends HyperHTMLElement {
     let el = StateTree.makeOrUpdate(null, key, value, fullpath);
     el.setAttribute("name", key);
     el.setAttribute("fullpath", fullpath);
-    el.setAttribute("class", 'details__value');
+    el.setAttribute("class", 'statetree__subtree');
     return el;
   }
 
@@ -75,7 +76,7 @@ export class StateTree extends HyperHTMLElement {
     if (!compute)
       return null;
     const el = ComputeListing.makeOrUpdate(null, compute);
-    el.setAttribute("class", 'details__computed');
+    el.setAttribute("class", 'statetree__computed');
     return el;
   }
 
@@ -97,10 +98,10 @@ export class StateTree extends HyperHTMLElement {
 
   static primitiveClass(value) {
     const type = (value === undefined || value === null) ? String(value) : (value.constructor.name).toLowerCase();
-    return `details__value primitive--type-${type}`;
+    return `statetree__value primitive--type-${type}`;
   }
 }
 
-customElements.define("state-tree", StateTree);
+customElements.define("state-state", StateTree);
 
 //     this.scrollIntoViewIfNeeded();

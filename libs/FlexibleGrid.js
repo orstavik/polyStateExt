@@ -17,6 +17,7 @@ class FlexibleGrid extends HyperHTMLElement {
   getAttributes() {
     this.separator = this.getAttribute('separator') || `${window.innerWidth/2}px`;
     this.minCols = this.getAttribute('min-cols').split(' ') || [`${window.innerWidth/2}px`, `${window.innerWidth/2}px`];
+    this.direction = this.getAttribute('direction');
     this._parseDirection();
   }
 
@@ -75,9 +76,9 @@ class FlexibleGrid extends HyperHTMLElement {
   static _getSeparator(e, dir, minCols) {
     let diff;
     if (dir === 'horizontal')
-      diff = e.x;
+      diff = e.layerX;
     else if (dir === 'vertical')
-      diff = e.y
+      diff = e.layerY;
 
     const minOne = minCols[0].match(/\d+/)[0];
     const minTwo = minCols[1].match(/\d+/)[0];
@@ -140,6 +141,9 @@ class FlexibleGrid extends HyperHTMLElement {
       }
       :host([direction="vertical"]) .grid {
         grid-template-rows: ${this.separator} auto;
+      }
+      .grid__container::slotted(*) {
+        overflow: auto;
       }
       :host([direction="horizontal"]) .grid__container:first-child::slotted(*) {
         border-right: 1px solid var(--separator-color);

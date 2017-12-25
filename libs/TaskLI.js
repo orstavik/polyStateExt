@@ -85,7 +85,6 @@ class TaskLI extends HyperHTMLElement {
           font-size: 10px;
           padding: 4px 0 4px 4px;
           pointer-events: auto;
-          cursor: pointer;
         }
         
         .task__body[open] .task__summary::before {

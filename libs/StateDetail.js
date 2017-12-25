@@ -46,7 +46,7 @@ export class StateDetail extends HyperHTMLElement {
       return null;
     let stateTree = StateTree.makeOrUpdate(null, "state", visVersion, null);
     stateTree.setAttribute("name", "state");
-    stateTree.setAttribute("class", "state-observer__state");
+    stateTree.setAttribute("class", "statetree");
     return stateTree;
   }
 
@@ -69,63 +69,66 @@ export class StateDetail extends HyperHTMLElement {
       }
       ${selectedSelector} {
         border: 2px solid red;
-      }                                                                             
+      }
       ${relevantsSelector} {
         border: 2px solid orange;
-      }                                                                             
-      state-tree {
-        display: none;
-        font-family: Consolas, "dejavu sans mono", monospace;
-        line-height: 16px;
-        white-space: nowrap;
-        margin-left: 16px;
       }
-      state-tree[name="state"],
-      state-tree[name="state"]>state-tree,
       ${openSelector} {
         display: block;
       }
-      .key--primitive {
-        margin-left: 13.5px;
+      ${this._treeStyle}
+    `;
+  }
+
+  get _treeStyle() {
+    return `
+      .statetree {
+        display: block;
+        font-family: Consolas, "dejavu sans mono", monospace;
+        line-height: 16px;
+        white-space: nowrap;
       }
-      .details__key {
+      .statetree>.statetree__subtree {
+        display: block;
+      }
+      .statetree__subtree {
+        display: none;
+        padding-left: 13.5px;
+      }
+      .statetree__opener::before {
+        content: "\\25b6";
+        width: 14px;
+        font-size: 10px;
+        padding: 4px 0 4px 4px;
+        pointer-events: auto;
+      }
+      .statetree--opened .statetree__opener::before {
+        content: "\\25bc";
+      }
+      .statetree__key {
         color: var(--color-property-normal);
       }
-      .details__key::after {
+      .statetree__key::after {
         content: ':';
       }
       .primitive--type-undefined,
       .primitive--type-null {
         color: var(--color-nothing-normal);
       }
-      
       .primitive--type-boolean {
         color: var(--color-boolean-normal);
       }
-      
       .primitive--type-number {
         color: var(--color-number-normal);
       }
-      
       .primitive--type-string {
         color: var(--color-string-normal);
       }
-      
       .primitive--type-string::before,
       .primitive--type-string::after {
         content: '"';
       }
-      .details__summary {
-        display: inline-block;
-      }
-      .details__summary:focus {
-        outline: none;
-      }
-      .details__summary::-webkit-details-marker {
-        margin-right: -1px;
-      }
-
-    `;
+    `
   }
 
   static pathsToCSSSelectors(paths, ending) {
