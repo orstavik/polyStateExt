@@ -19,6 +19,7 @@ class TaskLI extends HyperHTMLElement {
     for (let key in attribs)
       this.setAttribute(key, attribs[key]);
     this._props = props;
+    this.cachedStyle = this._style();
     this.updateProps();
     this.addEventListener('mousedown', TaskLI.showActiveState);
   }
@@ -40,7 +41,7 @@ class TaskLI extends HyperHTMLElement {
   render() {
     const p = this._props;
     return this.html`
-      ${TaskLI._style()}
+      <style>${this.cachedStyle}</style>
       <details class="task__body" data-index="${p.index}">
         <summary class="task__summary">
           <span class="task__method">${p.task.taskName}</span>
@@ -58,71 +59,68 @@ class TaskLI extends HyperHTMLElement {
 
   /**
    * Helper function to isolate css style
-   * @returns {HTMLStyleElement}
    */
-  static _style() {
-    return HyperHTMLElement.wire()`
-      <style>
-        :host {
-          display: block;
-        }
-        .task__summary {
-          display: flex;
-          align-items: center;
-          line-height: 16px;
-          padding: 8px 8px 8px 4px;
-          pointer-events: none;
-        }
-        
-        .task__summary::-webkit-details-marker {
-          display: none;
-        }
-        
-        .task__summary::before {
-          content: "\\25b6";
-          display: inline-block;
-          width: 14px;
-          font-size: 10px;
-          padding: 4px 0 4px 4px;
-          pointer-events: auto;
-        }
-        
-        .task__body[open] .task__summary::before {
-          content: "\\25bc";
-        }
-        
-        .task__summary:focus {
-          outline: none;
-        }
+  _style() {
+    return `
+      :host {
+        display: block;
+      }
+      .task__summary {
+        display: flex;
+        align-items: center;
+        line-height: 16px;
+        padding: 8px 8px 8px 4px;
+        pointer-events: none;
+      }
+      
+      .task__summary::-webkit-details-marker {
+        display: none;
+      }
+      
+      .task__summary::before {
+        content: "\\25b6";
+        display: inline-block;
+        width: 14px;
+        font-size: 10px;
+        padding: 4px 0 4px 4px;
+        pointer-events: auto;
+      }
+      
+      .task__body[open] .task__summary::before {
+        content: "\\25bc";
+      }
+      
+      .task__summary:focus {
+        outline: none;
+      }
 
-        .task__summary {
-          background-color: var(--color-light-0);
-        }
-        
-        :host(.task:nth-child(2n)) .task__summary {
-          background-color: var(--color-accent-light);
-        }
-        
-        :host(.task--active) .task__summary {
-          background-color: var(--color-accent-dark) !important;
-          color: var(--color-light-0);
-        }
+      .task__summary {
+        background-color: var(--color-light-0);
+      }
+      
+      :host(.task:nth-child(2n)) .task__summary {
+        background-color: var(--color-accent-light);
+      }
+      
+      :host(.task--active) .task__summary {
+        background-color: var(--color-accent-dark) !important;
+        color: var(--color-light-0);
+      }
 
-        :host(.task--active) .task__timestamp {
-          color: var(--color-light-0);
-        }
-        
-        .task__method {
-          flex: 1;
-        }
+      :host(.task--active) .task__timestamp {
+        color: var(--color-light-0);
+      }
+      
+      .task__method {
+        flex: 1;
+      }
 
-        .task__details {
-          padding: 10px;
-          border-top: 1px solid var(--color-border-4);
-          border-bottom: 1px solid var(--color-border-4);
-          overflow-x: auto;
-        }
-      </style>
+      .task__details {
+        padding: 10px;
+        border-top: 1px solid var(--color-border-4);
+        border-bottom: 1px solid var(--color-border-4);
+        overflow-x: auto;
+      }
     `;
   }
 

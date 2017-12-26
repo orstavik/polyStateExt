@@ -18,6 +18,7 @@ class AddedDuration extends HyperHTMLElement {
     for (let key in attribs)
       this.setAttribute(key, attribs[key]);
     this._props = props;
+    this.cachedStyle = this._style();
     this.updateProps();
   }
 
@@ -43,7 +44,7 @@ class AddedDuration extends HyperHTMLElement {
    */
   render() {
     this.html`
-      ${AddedDuration.style()}
+      <style>${this.cachedStyle}</style>
       <span class="task__timestamp">${this._props.h}:${this._props.m}:${this._props.s}.${this._props.ms}</span>
       <span>&nbsp;|&nbsp;</span>
       <span class="task__duration">${this._props.duration}</span>
@@ -54,14 +55,12 @@ class AddedDuration extends HyperHTMLElement {
    * Helper function to isolate css style
    * @return {HTMLStyleElement}
    */
-  static style() {
-    return HyperHTMLElement.wire()`
-      <style>
-        :host {
-          display: inline-block;
-          color: var(--color-dark-2);
-        }
-      </style>
+  _style() {
+    return `
+      :host {
+        display: inline-block;
+        color: var(--color-dark-2);
+      }
     `;
   }
 

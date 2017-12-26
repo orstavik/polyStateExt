@@ -4,7 +4,14 @@ import HyperHTMLElement from "../node_modules/hyperhtml-element/esm/index.js";
 import draggable from "./draggable.js";
 import throttle from "./throttle.js";
 
+/**
+ * Webcomponent grid with two resizable boxes inside
+ */
 class FlexibleGrid extends HyperHTMLElement {
+
+  /**
+   * Creates an instance of FlexibleGrid
+   */
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -14,6 +21,9 @@ class FlexibleGrid extends HyperHTMLElement {
     this.setDraggableSeparator();
   }
 
+  /**
+   * Wrapper for reading the attributes and store them as properties
+   */
   getAttributes() {
     this.separator = this.getAttribute('separator') || `${window.innerWidth/2}px`;
     this.minCols = this.getAttribute('min-cols').split(' ') || [`${window.innerWidth/2}px`, `${window.innerWidth/2}px`];
@@ -21,6 +31,9 @@ class FlexibleGrid extends HyperHTMLElement {
     this._parseDirection();
   }
 
+  /**
+   * Parses direction-media attribute and stores responsible rules for grid layout
+   */
   _parseDirection() {
     let attr = this.getAttribute('direction-media');
     if (attr) {
@@ -41,6 +54,9 @@ class FlexibleGrid extends HyperHTMLElement {
     }
   }
 
+  /**
+   * Creates listener for responsible behavior that follows direction-media attribute rules
+   */
   _addResizeListener() {
     window.addEventListener('resize', () => {
       throttle(() => {
@@ -57,6 +73,13 @@ class FlexibleGrid extends HyperHTMLElement {
     })
   }
 
+  /**
+   * Returns css grid-template property
+   * @param {string} dir 'horizontal' or 'vertical'
+   * @param {string} sep position of separator from top or left
+   * @param {string[]} mCols array of minimum widths of inner boxes
+   * @returns {string}
+   */
   static _gridStyle(dir, sep, mCols) {
     if (dir === 'horizontal')
       return `grid-template-columns: ${sep} auto`;
@@ -66,6 +89,13 @@ class FlexibleGrid extends HyperHTMLElement {
       // return `grid-template-rows: minmax(${mCols[0]}, ${sep}) minmax(${mCols[1]}, auto)`;
   }
 
+  /**
+   * Returns css top/left property
+   * @param {string} dir 'horizontal' or 'vertical'
+   * @param {string} sep position of separator from top or left
+   * @param {string[]} mCols array of minimum widths of inner boxes
+   * @returns {string}
+   */
   static _colsStyle(dir, sep, mCols) {
     if (dir === 'horizontal')
       return `left: ${sep}`;
@@ -73,15 +103,22 @@ class FlexibleGrid extends HyperHTMLElement {
       return `top: ${sep}`;
   }
 
-  static _getSeparator(e, dir, minCols) {
+  /**
+   * Gets separator position from event and normalize it depending on minimum boxes width
+   * @param {CustomEvent} e
+   * @param {string} dir 'horizontal' or 'vertical'
+   * @param {string[]} mCols array of minimum widths of inner boxes
+   * @returns {number}
+   */
+  static _getSeparator(e, dir, mCols) {
     let diff;
     if (dir === 'horizontal')
       diff = e.layerX;
     else if (dir === 'vertical')
       diff = e.layerY;
 
-    const minOne = minCols[0].match(/\d+/)[0];
-    const minTwo = minCols[1].match(/\d+/)[0];
+    const minOne = mCols[0].match(/\d+/)[0];
+    const minTwo = mCols[1].match(/\d+/)[0];
 
     if (diff < minOne) {
       return minOne;
@@ -96,6 +133,9 @@ class FlexibleGrid extends HyperHTMLElement {
     }
   }
 
+  /**
+   * Adds draggable behavior for separator node
+   */
   setDraggableSeparator() {
     const separator = this.shadowRoot.querySelector('.grid__separator');
     const grid = this.shadowRoot.querySelector('.grid');
@@ -112,6 +152,11 @@ class FlexibleGrid extends HyperHTMLElement {
     });
   }
 
+  /**
+   * Call this method to update the html code inside this element to the current state of its properties and attributes.
+   * updateProps calls this method by default, but you must call this method manually if you need the DOM to reflect
+   * changes to some of its attributes that should change the HTML structure.
+   */
   render() {
     return this.html`
       <style>
@@ -125,6 +170,9 @@ class FlexibleGrid extends HyperHTMLElement {
     `;
   }
 
+  /**
+   * Helper function to isolate css style
+   */
   _style() {
     return `
       :host {
