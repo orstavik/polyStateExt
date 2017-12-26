@@ -10,11 +10,51 @@ class StatePrinter {
 
   checkStateHistory(e) {
     const history = e.detail;
+
+    debugger;
+    this.pathDiff = [];
+    this.pathDiff = StatePrinter.diffObjsAsPaths(e.detail[0].startState, e.detail[0].reducedState, this.pathDiff);
+
     if (!this.debugHookFirstTime)
       return window.dispatchEvent(new CustomEvent('state-changed-debug', {detail: StatePrinter.jsonSnap(history[0])}));
     for (let snap of history.reverse())
       window.dispatchEvent(new CustomEvent('state-changed-debug', {detail: StatePrinter.jsonSnap(snap)}));
     this.debugHookFirstTime = false;
+  }
+
+  static diffObjsAsPaths(prev, curr, res, parentPath = '') {
+    const prevKeys = Object.keys(prev);
+    const currKeys = Object.keys(curr);
+    const keys = new Set(prevKeys.concat());
+
+    for (let key of keys) {
+      let path = `${parentPath}.${key}`;
+      if (prev[key] === curr[key]) {
+        res.push({
+          [path]: 0
+        });
+      }
+      else if (!(key in curr)) {
+        res.push({
+          [path]: 2
+        });
+      }
+      else if (!(key in prev)) {
+        res.push({
+          [path]: 3
+        })
+      }
+      if (typeof curr[key] === 'object') {
+        StatePrinter.diffObjsAsPaths(prev[key], curr[key], res, path);
+      }
+      else if (prev[key] !== curr[key]) {
+        res.push({
+          [path]: 1
+        });
+      }
+    }
+
+    return res;
   }
 
   static jsonSnap(debugInfo) {
