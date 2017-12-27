@@ -11,8 +11,7 @@ class StatePrinter {
   checkStateHistory(e) {
     const history = e.detail;
 
-    this.pathDiff = StatePrinter.diffObjsAsPaths(e.detail[0].startState, e.detail[0].reducedState);
-    console.log(e.detail[0].task.event.type, this.pathDiff);
+    history[0].openedPaths = StatePrinter.diffObjsAsPaths(e.detail[0].startState, e.detail[0].reducedState);
 
     if (!this.debugHookFirstTime)
       return window.dispatchEvent(new CustomEvent('state-changed-debug', {detail: StatePrinter.jsonSnap(history[0])}));
@@ -27,7 +26,7 @@ class StatePrinter {
     const keys = new Set(prevKeys.concat(currKeys));
 
     for (let key of keys) {
-      let path = `${parentPath}.${key}`;
+      let path = parentPath.length === 0 ? key : `${parentPath}.${key}`;
       if (prev[key] === curr[key]) {
         res.push({
           [path]: 0
