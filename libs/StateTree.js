@@ -107,6 +107,6 @@ export class StateTree extends HyperHTMLElement {
   }
 }
 
-customElements.define("state-state", StateTree);
+customElements.define("state-tree", StateTree);
 
 //     this.scrollIntoViewIfNeeded();

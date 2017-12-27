@@ -59,16 +59,10 @@ export class StateDetail extends HyperHTMLElement {
   _style(openedPaths, selectedPaths, relevantPaths) {
     const selectedSelector = StateDetail.pathsToCSSSelectors(selectedPaths, "");
     const openSelector = StateDetail.pathsToCSSSelectors(openedPaths, ">state-tree");
+    const triangleSelector = StateDetail.pathsToCSSSelectors(openedPaths, ">.statetree__opener::before");
     const relevantsSelector = StateDetail.pathsToCSSSelectors(relevantPaths, "");
     //language=CSS
     return `
-      :host {
-        display: block;
-        padding: 12px 24px;
-      }
-      .state__header {
-        margin: 0 0 12px;
-      }
       ${selectedSelector} {
         border: 2px solid red;
       }
@@ -78,12 +72,22 @@ export class StateDetail extends HyperHTMLElement {
       ${openSelector} {
         display: block;
       }
+      ${triangleSelector} {
+        content: "\\25bc";
+      }
       ${this._treeStyle}
     `;
   }
 
   get _treeStyle() {
     return `
+      :host {
+        display: block;
+        padding: 12px 24px;
+      }
+      .state__header {
+        margin: 0 0 12px;
+      }
       .statetree {
         display: block;
         font-family: Consolas, "dejavu sans mono", monospace;
@@ -94,8 +98,8 @@ export class StateDetail extends HyperHTMLElement {
         display: block;
       }
       .statetree__subtree {
-        /*display: none;*/
-        display: block;
+        display: none;
+        /*display: block;*/
         padding-left: 13.5px;
       }
       .statetree__opener::before {
@@ -143,7 +147,7 @@ export class StateDetail extends HyperHTMLElement {
       .primitive--type-string::after {
         content: '"';
       }
-    `
+    `;
   }
 
   toggleStateChange(e) {

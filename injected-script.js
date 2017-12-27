@@ -95,7 +95,7 @@ class StatePrinter {
     };
   }
 
-//.name, .diff, .style, .values.startState/.reducedState/.newState, .children
+  //.name, .diff, .style, .values.startState/.reducedState/.newState, .children
   static compareObjects(name, startState, reducedState, newState) {
     let res = {};
     res.name = name;
