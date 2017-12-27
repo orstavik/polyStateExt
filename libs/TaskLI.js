@@ -82,6 +82,7 @@ class TaskLI extends HyperHTMLElement {
         display: inline-block;
         width: 14px;
         font-size: 10px;
+        color: var(--color-dark-3);
         padding: 4px 0 4px 4px;
         pointer-events: auto;
       }
@@ -102,7 +103,8 @@ class TaskLI extends HyperHTMLElement {
         background-color: var(--color-accent-light);
       }
       
-      :host(.task--active) .task__summary {
+      :host(.task--active) .task__summary,
+      :host(.task--active) .task__summary::before {
         background-color: var(--color-accent-dark) !important;
         color: var(--color-light-0);
       }

@@ -74,6 +74,8 @@ export class StateDetail extends HyperHTMLElement {
       }
       ${triangleSelector} {
         content: "\\25bc";
+        font-size: 13px;
+        padding: 4px 2px 4px 0;
       }
       ${this._treeStyle}
     `;
@@ -104,13 +106,18 @@ export class StateDetail extends HyperHTMLElement {
       }
       .statetree__opener::before {
         content: "\\25b6";
+        width: 14px;
         font-size: 10px;
+        color: var(--color-dark-3);
         padding: 4px 0 4px;
         margin-right: -2px;
         pointer-events: auto;
       }
-      .statetree--opened .statetree__opener::before {
+      .statetree--opened .statetree__opener::before,
+      .statetree>.statetree__opener::before {
         content: "\\25bc";
+        font-size: 13px;
+        padding: 4px 2px 4px 0;
       }
       .statetree__key {
         color: var(--color-property-normal);

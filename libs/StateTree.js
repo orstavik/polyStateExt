@@ -53,7 +53,7 @@ export class StateTree extends HyperHTMLElement {
     } else {
       this.html`
         <span class="statetree__opener" onclick="${this.openDetail.bind(this)}"></span>
-        <span class="statetree__key key--composite">${this.state.name}</span>
+        <span class="statetree__key key--composite" onclick="${this.openDetail.bind(this)}">${this.state.name}</span>
         ${StateTree.makeComputeListing(this.state.compute)}
         </br>
         ${this.state.childObjs.map(([key, value]) => HyperHTMLElement.wire()`

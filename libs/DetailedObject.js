@@ -114,6 +114,7 @@ class DetailedObject extends HyperHTMLElement {
       }
       .details__summary::-webkit-details-marker {
         margin-right: -1px;
+        color: var(--color-dark-3);
       }
     `;
   }
