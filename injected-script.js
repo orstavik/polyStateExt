@@ -11,9 +11,8 @@ class StatePrinter {
   checkStateHistory(e) {
     const history = e.detail;
 
-    debugger;
-    this.pathDiff = [];
-    this.pathDiff = StatePrinter.diffObjsAsPaths(e.detail[0].startState, e.detail[0].reducedState, this.pathDiff);
+    this.pathDiff = StatePrinter.diffObjsAsPaths(e.detail[0].startState, e.detail[0].reducedState);
+    console.log(e.detail[0].task.event.type, this.pathDiff);
 
     if (!this.debugHookFirstTime)
       return window.dispatchEvent(new CustomEvent('state-changed-debug', {detail: StatePrinter.jsonSnap(history[0])}));
@@ -22,10 +21,10 @@ class StatePrinter {
     this.debugHookFirstTime = false;
   }
 
-  static diffObjsAsPaths(prev, curr, res, parentPath = '') {
+  static diffObjsAsPaths(prev, curr, res = [], parentPath = '') {
     const prevKeys = Object.keys(prev);
     const currKeys = Object.keys(curr);
-    const keys = new Set(prevKeys.concat());
+    const keys = new Set(prevKeys.concat(currKeys));
 
     for (let key of keys) {
       let path = `${parentPath}.${key}`;
@@ -33,27 +32,32 @@ class StatePrinter {
         res.push({
           [path]: 0
         });
+        continue;
       }
-      else if (!(key in curr)) {
+      if (!(key in curr)) {
         res.push({
           [path]: 2
         });
+        continue;
       }
-      else if (!(key in prev)) {
+      if (!(key in prev)) {
         res.push({
           [path]: 3
-        })
+        });
+        continue;
       }
-      if (typeof curr[key] === 'object') {
-        StatePrinter.diffObjsAsPaths(prev[key], curr[key], res, path);
+      if (prev[key] instanceof Object && curr[key] instanceof Object) {
+        res.concat(StatePrinter.diffObjsAsPaths(prev[key], curr[key], res, path));
+        continue;
       }
-      else if (prev[key] !== curr[key]) {
+      if (prev[key] !== curr[key]) {
         res.push({
           [path]: 1
         });
+        continue;
       }
     }
-
+    
     return res;
   }
 
