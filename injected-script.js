@@ -12,6 +12,7 @@ class StatePrinter {
     const history = e.detail;
 
     history[0].openedPaths = StatePrinter.diffObjsAsPaths(e.detail[0].startState, e.detail[0].reducedState);
+    console.log(history[0].openedPaths);
 
     if (!this.debugHookFirstTime)
       return window.dispatchEvent(new CustomEvent('state-changed-debug', {detail: StatePrinter.jsonSnap(history[0])}));
@@ -20,40 +21,32 @@ class StatePrinter {
     this.debugHookFirstTime = false;
   }
 
-  static diffObjsAsPaths(prev, curr, res = [], parentPath = '') {
+  static diffObjsAsPaths(prev, curr, parentPath = '') {
+    let res = {};
     const prevKeys = Object.keys(prev);
     const currKeys = Object.keys(curr);
     const keys = new Set(prevKeys.concat(currKeys));
 
     for (let key of keys) {
       let path = parentPath.length === 0 ? key : `${parentPath}.${key}`;
-      if (prev[key] === curr[key]) {
-        res.push({
-          [path]: 0
-        });
-        continue;
+      if (prev[key] === curr[key])
+        res[path] = 0;
+      else if (!(key in curr))
+        res[path] = 2;
+      else if (!(key in prev))
+        res[path] = 3;
+      else if (prev[key] instanceof Object && curr[key] instanceof Object) {
+        res[path] = 1;
+        res = Object.assign(res, StatePrinter.diffObjsAsPaths(prev[key], curr[key], path));
       }
-      if (!(key in curr)) {
-        res.push({
-          [path]: 2
-        });
-        continue;
-      }
-      if (!(key in prev)) {
-        res.push({
-          [path]: 3
-        });
-        continue;
-      }
-      if (prev[key] instanceof Object && curr[key] instanceof Object) {
-        res.concat(StatePrinter.diffObjsAsPaths(prev[key], curr[key], res, path));
-        continue;
-      }
-      if (prev[key] !== curr[key]) {
-        res.push({
-          [path]: 1
-        });
-        continue;
+      else if (prev[key] !== curr[key]) {
+        res[path] = 1;
+        if (curr[key] instanceof Object) {
+          Object.entries(curr[key])
+            .forEach(([key, value]) => {
+              res[path+'.'+key] = 3;
+            });
+        }
       }
     }
     
