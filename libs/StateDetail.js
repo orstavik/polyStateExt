@@ -9,10 +9,10 @@ export class StateDetail extends HyperHTMLElement {
    * @param {Object} visualVersion
    */
   // static makeOrUpdate(el, visualVersion, openedPaths, selectedPaths, relevants) {
-  static makeOrUpdate(el, data) {
+  static makeOrUpdate(el, visualVersion, data) {
     el = el || new StateDetail(true);
     // el.updateState(visualVersion, openedPaths, selectedPaths, relevants);
-    el.updateState(data);
+    el.updateState(visualVersion, data);
     return el;
   }
 
@@ -28,8 +28,8 @@ export class StateDetail extends HyperHTMLElement {
   }
 
   // updateState(visualVersion, openedPaths, selectedPaths, relevants) {
-  updateState(data) {
-    this.state.visualVersion = data.visualVersion;
+  updateState(visualVersion, data) {
+    this.state.visualVersion = visualVersion;
     this.state.openedPaths = data.opened;
     this.state.addedPaths = data.added;
     this.state.deletedPaths = data.deleted;
