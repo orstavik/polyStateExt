@@ -38,8 +38,13 @@ export class StateManager {
     this.visualVersion = data.visualVersion;
     this.observerInfo = data.observerInfo;
     this.computerInfo = data.computerInfo;
-    this.diffStartReduced = StateManager.filterDiffPaths(data.diffStartReduced);
-    this.openedPaths = Object.assign({}, this.diffStartReduced);
+    this.added = StateManager.filterDiffPaths(data.diffStartReduced, "Added");
+    this.deleted = StateManager.filterDiffPaths(data.diffStartReduced, "Deleted");
+    this.realAltered = StateManager.filterDiffPaths(data.diffStartReduced, "Altered");
+    this.subAltered = StateManager.filterDiffPaths(data.diffStartReduced, "SubAltered");
+    this.altered = Object.assign({}, this.realAltered, this.subAltered);
+    this.changed = Object.assign({}, this.altered, this.added, this.deleted);
+    // this.openedPaths = Object.assign({}, this.changed);
     this.notify(this);
   }
 
@@ -72,7 +77,7 @@ export class StateManager {
   }
 
   getOpenPaths() {
-    let openedPaths = Object.assign({}, this.openedPaths, this.diffStartReduced);
+    let openedPaths = Object.assign({}, this.openedPaths, this.changed, this.selectedPath);
     return StateManager.allPathsAndParentPaths(openedPaths);
   }
 
@@ -80,9 +85,9 @@ export class StateManager {
     const opened = this.getOpenPaths();
     return {
       opened: opened,
-      added: StateManager.filterAddedPaths(opened),
-      deleted: StateManager.filterDeletedPaths(opened),
-      altered: StateManager.filterAlteredPaths(opened),
+      added: this.added,
+      deleted: this.deleted,
+      altered: this.altered,
       selected: this.selectedPath,
       relevant: this.relevants
     }
@@ -126,38 +131,12 @@ export class StateManager {
     return visualVersion;
   }
 
-  static filterDiffPaths(paths) {
-    Object.entries(paths).forEach(([key,value]) => {
-      if (value === 0)
-        delete paths[key];
-    });
-    return paths;
-  }
-
-  static filterAddedPaths(paths) {
-    let res = [];
-    Object.entries(res).forEach(([key,value]) => {
-      if (value === 2)
-        res.push(key);
-    });
-    return res;
-  }
-
-  static filterDeletedPaths(paths) {
-    let res = [];
-    Object.entries(res).forEach(([key,value]) => {
-      if (value === 3)
-        res.push(key);
-    });
-    return res;
-  }
-
-  static filterAlteredPaths(paths) {
-    let res = [];
-    Object.entries(res).forEach(([key,value]) => {
-      if (value === 1)
-        res.push(key);
-    });
+  static filterDiffPaths(paths, check) {
+    const res = {};
+    for (let key in paths) {
+      if (paths[key] === check)
+        res[key] = check;
+    }
     return res;
   }
 }

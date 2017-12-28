@@ -11,9 +11,6 @@ class StatePrinter {
   checkStateHistory(e) {
     const history = e.detail;
 
-    history[0].diffStartReduced = StatePrinter.diffObjsAsPaths(e.detail[0].startState, e.detail[0].reducedState);
-    history[0].diffReducedComputed = StatePrinter.diffObjsAsPaths(e.detail[0].reducedState, e.detail[0].computedState);
-
     if (!this.debugHookFirstTime)
       return window.dispatchEvent(new CustomEvent('state-changed-debug', {detail: StatePrinter.jsonSnap(history[0])}));
     for (let snap of history.reverse())
@@ -21,35 +18,22 @@ class StatePrinter {
     this.debugHookFirstTime = false;
   }
 
-  static diffObjsAsPaths(prev, curr, parentPath = '') {
+  static diffObjsAsPaths(a, b, path) {
     let res = {};
-    const prevKeys = Object.keys(prev);
-    const currKeys = Object.keys(curr);
-    const keys = new Set(prevKeys.concat(currKeys));
+    res[path] = StatePrinter.diff(a, b);
+    if (res[path] === "NoChange" || !(a instanceof Object || b instanceof Object))
+      return res;
 
-    for (let key of keys) {
-      let path = parentPath.length === 0 ? key : `${parentPath}.${key}`;
-      if (prev[key] === curr[key])
-        res[path] = 0;
-      else if (!(key in curr))
-        res[path] = 2;
-      else if (!(key in prev))
-        res[path] = 3;
-      else if (prev[key] instanceof Object && curr[key] instanceof Object) {
-        res[path] = 1;
-        res = Object.assign(res, StatePrinter.diffObjsAsPaths(prev[key], curr[key], path));
-      }
-      else if (prev[key] !== curr[key]) {
-        res[path] = 1;
-        if (curr[key] instanceof Object) {
-          Object.entries(curr[key])
-            .forEach(([key, value]) => {
-              res[path+'.'+key] = 3;
-            });
-        }
-      }
+    if (!(a instanceof Object)) a = {};
+    if (!(b instanceof Object)) b = {};
+
+    if (path.length > 0) path += ".";
+    for (let key in a)
+      res = Object.assign(res, StatePrinter.diffObjsAsPaths(a[key], b[key], path + key));
+    for (let key in b){
+      if (!(key in a))
+        res = Object.assign(res, StatePrinter.diffObjsAsPaths(a[key], b[key], path + key));
     }
-    
     return res;
   }
 
@@ -61,8 +45,8 @@ class StatePrinter {
       visualVersion: visualVersion,
       computerInfo: computerInfo,
       observerInfo: StatePrinter.makeTriggerFuncs(debugInfo.observerInfo.start, debugInfo.observerInfo.stop),
-      diffStartReduced: StatePrinter.diffObjsAsPaths(debugInfo.startState, debugInfo.reducedState),
-      diffReducedComputed: StatePrinter.diffObjsAsPaths(debugInfo.reducedState, debugInfo.computedState)
+      diffStartReduced: StatePrinter.diffObjsAsPaths(debugInfo.startState, debugInfo.reducedState, ""),
+      diffReducedComputed: StatePrinter.diffObjsAsPaths(debugInfo.reducedState, debugInfo.computedState, "")
     });
   }
 
@@ -142,19 +126,11 @@ class StatePrinter {
   }
 
   static objectEqualOneLayer(a, b) {
-    if (typeof a !== "object" || typeof b !== "object")
-      return false;
-    if (a === null || b === null)
+    if (!(a instanceof Object) || !(b instanceof Object))
       return false;
     let aKeys = Object.keys(a);
     let bKeys = Object.keys(b);
-    if (aKeys.length !== bKeys.length)
-      return false;
-    for (let key of aKeys) {
-      if (bKeys.indexOf(key) === -1)
-        return false;
-    }
-    return true;
+    return aKeys.length === bKeys.length && aKeys.every(key => bKeys.indexOf(key) >= 0);
   }
 
   static arrToObj(arr) {
