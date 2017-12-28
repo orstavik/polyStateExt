@@ -11,8 +11,8 @@ class StatePrinter {
   checkStateHistory(e) {
     const history = e.detail;
 
-    history[0].openedPaths = StatePrinter.diffObjsAsPaths(e.detail[0].startState, e.detail[0].reducedState);
-    console.log(history[0].openedPaths);
+    history[0].diffStartReduced = StatePrinter.diffObjsAsPaths(e.detail[0].startState, e.detail[0].reducedState);
+    history[0].diffReducedComputed = StatePrinter.diffObjsAsPaths(e.detail[0].reducedState, e.detail[0].computedState);
 
     if (!this.debugHookFirstTime)
       return window.dispatchEvent(new CustomEvent('state-changed-debug', {detail: StatePrinter.jsonSnap(history[0])}));
@@ -60,7 +60,9 @@ class StatePrinter {
       task: debugInfo.task,
       visualVersion: visualVersion,
       computerInfo: computerInfo,
-      observerInfo: StatePrinter.makeTriggerFuncs(debugInfo.observerInfo.start, debugInfo.observerInfo.stop)
+      observerInfo: StatePrinter.makeTriggerFuncs(debugInfo.observerInfo.start, debugInfo.observerInfo.stop),
+      diffStartReduced: StatePrinter.diffObjsAsPaths(debugInfo.startState, debugInfo.reducedState),
+      diffReducedComputed: StatePrinter.diffObjsAsPaths(debugInfo.reducedState, debugInfo.computedState)
     });
   }
 

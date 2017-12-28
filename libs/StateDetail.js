@@ -8,9 +8,11 @@ export class StateDetail extends HyperHTMLElement {
    * @param {HyperHTMLElement} el
    * @param {Object} visualVersion
    */
-  static makeOrUpdate(el, visualVersion, openedPaths, selectedPaths, relevants) {
+  // static makeOrUpdate(el, visualVersion, openedPaths, selectedPaths, relevants) {
+  static makeOrUpdate(el, data) {
     el = el || new StateDetail(true);
-    el.updateState(visualVersion, openedPaths, selectedPaths, relevants);
+    // el.updateState(visualVersion, openedPaths, selectedPaths, relevants);
+    el.updateState(data);
     return el;
   }
 
@@ -25,11 +27,15 @@ export class StateDetail extends HyperHTMLElement {
     // this.addEventListener("path-clicked", StateDetail.pathClicked);
   }
 
-  updateState(visualVersion, openedPaths, selectedPaths, relevants) {
-    this.state.visualVersion = visualVersion;
-    this.state.openedPaths = openedPaths;
-    this.state.selectedPaths = selectedPaths;
-    this.state.relevants = relevants;
+  // updateState(visualVersion, openedPaths, selectedPaths, relevants) {
+  updateState(data) {
+    this.state.visualVersion = data.visualVersion;
+    this.state.openedPaths = data.opened;
+    this.state.addedPaths = data.added;
+    this.state.deletedPaths = data.deleted;
+    this.state.alteredPaths = data.altered;
+    this.state.selectedPaths = data.selected;
+    this.state.relevants = data.relevant;
     this.render();
   }
 

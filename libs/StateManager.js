@@ -38,6 +38,8 @@ export class StateManager {
     this.visualVersion = data.visualVersion;
     this.observerInfo = data.observerInfo;
     this.computerInfo = data.computerInfo;
+    this.diffStartReduced = StateManager.filterDiffPaths(data.diffStartReduced);
+    this.openedPaths = Object.assign({}, this.diffStartReduced);
     this.notify(this);
   }
 
@@ -70,8 +72,20 @@ export class StateManager {
   }
 
   getOpenPaths() {
-    let openedPaths = Object.assign({}, this.openedPaths, this.selectedPath, this.relevants);
+    let openedPaths = Object.assign({}, this.openedPaths, this.diffStartReduced);
     return StateManager.allPathsAndParentPaths(openedPaths);
+  }
+
+  getWrapperPaths() {
+    const opened = this.getOpenPaths();
+    return {
+      opened: opened,
+      added: StateManager.filterAddedPaths(opened),
+      deleted: StateManager.filterDeletedPaths(opened),
+      altered: StateManager.filterAlteredPaths(opened),
+      selected: this.selectedPath,
+      relevant: this.relevants
+    }
   }
 
   onChange(cb) {
@@ -110,6 +124,41 @@ export class StateManager {
       visualVersion = Tools.setIn(visualVersion, ["children", computeName, "compute"], compute);
     }
     return visualVersion;
+  }
+
+  static filterDiffPaths(paths) {
+    Object.entries(paths).forEach(([key,value]) => {
+      if (value === 0)
+        delete paths[key];
+    });
+    return paths;
+  }
+
+  static filterAddedPaths(paths) {
+    let res = [];
+    Object.entries(res).forEach(([key,value]) => {
+      if (value === 2)
+        res.push(key);
+    });
+    return res;
+  }
+
+  static filterDeletedPaths(paths) {
+    let res = [];
+    Object.entries(res).forEach(([key,value]) => {
+      if (value === 3)
+        res.push(key);
+    });
+    return res;
+  }
+
+  static filterAlteredPaths(paths) {
+    let res = [];
+    Object.entries(res).forEach(([key,value]) => {
+      if (value === 1)
+        res.push(key);
+    });
+    return res;
   }
 }
 
