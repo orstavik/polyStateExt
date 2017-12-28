@@ -88,6 +88,7 @@ export class StateDetail extends HyperHTMLElement {
   }
 
   get _treeStyle() {
+    //language=CSS
     return `
       :host {
         display: block;
