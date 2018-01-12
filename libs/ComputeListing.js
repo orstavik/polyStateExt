@@ -45,7 +45,7 @@ export class ComputeListing extends HyperHTMLElement {
           <span class="compute__name">${this.state.func.funcName}</span>
           <span class="compute__args">
             ${(this.state.func.argsPaths || []).map(arg => HyperHTMLElement.wire()`
-              <state-path path="${path}">${arg}</state-path>
+              <state-path path="${arg}">${arg}</state-path>
             `)}
           </span>
         </span>

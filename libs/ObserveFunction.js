@@ -34,12 +34,14 @@ export class ObserveFunction extends HyperHTMLElement {
   }
 
   render() {
-
+    let args = [];
+    if (this.state.func.triggerPaths)
+      args = Object.values(this.state.func.triggerPaths) || [];
     this.html`
       <style>${this.cachedStyle}</style>
       <span class="funcName">${this.state.func.funcName}</span>
       <span class="funcArgs">
-        ${(Object.values(this.state.func.triggerPaths) || []).map((arg, i) => HyperHTMLElement.wire(arg)`
+        ${args.map((arg, i) => HyperHTMLElement.wire(arg)`
           <state-path path="${arg.path.join(".")}" triggered="${arg.triggered}">${arg.path.join(".")}</state-path>
         `)}
       </span>

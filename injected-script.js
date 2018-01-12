@@ -4,13 +4,13 @@ class StatePrinter {
 
   constructor() {
     this.debugHookFirstTime = true;
+    debugger;
     window.addEventListener("state-history-changed", this.checkStateHistory.bind(this));
     window.dispatchEvent(new CustomEvent('state-get-history'));
   }
 
   checkStateHistory(e) {
     const history = e.detail;
-    debugger;
     if (!this.debugHookFirstTime)
       return window.dispatchEvent(new CustomEvent('state-changed-debug', {detail: StatePrinter.jsonSnap(history[0])}));
     for (let snap of history.reverse())
