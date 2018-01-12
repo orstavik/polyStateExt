@@ -1,3 +1,0 @@
-//fails    return html`<li><div class="stateName">${key}</div>${!value ? "nananas": "bbabbaba"}</li>`;
-//succeeds    return html`<li><div class="stateName">${key}</div><div>${!value ? "nananas": "bbabbaba"}</div></li>`;
-//succeeds    return html`<li>${!value ? "nananas": "bbabbaba"}<div class="stateName">${key}</div><div></div></li>`;

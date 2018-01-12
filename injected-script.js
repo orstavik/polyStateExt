@@ -10,7 +10,7 @@ class StatePrinter {
 
   checkStateHistory(e) {
     const history = e.detail;
-
+    debugger;
     if (!this.debugHookFirstTime)
       return window.dispatchEvent(new CustomEvent('state-changed-debug', {detail: StatePrinter.jsonSnap(history[0])}));
     for (let snap of history.reverse())
@@ -39,39 +39,14 @@ class StatePrinter {
 
   static jsonSnap(debugInfo) {
     let visualVersion = StatePrinter.compareObjects("state", debugInfo.startState, debugInfo.reducedState, debugInfo.newState);
-    let computerInfo = StatePrinter.makeTriggerFuncs(debugInfo.computerInfo.start, debugInfo.computerInfo.stop);
     return JSON.stringify({
       task: debugInfo.task,
       visualVersion: visualVersion,
-      computerInfo: computerInfo,
-      observerInfo: StatePrinter.makeTriggerFuncs(debugInfo.observerInfo.start, debugInfo.observerInfo.stop),
+      computerInfo: debugInfo.computerInfo,
+      observerInfo: debugInfo.observerInfo,
       diffStartReduced: StatePrinter.diffObjsAsPaths(debugInfo.startState, debugInfo.reducedState, ""),
       diffReducedComputed: StatePrinter.diffObjsAsPaths(debugInfo.reducedState, debugInfo.computedState, "")
     });
-  }
-
-  static makeTriggerFuncs(startReg, stopReg) {
-    let C = {};
-    for (let key in startReg)
-      C[key] = StatePrinter.makeTriggerFunc(startReg[key], stopReg[key]);
-    return C;
-  }
-
-  static makeTriggerFunc(start, stop) {
-    return {
-      funcName: start.funcName,
-      triggerReturn: StatePrinter.makeTriggerPath(start.returnPath, start.returnValue, stop.returnValue),
-      triggerPaths: StatePrinter.arrToObj(start.argsPaths.map((p, i) => StatePrinter.makeTriggerPath(p, start.argsValue[i], stop.argsValue[i])))
-    };
-  }
-
-  static makeTriggerPath(path, startValue, stopValue) {
-    return {
-      path,
-      startValue,
-      stopValue,
-      triggered: startValue !== stopValue
-    };
   }
 
   //.name, .diff, .style, .values.startState/.reducedState/.newState, .children
@@ -131,13 +106,6 @@ class StatePrinter {
     let aKeys = Object.keys(a);
     let bKeys = Object.keys(b);
     return aKeys.length === bKeys.length && aKeys.every(key => bKeys.indexOf(key) >= 0);
-  }
-
-  static arrToObj(arr) {
-    const res = {};
-    for (let i = 0; i < arr.length; ++i)
-      res[i] = arr[i];
-    return res;
   }
 }
 

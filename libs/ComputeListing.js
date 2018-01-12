@@ -44,14 +44,14 @@ export class ComputeListing extends HyperHTMLElement {
         <span class="compute__description">
           <span class="compute__name">${this.state.func.funcName}</span>
           <span class="compute__args">
-            ${(Object.values(this.state.func.triggerPaths)).map((arg, i) => HyperHTMLElement.wire()`
-              <state-path triggered="${arg.triggered}" selected="${arg.selected}">${arg.path.join(".")}</state-path>
+            ${(this.state.func.argsPaths || []).map(arg => HyperHTMLElement.wire()`
+              <state-path path="${path}">${arg}</state-path>
             `)}
           </span>
         </span>
       </div>
     `;
-  }
+  }                       //triggered="${arg.triggered}" selected="${arg.selected}"
 
   static _style() {
     return HyperHTMLElement.wire()`

@@ -13,6 +13,7 @@ export class StatePath extends HyperHTMLElement {
   }
 
   render() {
+    //language=CSS
     this.html`
       <style>
         :host {
