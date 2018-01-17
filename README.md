@@ -9,6 +9,9 @@
 When you have made changes in the folder from where you
 installed the extension, you can simply close and reopen the devtools.
 
+### How does it work?
+![schema](./tutorial/Workings_of_JoiState_devtools_plugin.jpg)
+
 #### How to debug: content-script.js
 1) Open the __normal__ devtools (F12) from an app that uses JoiState.
 2) Select __sources__ panel
