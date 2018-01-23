@@ -11,26 +11,20 @@ class TaskLI extends HyperHTMLElement {
   /**
    * Creates an instance of TaskLI
    * @param {TaskLI.Props} props Properties of class
-   * @param {Object} attribs Attributes of component
    */
-  constructor(props, attribs) {
+  constructor(props) {
     super();
     this.attachShadow({mode: 'open'});
+    const attribs = {
+      id: 'task_' + props.index,
+      class: 'tasklist__item task',
+      'data-index': props.index
+    };
     for (let key in attribs)
       this.setAttribute(key, attribs[key]);
-    this._props = props;
     this.cachedStyle = this._style();
-    this.updateProps();
+    this.render(props);
     this.addEventListener('mousedown', TaskLI.showActiveState);
-  }
-
-  /**
-   * Call this method to update its properties and rerender its DOM node.
-   * @param {TaskLI.Props} props The new properties of this component
-   */
-  updateProps(props) {
-    this._props = this._props.update(props);
-    this.render();
   }
 
   /**
@@ -38,17 +32,16 @@ class TaskLI extends HyperHTMLElement {
    * updateProps calls this method by default, but you must call this method manually if you need the DOM to reflect
    * changes to some of its attributes that should change the HTML structure.
    */
-  render() {
-    const p = this._props;
+  render(p) {
     return this.html`
       <style>${this.cachedStyle}</style>
       <details class="task__body" data-index="${p.index}">
         <summary class="task__summary">
           <span class="task__method">${p.task.taskName}</span>
           ${new AddedDuration(new AddedDuration.Props(p.task.added, p.task.start, p.task.stop), {
-            class: 'task__timestamp',
-            'data-test': 'test'
-          })}
+      class: 'task__timestamp',
+      'data-test': 'test'
+    })}
         </summary>
         <div class="task__details">
           ${new DetailedObject(new DetailedObject.Props(p.task.taskName, p.task.event))}
@@ -138,32 +131,13 @@ class TaskLI extends HyperHTMLElement {
     const nextTask = e.currentTarget;
     nextTask.classList.add("task--active");
 
-    this.dispatchEvent(new CustomEvent("task-selected", {composed:true, bubbles:true, detail: nextTask.dataset.index}));
+    this.dispatchEvent(new CustomEvent("task-selected", {
+      composed: true,
+      bubbles: true,
+      detail: nextTask.dataset.index
+    }));
   }
 }
-
-/**
- * TaskLI props interface
- */
-TaskLI.Props = class {
-  /**
-   * @param {number} index Index of task
-   * @param {Object} task Body of task
-   */
-  constructor(index, task) {
-    this.index = index || 0;
-    this.task = task || {taskName: "unset"};
-  }
-
-  /**
-   * @param {Object} newProps
-   * @param {number} newProps.index
-   * @param {Object} newProps.task
-   */
-  update(newProps){
-    return Object.assign({}, this, newProps);
-  }
-};
 
 customElements.define('task-li', TaskLI);
 

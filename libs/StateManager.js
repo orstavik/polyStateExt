@@ -19,7 +19,8 @@ export class StateManager {
 
   addDebugInfo(deb) {
     //todo here we should make A reuse as much as possible from B??
-    this.debugInfoList[++this.debugCounter] = deb;
+    deb.index = ++this.debugCounter;
+    this.debugInfoList[this.debugCounter] = deb;
     this.setSelectDetail(this.debugCounter);
     return this.debugCounter;
   }
@@ -43,6 +44,10 @@ export class StateManager {
     //todo replace all the res in fullTree with cached version using JSON.stringify keys?
     // this.paths = StateManager.makePaths(data.newState, data.startState);
     this.notify(this);
+  }
+
+  getFullList() {
+    return this.debugInfoList;
   }
 
   getFullTree() {

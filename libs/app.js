@@ -13,7 +13,7 @@ export class AppShell extends HyperHTMLElement {
   render() {
     this.html`
 <flexible-grid class="topgrid" separator="300px" min-cols="260px 400px" direction-media="horizontal 660px vertical">
-  <aside class="tasklist" slot="first"></aside>
+  <aside class="tasklist" slot="first">${this.state.tasks}</aside>
   <main class="state" slot="second">
     <flexible-grid class="stategrid" separator="300px" min-cols="100px 200px" direction="vertical">
       <observer-list slot="first"></observer-list>
@@ -26,6 +26,7 @@ export class AppShell extends HyperHTMLElement {
 
   constructor() {
     super();
+    this.state.tasks = [];
     this.render();
 
     //1. load the content-script by sending a message to the background.js script that has access to load content scripts.
@@ -37,7 +38,6 @@ export class AppShell extends HyperHTMLElement {
     this.state.stateDetail = document.querySelector("state-detail");
     this.state.observers = document.querySelector("observer-list");
     this.state.fluidStyle = document.querySelector("style#mainStyle");
-    this.state.tasksList = document.querySelector("aside.tasklist");
 
     this.state.state = new StateManager();
     this.state.state.onChange(this.onStateChange.bind(this));
@@ -59,20 +59,16 @@ export class AppShell extends HyperHTMLElement {
   onStateChange(newState) {
     this.state.stateDetail.render(newState.getFullTree());
     ObserverList.makeOrUpdate(this.state.observers, newState.getObserverInfo(), newState.getSelectedPath());
-    console.log(newState);
+    const fullList = newState.getFullList();
+    for (let i = this.state.tasks.length; i < fullList.length; i++)
+      this.state.tasks = this.state.tasks.concat([new TaskLI(fullList[i])]);
+    this.render();
   }
 
   onNewStateDebugInfoFromMainApp(request, sender, sendResponse) {
     if (request.name !== 'new-client-state')
       return;
-
-    let data = JSON.parse(request.payload);
-    let id = this.state.state.addDebugInfo(data);
-    this.state.tasksList.append(new TaskLI(new TaskLI.Props(id, data.task), {
-      id: 'task_' + id,
-      class: 'tasklist__item task',
-      'data-index': id
-    }));
+    this.state.state.addDebugInfo(JSON.parse(request.payload));
   };
 
   static getHistory() {
