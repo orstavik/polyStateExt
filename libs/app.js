@@ -26,6 +26,7 @@ export class AppShell extends HyperHTMLElement {
 
   constructor() {
     super();
+    this.render();
 
     //1. load the content-script by sending a message to the background.js script that has access to load content scripts.
     chrome.runtime.sendMessage({
@@ -33,7 +34,6 @@ export class AppShell extends HyperHTMLElement {
       filename: "content-script.js"
     });
 
-    this.render();
     this.state.stateDetail = document.querySelector("state-detail");
     this.state.observers = document.querySelector("observer-list");
     this.state.fluidStyle = document.querySelector("style#mainStyle");
