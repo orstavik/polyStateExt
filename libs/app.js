@@ -6,7 +6,6 @@ import {StateManager} from "./StateManager.js";
 import {FlexibleGrid} from "./FlexibleGrid.js";
 import {StatePath} from "./StatePath.js";
 import {ObserveFunction} from "./ObserveFunction.js";
-import {ComputeListing} from "./ComputeListing.js";
 import {StateTree} from "./StateTree.js";
 
 export class AppShell extends HyperHTMLElement {
@@ -43,20 +42,18 @@ export class AppShell extends HyperHTMLElement {
     this.state.state = new StateManager();
     this.state.state.onChange(this.onStateChange.bind(this));
 
-    //2. connect the apps listener method to the messages coming in from the injected-script.
-//   This listener will decorate the devtools-panel DOM with the incoming data.
     chrome.runtime.onMessage.addListener(this.onNewStateDebugInfoFromMainApp.bind(this));
 
-    //3. get and inject the injected-script.
-//   the injected-script will hook into the ITObservableState.debugHook method to process
-//   and send messages for each debug state.
-//   Only chrome.devtools.inspectedWindow.eval has access to do this.
     (async function () {
-      let response = await fetch("injected-script.js");
-      let text = await response.text();
-      chrome.devtools.inspectedWindow.eval(text);
-      this.getHistory();
-    }.bind(this))();
+      await AppShell.injectScriptInApp();
+      AppShell.getHistory();
+    })();
+  }
+
+  static async injectScriptInApp() {
+    let response = await fetch("injected-script.js");
+    let text = await response.text();
+    chrome.devtools.inspectedWindow.eval(text);
   }
 
   onStateChange(newState) {
@@ -78,11 +75,9 @@ export class AppShell extends HyperHTMLElement {
     }));
   };
 
-  getHistory() {
+  static getHistory() {
     chrome.devtools.inspectedWindow.eval("window.dispatchEvent(new CustomEvent('state-history-get'));");
   };
-
 }
 
 customElements.define("app-shell", AppShell);
-
