@@ -3,23 +3,32 @@ import {ObserveFunction} from "./ObserveFunction.js";
 
 export class ObserverList extends HyperHTMLElement {
 
+  constructor() {
+    super();
+    this.state.cache = {};
+  }
+
   render(observerInfo, selected) {
     if (!observerInfo)
       return this.html`<h5>No observers registered</h5>`;
-    this.state.cache = this.state.cache || {};
+
+    return this.html`
+      <style>${ObserverList._style(selected)}</style>
+      <h4 class="observer__header">Observers</h4>
+      <ul class="observer__observers">
+        ${this.makeAndCacheObservers(observerInfo)}
+      </ul>
+    `;
+  }
+
+  makeAndCacheObservers(observerInfo) {
     const observers = [];
     for (let key in observerInfo) {
       if (!this.state.cache[key])
         this.state.cache[key] = new ObserveFunction(observerInfo[key]);
       observers.push(this.state.cache[key]);
     }
-    return this.html`
-      <style>${ObserverList._style(selected)}</style>
-      <h4 class="observer__header">Observers</h4>
-      <ul class="observer__observers">
-        ${observers}
-      </ul>
-    `;
+    return observers;
   }
 
   /**
