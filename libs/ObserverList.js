@@ -10,7 +10,7 @@ export class ObserverList extends HyperHTMLElement {
     const observers = [];
     for (let key in observerInfo) {
       if (!this.state.cache[key])
-        this.state.cache[key] = ObserveFunction.makeOrUpdate(null, observerInfo[key]);
+        this.state.cache[key] = new ObserveFunction(observerInfo[key]);
       observers.push(this.state.cache[key]);
     }
     return this.html`
