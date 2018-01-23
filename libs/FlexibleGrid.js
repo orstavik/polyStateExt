@@ -7,7 +7,7 @@ import throttle from "./throttle.js";
 /**
  * Webcomponent grid with two resizable boxes inside
  */
-class FlexibleGrid extends HyperHTMLElement {
+export class FlexibleGrid extends HyperHTMLElement {
 
   /**
    * Creates an instance of FlexibleGrid
