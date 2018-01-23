@@ -27,7 +27,6 @@ export class AppShell extends HyperHTMLElement {
 
   constructor() {
     super();
-    this.render();
 
     //1. load the content-script by sending a message to the background.js script that has access to load content scripts.
     chrome.runtime.sendMessage({
@@ -35,26 +34,18 @@ export class AppShell extends HyperHTMLElement {
       filename: "content-script.js"
     });
 
-    //2a. get shortcuts to DOM elements in devtools-panel that will be decorated
-    this.state.state = new StateManager();
-
-    const stateDetail = document.querySelector("state-detail");
-    const observers = document.querySelector("observer-list");
-    const fluidStyle = document.querySelector("style#mainStyle");
-
-    this.state.state.onChange(function (newState) {
-      // fluidStyle.innerHTML = newState.getStyle();
-      // StateDetail.makeOrUpdate(stateDetail, newState.getVisualVersion(), newState.getOpenPaths(), newState.getSelectedPath(), newState.getRelevants());
-      // StateDetail.makeOrUpdate(stateDetail, newState.getVisualVersion(), newState.getWrapperPaths());
-      stateDetail.render(newState.getFullTree());
-      ObserverList.makeOrUpdate(observers, newState.getObserverInfo(), newState.getSelectedPath());
-      console.log(newState);
-    });
+    this.render();
+    this.state.stateDetail = document.querySelector("state-detail");
+    this.state.observers = document.querySelector("observer-list");
+    this.state.fluidStyle = document.querySelector("style#mainStyle");
     this.state.tasksList = document.querySelector("aside.tasklist");
+
+    this.state.state = new StateManager();
+    this.state.state.onChange(this.onStateChange.bind(this));
 
     //2. connect the apps listener method to the messages coming in from the injected-script.
 //   This listener will decorate the devtools-panel DOM with the incoming data.
-    chrome.runtime.onMessage.addListener(this.listenerFunc.bind(this));
+    chrome.runtime.onMessage.addListener(this.onNewStateDebugInfoFromMainApp.bind(this));
 
     //3. get and inject the injected-script.
 //   the injected-script will hook into the ITObservableState.debugHook method to process
@@ -68,19 +59,23 @@ export class AppShell extends HyperHTMLElement {
     }.bind(this))();
   }
 
-  //2b.
-  //    Att! the devtools-panel.js script can be debugged by right-clicking on the panel in devtools -> inspect.
-  listenerFunc(request, sender, sendResponse) {
-    debugger;
-    if (request.name === 'new-client-state') {
-      let data = JSON.parse(request.payload);
-      let id = this.state.state.addDebugInfo(data);
-      this.state.tasksList.append(new TaskLI(new TaskLI.Props(id, data.task), {
-        id: 'task_' + id,
-        class: 'tasklist__item task',
-        'data-index': id
-      }));
-    }
+  onStateChange(newState) {
+    this.state.stateDetail.render(newState.getFullTree());
+    ObserverList.makeOrUpdate(this.state.observers, newState.getObserverInfo(), newState.getSelectedPath());
+    console.log(newState);
+  }
+
+  onNewStateDebugInfoFromMainApp(request, sender, sendResponse) {
+    if (request.name !== 'new-client-state')
+      return;
+
+    let data = JSON.parse(request.payload);
+    let id = this.state.state.addDebugInfo(data);
+    this.state.tasksList.append(new TaskLI(new TaskLI.Props(id, data.task), {
+      id: 'task_' + id,
+      class: 'tasklist__item task',
+      'data-index': id
+    }));
   };
 
   getHistory() {
