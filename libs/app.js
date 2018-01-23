@@ -58,7 +58,7 @@ export class AppShell extends HyperHTMLElement {
 
   onStateChange(newState) {
     this.state.stateDetail.render(newState.getFullTree());
-    ObserverList.makeOrUpdate(this.state.observers, newState.getObserverInfo(), newState.getSelectedPath());
+    this.state.observers.render(newState.getObserverInfo(), newState.getSelectedPath());
     const fullList = newState.getFullList().reverse();
     for (let i = this.state.tasks.length; i < fullList.length; i++)
       this.state.tasks = this.state.tasks.concat([new TaskLI(fullList[i])]);

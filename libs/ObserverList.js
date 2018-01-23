@@ -3,44 +3,21 @@ import {ObserveFunction} from "./ObserveFunction.js";
 
 export class ObserverList extends HyperHTMLElement {
 
-  /**
-   * update a computed trigger
-   * @param {HyperHTMLElement} el
-   * @param {Object} observerInfo
-   */
-  static makeOrUpdate(el, observerInfo, selected) {
-    el = el || new ObserverList(true);
-    el.updateState(observerInfo, selected);
-    return el;
-  }
-
-  /**
-   * An entry for a computed trigger
-   */
-  constructor(skipRender) {
-    super();
-    // this.attachShadow({mode: 'open'});
-    if (!skipRender)
-      this.render();
-  }
-
-  updateState(observerInfo, selected) {
-    this.state.observers = observerInfo ? Object.values(observerInfo) : undefined;
-    this.state.selected = selected;
-    this.render();
-  }
-
-  render() {
-    if (!this.state.observers)
+  render(observerInfo, selected) {
+    if (!observerInfo)
       return this.html`<h5>No observers registered</h5>`;
-
+    this.state.cache = this.state.cache || {};
+    const observers = [];
+    for (let key in observerInfo) {
+      if (!this.state.cache[key])
+        this.state.cache[key] = ObserveFunction.makeOrUpdate(null, observerInfo[key]);
+      observers.push(this.state.cache[key]);
+    }
     return this.html`
-      <style>${ObserverList._style(this.state.selected)}</style>
+      <style>${ObserverList._style(selected)}</style>
       <h4 class="observer__header">Observers</h4>
       <ul class="observer__observers">
-        ${this.state.observers.map(observer => HyperHTMLElement.wire()`
-          ${ObserveFunction.makeOrUpdate(null, observer)}
-        `)}
+        ${observers}
       </ul>
     `;
   }
