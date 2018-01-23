@@ -10,6 +10,11 @@ chrome.runtime.sendMessage({
 //   This listener will decorate the devtools-panel DOM with the incoming data.
 chrome.runtime.onMessage.addListener(listenerFunc);
 
+debugger;
+const getHistory = function() {
+  chrome.devtools.inspectedWindow.eval("window.dispatchEvent(new CustomEvent('state-history-get'));");
+};
+
 //3. get and inject the injected-script.
 //   the injected-script will hook into the ITObservableState.debugHook method to process
 //   and send messages for each debug state.
@@ -18,4 +23,5 @@ chrome.runtime.onMessage.addListener(listenerFunc);
   let response = await fetch("injected-script.js");
   let text = await response.text();
   chrome.devtools.inspectedWindow.eval(text);
+  getHistory();
 })();

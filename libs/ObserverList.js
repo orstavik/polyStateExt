@@ -19,7 +19,7 @@ export class ObserverList extends HyperHTMLElement {
    */
   constructor(skipRender) {
     super();
-    this.attachShadow({mode: 'open'});
+    // this.attachShadow({mode: 'open'});
     if (!skipRender)
       this.render();
   }

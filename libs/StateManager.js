@@ -1,11 +1,13 @@
 import {Tools} from "./Tools.js";
+import {JoiGraph} from "./JoiGraph.js";
 
 export class StateManager {
 
   constructor() {
+    debugger;
     this.debugInfoList = [];
     this.selectedPath = {};
-    this.debugCounter = 0;
+    this.debugCounter = -1;
     this.openedPaths = {};
     this.relevants = {};
 
@@ -16,7 +18,7 @@ export class StateManager {
   }
 
   addDebugInfo(deb) {
-    deb.visualVersion = StateManager.appendComputesToState(deb.visualVersion, deb.computerInfo);
+    //todo here we should make A reuse as much as possible from B??
     this.debugInfoList[++this.debugCounter] = deb;
     this.setSelectDetail(this.debugCounter);
     return this.debugCounter;
@@ -32,20 +34,96 @@ export class StateManager {
   setSelectDetail(id) {
     let data = this.debugInfoList[Number(id)];
     if (!data) {
-      console.log(id);
+      console.log(id);                    //todo this should never happen!
       return;
     }
-    this.visualVersion = data.visualVersion;
     this.observerInfo = data.observerInfo;
     this.computerInfo = data.computerInfo;
-    this.added = StateManager.filterDiffPaths(data.diffStartReduced, "Added");
-    this.deleted = StateManager.filterDiffPaths(data.diffStartReduced, "Deleted");
-    this.realAltered = StateManager.filterDiffPaths(data.diffStartReduced, "Altered");
-    this.subAltered = StateManager.filterDiffPaths(data.diffStartReduced, "SubAltered");
-    this.altered = Object.assign({}, this.realAltered, this.subAltered);
-    this.changed = Object.assign({}, this.altered, this.added, this.deleted);
-    // this.openedPaths = Object.assign({}, this.changed);
+    this.fullTreeWithPathsToDataParentLevelStyle = StateManager.makeFullTreeWithPathsToDataParentLevelStyle(data.startState, data.reducedState, data.newState)
+    //todo replace all the res in fullTree with cached version using JSON.stringify keys?
+    // this.paths = StateManager.makePaths(data.newState, data.startState);
     this.notify(this);
+  }
+
+  getFullTree() {
+    return this.fullTreeWithPathsToDataParentLevelStyle;
+  }
+
+  //todo mutate madness
+  static makeFullTreeWithPathsToDataParentLevelStyle(startStateObj, reducedStateObj, newStateObj) {
+    let startState = JoiGraph.flatten(startStateObj);
+    let reducedState = JoiGraph.flatten(reducedStateObj);
+    let newState = JoiGraph.flatten(newStateObj);
+    const fullTree = JoiGraph.orderedAssign(startState, newState);
+
+    //todo use the const below to give an error if the reduced state is not covered by the fullTree
+    const reducedIsCovered = Object.getOwnPropertyNames(reducedState).every(path => path in fullTree);
+
+    const paths = Object.getOwnPropertyNames(fullTree);
+    for (let i = 0; i < paths.length; i++) {
+      let path = paths[i];
+      let res = {
+        path,
+        start: startState[path],
+        reduced: reducedState[path],
+        computed: newState[path],
+      };
+      if (res.start !== res.reduced)
+        res.changeReduced =
+          res.start === undefined ? "added" :
+            res.reduced === undefined ? "deleted" :
+              "changed";
+      if (res.reduced !== res.computed)
+        res.changeComputed =
+          res.reduced === undefined ? "added" :
+            res.computed === undefined ? "deleted" :
+              "changed";
+      fullTree[path] = res;
+    }
+    return StateManager.addParentStyle(fullTree);
+  }
+
+  //todo mutates fullTree
+  static addParentStyle(fullTree) {
+    const paths = Object.getOwnPropertyNames(fullTree);
+    for (let i = 0; i < paths.length; i++) {
+      for (let j = i + 1; j < paths.length; j++) {
+        let path = paths[i];
+        let nextPath = paths[j];
+        if (!nextPath.startsWith(path))
+          break;
+        fullTree[path].isParent = true;
+        if (fullTree[nextPath].changeReduced)
+          fullTree[path].parentReduced = fullTree[nextPath].changeReduced;
+        if (fullTree[nextPath].changeComputed)
+          fullTree[path].parentComputed = fullTree[nextPath].changeComputed;
+      }
+    }
+    return fullTree;
+  }
+
+  static makePaths(newState, startState) {
+    const computed = JoiGraph.flatten(newState);
+    const start = JoiGraph.flatten(startState);
+
+    const alteredComputed = JoiGraph.filterDeep(computed, start);
+    const alteredStart = JoiGraph.filterDeep(start, computed);
+
+    const altered = Object.getOwnPropertyNames(alteredComputed);
+    const alteredReverse = Object.getOwnPropertyNames(alteredStart);
+    const notInComputed = alteredReverse.filter(name => altered.indexOf(name) === -1);
+    const changed = altered.concat(notInComputed);
+
+    // const openedPaths = Object.assign({}, this.openedPaths, this.paths.changed, this.selectedPath);
+    // return StateManager.allPathsAndParentPaths(openedPaths);
+
+    return {
+      added: altered.filter(name => alteredReverse.indexOf(name) === -1),
+      deleted: notInComputed,
+      realAltered: alteredReverse.filter(name => altered.indexOf(name) !== -1),
+      changed: changed,
+      subAltered: JoiGraph.getParentPaths(changed)
+    };
   }
 
   toogleOpen(path) {
@@ -72,32 +150,43 @@ export class StateManager {
     return this.selectedPath;
   }
 
-  getRelevants() {
-    return this.relevants;
+  getStyle() {
+    const addeds = StateManager.pathsToCSSSelectors(this.paths.added, "");//">state-tree");
+    const deleteds = StateManager.pathsToCSSSelectors(this.paths.deleted, "");//">.statetree__opener::before");
+    const subAltered = StateManager.pathsToCSSSelectors(this.paths.changed, "");
+    //language=CSS
+    return `
+      ${addeds} {
+        border: 2px solid red;
+      }
+      ${deleteds} {
+        border: 2px solid orange;
+      }
+      ${subAltered} {
+        display: 2px dotted green;
+      }
+    `;
   }
 
-  getOpenPaths() {
-    let openedPaths = Object.assign({}, this.openedPaths, this.changed, this.selectedPath);
-    return StateManager.allPathsAndParentPaths(openedPaths);
+  static pathsToCSSSelectors(paths, ending) {
+    if (!paths || paths.length === 0)
+      return "inactive";
+    return paths.map(path => StateManager.pathToCSSSelectorFullPath(path, ending)).join(",\n");
+  }
+
+  static pathToCSSSelectorFullPath(path, ending) {
+    return `[path='${path}']` + ending;
   }
 
   getWrapperPaths() {
-    const opened = this.getOpenPaths();
-    return {
-      opened: opened,
-      added: this.added,
-      deleted: this.deleted,
-      altered: this.altered,
-      selected: this.selectedPath,
-      relevant: this.relevants
-    }
+    return this.paths;
   }
 
   onChange(cb) {
     this.notify = cb;
   }
 
-  //todo see if the paths in the funcObj maybe should be made into strings at outset.
+//todo see if the paths in the funcObj maybe should be made into strings at outset.
   static getArgumentPathsAsObject(funcObj) {
     if (!funcObj)
       return {};

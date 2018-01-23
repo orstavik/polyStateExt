@@ -8,11 +8,15 @@ const state = new StateManager();
 
 const stateDetail = document.querySelector("state-detail");
 const observers = document.querySelector("observer-list");
+const fluidStyle = document.querySelector("style#mainStyle");
 
 state.onChange(function (newState) {
+  // fluidStyle.innerHTML = newState.getStyle();
   // StateDetail.makeOrUpdate(stateDetail, newState.getVisualVersion(), newState.getOpenPaths(), newState.getSelectedPath(), newState.getRelevants());
-  StateDetail.makeOrUpdate(stateDetail, newState.getVisualVersion(), newState.getWrapperPaths());
+  // StateDetail.makeOrUpdate(stateDetail, newState.getVisualVersion(), newState.getWrapperPaths());
+  stateDetail.render(newState.getFullTree());
   ObserverList.makeOrUpdate(observers, newState.getObserverInfo(), newState.getSelectedPath());
+  console.log(newState);
 });
 
 const tasksList = document.querySelector("aside.tasklist");

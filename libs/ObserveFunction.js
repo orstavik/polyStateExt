@@ -10,7 +10,7 @@ export class ObserveFunction extends HyperHTMLElement {
    */
   static makeOrUpdate(el, observeFunc) {
     el = el || new ObserveFunction(true);
-    el._updateState(observeFunc);
+    el.render(observeFunc);
     return el;
   }
 
@@ -20,35 +20,25 @@ export class ObserveFunction extends HyperHTMLElement {
    */
   constructor(skipRender) {
     super();
-    this.cachedStyle = this._style();
+    this.cachedStyle = ObserveFunction._style();
     // this.attachShadow({mode: 'open'});
     if (!skipRender)
       this.render();
   }
 
-  _updateState(observeFunc) {
-    if (observeFunc === this.state.func) //todo implies immutable observeFunc
-      return;
-    this.state.func = observeFunc;
-    this.render();
-  }
-
-  render() {
-    let args = [];
-    if (this.state.func.triggerPaths)
-      args = Object.values(this.state.func.triggerPaths) || [];
+  render(observeFunc) {
     this.html`
       <style>${this.cachedStyle}</style>
-      <span class="funcName">${this.state.func.funcName}</span>
+      <span class="funcName">${observeFunc.funcName}</span>
       <span class="funcArgs">
-        ${args.map((arg, i) => HyperHTMLElement.wire(arg)`
-          <state-path path="${arg.path.join(".")}" triggered="${arg.triggered}">${arg.path.join(".")}</state-path>
+        ${(observeFunc.argsPaths || []).map(arg => HyperHTMLElement.wire()`
+          <state-path path="${arg}">${arg}</state-path>
         `)}
       </span>
     `;
   }
 
-  _style(){
+  static _style(){
     //language=CSS
     return `
         observe-function {
