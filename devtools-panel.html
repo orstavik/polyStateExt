@@ -5,25 +5,16 @@
   <link rel="stylesheet" href="style/variables.css">
   <link rel="stylesheet" href="style/main.css">
   <link rel="stylesheet" href="style/statetree.css">
+  <script src="libs/app.js" type="module"></script>
   <script src="libs/FlexibleGrid.js" type="module"></script>
-</head>
-
-<body>
-  <flexible-grid class="topgrid" separator="300px" min-cols="260px 400px" direction-media="horizontal 660px vertical">
-    <aside class="tasklist" slot="first"></aside>
-    <main class="state" slot="second">
-      <flexible-grid class="stategrid" separator="300px" min-cols="100px 200px" direction="vertical">
-        <observer-list slot="first"></observer-list>
-        <state-detail slot="second"></state-detail>
-      </flexible-grid>
-    </main>
-  </flexible-grid>
-
-  <script src="devtools-panel.js" type="module"></script>
   <script src="libs/StatePath.js" type="module"></script>
   <script src="libs/ObserveFunction.js" type="module"></script>
   <script src="libs/ComputeListing.js" type="module"></script>
   <script src="libs/StateTree.js" type="module"></script>
+</head>
+
+<body>
+  <app-shell></app-shell>
 </body>
 
 </html>
