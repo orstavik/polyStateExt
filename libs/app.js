@@ -42,7 +42,7 @@ export class AppShell extends HyperHTMLElement {
     this.state.state = new StateManager();
     this.state.state.onChange(this.onStateChange.bind(this));
 
-    chrome.runtime.onMessage.addListener(this.onNewStateDebugInfoFromMainApp.bind(this));
+    chrome.runtime.onMessage.addListener(this.onNewStateFromApp.bind(this));
 
     (async function () {
       await AppShell.injectScriptInApp();
@@ -59,13 +59,13 @@ export class AppShell extends HyperHTMLElement {
   onStateChange(newState) {
     this.state.stateDetail.render(newState.getFullTree());
     ObserverList.makeOrUpdate(this.state.observers, newState.getObserverInfo(), newState.getSelectedPath());
-    const fullList = newState.getFullList();
+    const fullList = newState.getFullList().reverse();
     for (let i = this.state.tasks.length; i < fullList.length; i++)
       this.state.tasks = this.state.tasks.concat([new TaskLI(fullList[i])]);
     this.render();
   }
 
-  onNewStateDebugInfoFromMainApp(request, sender, sendResponse) {
+  onNewStateFromApp(request, sender, sendResponse) {
     if (request.name !== 'new-client-state')
       return;
     this.state.state.addDebugInfo(JSON.parse(request.payload));

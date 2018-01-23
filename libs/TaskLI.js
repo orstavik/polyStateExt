@@ -15,13 +15,10 @@ class TaskLI extends HyperHTMLElement {
   constructor(props) {
     super();
     this.attachShadow({mode: 'open'});
-    const attribs = {
-      id: 'task_' + props.index,
-      class: 'tasklist__item task',
-      'data-index': props.index
-    };
-    for (let key in attribs)
-      this.setAttribute(key, attribs[key]);
+    this.setAttribute("id", 'task_' + props.index);
+    this.setAttribute("data-index", props.index);
+    this.classList.add('tasklist__item');
+    this.classList.add('task');
     this.cachedStyle = this._style();
     this.render(props);
     this.addEventListener('mousedown', TaskLI.showActiveState);
